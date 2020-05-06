@@ -13,12 +13,15 @@ public class CF4M {
 
     private static CF4M instance;
 
+    public String packName;
+
     public EventManager eventManager;
     public ModuleManager moduleManager;
     public SettingManager settingManager;
 
-    public CF4M() {
+    public CF4M(Object o) {
         instance = this;
+        packName = o.getClass().getPackage().getName();
     }
 
     public void start() {

@@ -20,6 +20,18 @@ public class ModuleManager {
     public ModuleManager() {
         modules = new ArrayList<>();
         CF4M.getInstance().eventManager.register(this);
+        try {
+            for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
+                if (info.getName().startsWith(CF4M.getInstance().packName)) {
+                    Class<?> clazz = info.load();
+                    if (clazz.isAnnotationPresent(ModuleAT.class)) {
+                        modules.add((Module) clazz.newInstance());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @EventTarget
