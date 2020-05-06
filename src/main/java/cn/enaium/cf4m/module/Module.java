@@ -13,6 +13,7 @@ public class Module {
     private int keyCode;
     private Category category;
     private boolean enable;
+    private String tag;
 
     public Module(String name, String info, int keyCode, Category category) {
         this.name = name;
@@ -76,5 +77,13 @@ public class Module {
 
     private void onDisable() {
         CF4M.getInstance().eventManager.unregister(this);
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 }
