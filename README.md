@@ -1,2 +1,2 @@
-# cf4m
+# Client Framework for Minecraft
  
