@@ -1,0 +1,23 @@
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# mavne
+
+target/
+
+# Me
+
+run/
+src/test/
