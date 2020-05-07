@@ -63,7 +63,7 @@ public class Module {
         this.enable = enable;
     }
 
-    protected void enable() {
+    public void enable() {
         this.enable = !this.enable;
         if (this.enable)
             onEnable();
