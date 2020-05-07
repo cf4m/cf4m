@@ -38,7 +38,6 @@ public class SettingManager {
                     }
                 }
             }
-            System.out.println(settings.toString());
         } catch (Exception e) {
             System.out.println(e);
         }

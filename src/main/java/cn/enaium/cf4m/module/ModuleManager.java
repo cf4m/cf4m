@@ -4,8 +4,6 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.event.EventTarget;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import com.google.common.reflect.ClassPath;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -36,7 +34,6 @@ public class ModuleManager {
 
     @EventTarget
     public void onKey(KeyboardEvent keyboardEvent) {
-        System.out.println("@3333");
         for (Module module : modules) {
             if (module.getKeyCode() == keyboardEvent.getKeyCode())
                 module.enable();
