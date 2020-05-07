@@ -21,3 +21,8 @@ target/
 
 run/
 src/test/
+
+
+#vuepress
+
+doc-src/node_modules

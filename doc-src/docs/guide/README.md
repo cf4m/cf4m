@@ -1,4 +1,8 @@
-# Client Framework for Minecraft
+---
+sidebar: auto
+---
+
+# Guide
 
 ## Install
 
@@ -37,4 +41,5 @@ repositories {
 ### Libraries
 
 [releases](https://github.com/Enaium/cf4m/releases)
- 
+
+## Usage
