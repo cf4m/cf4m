@@ -44,10 +44,6 @@ repositories {
 
 ## Usage
 
-::: warning
-Currently only Event, Module,Setting and Command
-:::
-
 ### Instance
 
 Create the main class.

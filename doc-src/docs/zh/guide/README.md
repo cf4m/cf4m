@@ -44,10 +44,6 @@ repositories {
 
 ## 使用
 
-::: warning
-当前仅有Event、Module和Setting
-:::
-
 ### Instance
 
 创建主类.
