@@ -21,7 +21,7 @@ sidebar: auto
     <dependency>
         <groupId>cn.enaium</groupId>
         <artifactId>cf4m</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </dependency>
 </dependencies>
 ```
@@ -30,7 +30,7 @@ sidebar: auto
 
 ```groovy
 dependencies {
-    compile group: 'cn.enaium', name: 'cf4m', version: '1.0.0'
+    compile group: 'cn.enaium', name: 'cf4m', version: '1.1.0'
 }
 
 repositories {
