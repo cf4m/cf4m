@@ -101,7 +101,7 @@ public class Sprint extends Module {
 ```
 
 ::: tip
-加`@ ModuleAT`注解CF4M会自动为您添加到ModuleManager
+加`@ModuleAT`注解CF4M会自动为您添加到ModuleManager
 :::
 
 ### Setting
