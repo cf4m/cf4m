@@ -142,6 +142,8 @@ Plus `@SettingAT` annotation CF4M will automatically add it to SettingManager fo
 
 ### Command
 
+prefix: `
+
 ```java
 @CommandAT({"h", "help"})
 public class HelpCommand implements Command {

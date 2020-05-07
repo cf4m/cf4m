@@ -141,6 +141,8 @@ public class Sprint extends Module {
 
 ### Command
 
+prefix: `
+
 ```java
 @CommandAT({"h", "help"})
 public class HelpCommand implements Command {
