@@ -45,7 +45,7 @@ repositories {
 ## Usage
 
 ::: warning
-Currently only Event, Module and Setting
+Currently only Event, Module,Setting and Command
 :::
 
 ### Instance
@@ -140,4 +140,63 @@ Plus `@ModuleAT` annotation CF4M will automatically add it to ModuleManager for 
 Plus `@SettingAT` annotation CF4M will automatically add it to SettingManager for you
 :::
 
+### Command
 
+```java
+@CommandAT({"h", "help"})
+public class HelpCommand implements Command {
+
+    @Override
+    public void run(String[] args) {
+        ChatUtils.message("Here are the list of commands:");
+        for (Command c : CF4M.getInstance().commandManager.commands.values()) {
+            for (String s : c.usage()) {
+                ChatUtils.message("USAGE:" + CF4M.getInstance().commandManager.prefix + s);
+            }
+        }
+    }
+
+    @Override
+    public List<String> usage() {
+        return Arrays.asList("help");
+    }
+}
+```
+
+```java
+@CommandAT({"e", "enable"})
+public class EnableCommand implements Command {
+    @Override
+    public void run(String[] args) {
+        if (args.length == 2) {
+
+            Module module = getModule(args[1]);
+
+            if (module == null) {
+                ChatUtils.message("The module with the name " + args[1] + " does not exist.");
+                return;
+            }
+
+            module.enable();
+
+        }
+    }
+
+    public Module getModule(String name) {
+        for (Module m : CF4M.getInstance().moduleManager.modules) {
+            if (m.getName().equalsIgnoreCase(name))
+                return m;
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> usage() {
+        return Arrays.asList("enable [module]");
+    }
+}
+```
+
+::: tip
+Plus `@Command({"index"})` annotation CF4M will automatically add it to CommandManager for you
+:::
