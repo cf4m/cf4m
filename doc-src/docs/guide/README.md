@@ -34,7 +34,7 @@ dependencies {
 }
 
 repositories {
-	maven {url 'https://enaium.gitee.io/maven/'}
+	maven { url 'https://enaium.gitee.io/maven/' }
 }
 ```
 
