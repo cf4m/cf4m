@@ -6,7 +6,7 @@ actionText: Quick Start →
 actionLink: /guide/
 features:
 - title: Easy
-  details: No need to write Module Setting etc.
+  details: No need to write Event,Module and Setting etc.
 - title: Small
   details: Less than 30KB.
 - title: Lightweight

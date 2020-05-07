@@ -2,9 +2,9 @@
 sidebar: auto
 ---
 
-# Guide
+# 指南
 
-## Install
+## 安装
 
 ### Maven
 
@@ -42,15 +42,15 @@ repositories {
 
 [releases](https://github.com/Enaium/cf4m/releases)
 
-## Usage
+## 使用
 
 ::: warning
-Currently only Event, Module and Setting
+当前仅有Event、Module和Setting
 :::
 
 ### Instance
 
-Create the main class.
+创建主类.
 
 ```java
 public enum Example {
@@ -64,7 +64,7 @@ public enum Example {
 
 ### Start and Stop
 
-Use `Start` and `Stop` in game Start and Stop.
+在游戏启动和停止时使用`Start`和`Stop`.
 
 `Example.instance.cf4M.start();` `Example.instance.cf4M.start();`
 
@@ -72,21 +72,20 @@ Use `Start` and `Stop` in game Start and Stop.
 ### Event
 
 ::: tip
-2 events are built into CF4M (KeyboardEvent,UpdateEvent)
+CF4M内置了2个Event(KeyboardEvent,UpdateEvent)
 :::
 
 ::: warning 
-You must `new KeyboardEvent(keyCode).call();` `new UpdateEvent().call();` can be used
+你必须`new KeyboardEvent(keyCode).call();` `new UpdateEvent().call();` 才能使用
 :::
 
 ### Module
 
 ::: warning
-Must be under the sibling package as the main class
+必须和主类在同级包下
 :::
 
-Create the `Sprint` class.
-
+创建`Sprint`类.
 ```java
 @ModuleAT
 public class Sprint extends Module {
@@ -102,7 +101,7 @@ public class Sprint extends Module {
 ```
 
 ::: tip
-Plus `@ModuleAT` annotation CF4M will automatically add it to ModuleManager for you
+加`@ ModuleAT`注解CF4M会自动为您添加到ModuleManager
 :::
 
 ### Setting
@@ -137,7 +136,7 @@ Plus `@ModuleAT` annotation CF4M will automatically add it to ModuleManager for 
 ```
 
 ::: tip
-Plus `@SettingAT` annotation CF4M will automatically add it to SettingManager for you
+加`@SettingAT`注解CF4M会自动为您添加到SettingManager
 :::
 
 
