@@ -1,5 +1,6 @@
 package cn.enaium.cf4m;
 
+import cn.enaium.cf4m.command.CommandManager;
 import cn.enaium.cf4m.event.EventManager;
 import cn.enaium.cf4m.module.ModuleManager;
 import cn.enaium.cf4m.setting.SettingManager;
@@ -18,6 +19,7 @@ public class CF4M {
     public EventManager eventManager;
     public ModuleManager moduleManager;
     public SettingManager settingManager;
+    public CommandManager commandManager;
 
     public CF4M(Object o) {
         instance = this;
@@ -28,6 +30,7 @@ public class CF4M {
         eventManager = new EventManager();
         moduleManager = new ModuleManager();
         settingManager = new SettingManager();
+        commandManager = new CommandManager();
     }
 
     public void stop() {
