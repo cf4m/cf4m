@@ -1,5 +1,6 @@
 ---
 home: true
+heroImage: /hero.png
 heroText: CF4M
 tagline: Minecraft客户端框架
 actionText: 快速上手 →

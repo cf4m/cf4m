@@ -1,5 +1,6 @@
 ---
 home: true
+heroImage: /hero.png
 heroText: CF4M
 tagline: Client Framework for Minecraft
 actionText: Quick Start →

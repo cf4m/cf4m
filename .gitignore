@@ -13,7 +13,7 @@ bin/
 .classpath
 .project
 
-# mavne
+# maven
 
 target/
 
@@ -26,3 +26,7 @@ src/test/
 #vuepress
 
 doc-src/node_modules
+
+#me 
+
+pom.xml
