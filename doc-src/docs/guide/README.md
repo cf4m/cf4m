@@ -138,6 +138,10 @@ Plus `@SettingAT` annotation CF4M will automatically add it to SettingManager fo
 
 ### Command
 
+::: warning
+You need to use `Example.instance.cf4M.commandManager.isCommand(message)` in the `sendChatMessage` method of the game
+:::
+
 prefix: `
 
 ```java

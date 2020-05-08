@@ -137,6 +137,10 @@ public class Sprint extends Module {
 
 ### Command
 
+::: warning
+你需要在游戏的`sendChatMessage`方法下使用`Example.instance.cf4M.commandManager.isCommand(message)`
+:::
+
 prefix: `
 
 ```java
