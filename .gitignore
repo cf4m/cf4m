@@ -21,12 +21,9 @@ target/
 
 run/
 src/test/
+pom.xml
 
 
 #vuepress
 
 doc-src/node_modules
-
-#me 
-
-pom.xml
