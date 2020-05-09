@@ -15,7 +15,14 @@ import java.util.Map;
  * Copyright © 2020 | Enaium | All rights reserved.
  */
 public class CommandManager {
+    /**
+     * Command list.
+     */
     public HashMap<String[], Command> commands;
+
+    /**
+     * Prefix.
+     */
     public String prefix = "`";
 
     public CommandManager() {
@@ -30,10 +37,14 @@ public class CommandManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getLocalizedMessage());
         }
     }
 
+    /**
+     * @param rawMessage SendChatMessage
+     * @return Is it a command
+     */
     public boolean isCommand(String rawMessage) {
         if (!rawMessage.startsWith(prefix)) {
             return false;
@@ -52,7 +63,10 @@ public class CommandManager {
         return true;
     }
 
-
+    /**
+     * @param name Index.
+     * @return Whether match index.
+     */
     private Command getCommand(String name) {
         for (Map.Entry entry : commands.entrySet()) {
             String[] key = (String[]) entry.getKey();
@@ -61,11 +75,13 @@ public class CommandManager {
                     return (Command) entry.getValue();
                 }
             }
-
         }
         return null;
     }
 
+    /**
+     * @return Get Command list
+     */
     public HashMap<String[], Command> getCommands() {
         return commands;
     }

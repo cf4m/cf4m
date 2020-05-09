@@ -8,13 +8,42 @@ import cn.enaium.cf4m.CF4M;
  * Copyright © 2020 | Enaium | All rights reserved.
  */
 public class Module {
+    /**
+     * Name.
+     */
     private String name;
+
+    /**
+     * Info.
+     */
     private String info;
+
+    /**
+     * hotkey.
+     */
     private int keyCode;
+
+    /**
+     * Category.
+     */
     private Category category;
+
+    /**
+     * Enable.
+     */
     private boolean enable;
+
+    /**
+     * Tag.
+     */
     private String tag;
 
+    /**
+     * @param name     Module name.
+     * @param info     Module info.
+     * @param keyCode  Module hotkey.
+     * @param category Module category.
+     */
     public Module(String name, String info, int keyCode, Category category) {
         this.name = name;
         this.info = info;
@@ -63,6 +92,9 @@ public class Module {
         this.enable = enable;
     }
 
+    /**
+     * enable or disable.
+     */
     public void enable() {
         this.enable = !this.enable;
         if (this.enable)

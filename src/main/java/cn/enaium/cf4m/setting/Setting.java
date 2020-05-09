@@ -8,16 +8,36 @@ import cn.enaium.cf4m.module.Module;
  * Copyright © 2020 | Enaium | All rights reserved.
  */
 public class Setting {
+
+    /**
+     * Module.
+     */
     private Module module;
+
+    /**
+     * Name.
+     */
     private String name;
+
+    /**
+     * Info.
+     */
     private String info;
 
+    /**
+     * @param module Setting module
+     * @param name   Setting module
+     * @param info   Setting module
+     */
     public Setting(Module module, String name, String info) {
         this.module = module;
         this.name = name;
         this.info = info;
     }
 
+    /**
+     * @return Module
+     */
     public Module getModule() {
         return module;
     }

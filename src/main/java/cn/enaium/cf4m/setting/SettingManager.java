@@ -13,6 +13,9 @@ import java.util.ArrayList;
  * Copyright © 2020 | Enaium | All rights reserved.
  */
 public class SettingManager {
+    /**
+     * Setting list.
+     */
     public ArrayList<Setting> settings;
 
     public SettingManager() {
@@ -39,7 +42,7 @@ public class SettingManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getLocalizedMessage());
         }
     }
 }
