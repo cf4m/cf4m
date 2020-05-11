@@ -4,6 +4,7 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.event.EventTarget;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import com.google.common.reflect.ClassPath;
+
 import java.util.ArrayList;
 
 /**
@@ -12,7 +13,9 @@ import java.util.ArrayList;
  * Copyright © 2020 | Enaium | All rights reserved.
  */
 public class ModuleManager {
-
+    /**
+     * Module list.
+     */
     public ArrayList<Module> modules;
 
     public ModuleManager() {
@@ -28,7 +31,7 @@ public class ModuleManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getLocalizedMessage());
         }
     }
 
