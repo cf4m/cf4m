@@ -82,6 +82,7 @@ CF4M内置了2个Event(KeyboardEvent,UpdateEvent)
 :::
 
 创建`Sprint`类.
+
 ```java
 @ModuleAT
 public class Sprint extends Module {
@@ -202,3 +203,64 @@ public class EnableCommand implements Command {
 加`@Command({"index"})`注解CF4M会自动为您添加到CommandManager
 :::
 
+### Config
+
+```java
+@ConfigAT
+public class ModuleConfig extends Config {
+    public ModuleConfig() {
+        super("Modules");
+    }
+
+    @Override
+    public void load() {
+        for (Module module : CF4M.getInstance().moduleManager.modules) {
+            JsonArray jsonArray = new JsonArray();
+            try {
+                jsonArray = new Gson().fromJson(read(getPath()), JsonArray.class);
+            } catch (IOException e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+            for (JsonElement jsonElement : jsonArray) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                if (module.getName().equals(new Gson().fromJson(jsonObject, JsonObject.class).get("name").getAsString())) {
+                    if (jsonObject.get("enable").getAsBoolean())
+                        module.enable();
+                    module.setKeyCode(jsonObject.get("keyCode").getAsInt());
+                }
+            }
+        }
+        super.load();
+    }
+
+    @Override
+    public void save() {
+        JsonArray jsonArray = new JsonArray();
+        for (Module module : CF4M.getInstance().moduleManager.modules) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("name", module.getName());
+            jsonObject.addProperty("enable", module.isEnable());
+            jsonObject.addProperty("keyCode", module.getKeyCode());
+            jsonArray.add(jsonObject);
+        }
+        try {
+            write(getPath(), new Gson().toJson(jsonArray));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        super.save();
+    }
+
+    private String read(String path) throws IOException {
+        return FileUtils.readFileToString(new File(path));
+    }
+
+    private void write(String path, String string) throws IOException {
+        FileUtils.writeStringToFile(new File(path), string, "UTF-8");
+    }
+}
+```
+
+::: tip
+加`@ConfigAT`注解CF4M会自动为您添加到CommandManager
+:::

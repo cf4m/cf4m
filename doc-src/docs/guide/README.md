@@ -21,7 +21,7 @@ sidebar: auto
     <dependency>
         <groupId>cn.enaium</groupId>
         <artifactId>cf4m</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </dependency>
 </dependencies>
 ```
@@ -30,7 +30,7 @@ sidebar: auto
 
 ```groovy
 dependencies {
-    compile group: 'cn.enaium', name: 'cf4m', version: '1.1.0'
+    compile group: 'cn.enaium', name: 'cf4m', version: '1.2.0'
 }
 
 repositories {
@@ -201,4 +201,66 @@ public class EnableCommand implements Command {
 
 ::: tip
 Plus `@Command({"index"})` annotation CF4M will automatically add it to CommandManager for you
+:::
+
+### Config
+
+```java
+@ConfigAT
+public class ModuleConfig extends Config {
+    public ModuleConfig() {
+        super("Modules");
+    }
+
+    @Override
+    public void load() {
+        for (Module module : CF4M.getInstance().moduleManager.modules) {
+            JsonArray jsonArray = new JsonArray();
+            try {
+                jsonArray = new Gson().fromJson(read(getPath()), JsonArray.class);
+            } catch (IOException e) {
+                System.out.println(e.getLocalizedMessage());
+            }
+            for (JsonElement jsonElement : jsonArray) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                if (module.getName().equals(new Gson().fromJson(jsonObject, JsonObject.class).get("name").getAsString())) {
+                    if (jsonObject.get("enable").getAsBoolean())
+                        module.enable();
+                    module.setKeyCode(jsonObject.get("keyCode").getAsInt());
+                }
+            }
+        }
+        super.load();
+    }
+
+    @Override
+    public void save() {
+        JsonArray jsonArray = new JsonArray();
+        for (Module module : CF4M.getInstance().moduleManager.modules) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("name", module.getName());
+            jsonObject.addProperty("enable", module.isEnable());
+            jsonObject.addProperty("keyCode", module.getKeyCode());
+            jsonArray.add(jsonObject);
+        }
+        try {
+            write(getPath(), new Gson().toJson(jsonArray));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        super.save();
+    }
+
+    private String read(String path) throws IOException {
+        return FileUtils.readFileToString(new File(path));
+    }
+
+    private void write(String path, String string) throws IOException {
+        FileUtils.writeStringToFile(new File(path), string, "UTF-8");
+    }
+}
+```
+
+::: tip
+Plus `@ConfigAT` annotation CF4M will automatically add it to ConfigManager for you
 :::
