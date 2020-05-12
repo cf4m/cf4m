@@ -32,7 +32,7 @@ allprojects {
 	}
 }
 dependencies {
-	implementation 'cn.enaium:cf4m:1.2.0'
+	compile group: 'cn.enaium', name: 'cf4m', version: '1.2.0'
 }
 ```
 
