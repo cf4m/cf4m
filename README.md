@@ -1,4 +1,9 @@
-# Client Framework for Minecraft [![](https://jitpack.io/v/Enaium/cf4m.svg)](https://jitpack.io/#Enaium/cf4m)
+
+![](https://enaium.github.io/cf4m/hero.png)
+
+# Client Framework for Minecraft (CF4M)
+
+[![](https://jitpack.io/v/Enaium/cf4m.svg)](https://jitpack.io/#Enaium/cf4m)
 
 ## Install
 
