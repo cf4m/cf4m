@@ -12,6 +12,38 @@
 ```xml
 <repositories>
 	<repository>
+        <name>Enaium</name>
+		<id>Enaium</id>
+		<url>https://enaium.gitee.io/maven</url>
+	</repository>
+</repositories>
+<dependency>
+	<groupId>cn.enaium</groupId>
+	<artifactId>cf4m</artifactId>
+	<version>1.2.0</version>
+</dependency>
+```
+
+### Gradle
+
+```groovy
+allprojects {
+	repositories {
+		maven { url 'https://enaium.gitee.io/maven' }
+	}
+}
+dependencies {
+	implementation 'cn.enaium:cf4m:1.2.0'
+}
+```
+
+### JitPack
+
+#### Maven
+
+```xml
+<repositories>
+	<repository>
 		<id>jitpack.io</id>
 		<url>https://jitpack.io</url>
 	</repository>
@@ -23,7 +55,7 @@
 </dependency>
 ```
 
-### Gradle
+#### Gradle
 
 ```groovy
 allprojects {
@@ -33,7 +65,7 @@ allprojects {
 }
 dependencies {
 	implementation 'com.github.Enaium:cf4m:1.2.0'
-}    
+}
 ```
 
 ### Libraries
