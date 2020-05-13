@@ -14,6 +14,13 @@ module.exports = {
                 ],
             },
             {
+                text: 'Video',
+                items: [
+                    { text: 'Youtube', link: 'https://www.youtube.com/watch?v=zhfln_BeGh8' },
+                    { text: 'BiliBili', link: 'https://www.bilibili.com/video/BV1qK41157gP' }
+                ],
+            },
+            {
                 text: 'GitHub', link: 'https://github.com/Enaium/cf4m',
             }
         ]
