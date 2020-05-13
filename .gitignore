@@ -27,6 +27,7 @@ bin/
 
 run/
 src/test/
+build.gradle
 
 #vuepress
 
