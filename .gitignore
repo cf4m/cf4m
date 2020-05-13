@@ -1,3 +1,10 @@
+# gradle
+
+.gradle/
+build/
+out/
+classes/
+
 # idea
 
 .idea/
@@ -7,21 +14,19 @@
 
 # vscode
 
-.settings/
 .vscode/
+
+# eclipse
+
+.settings/
 bin/
 .classpath
 .project
 
-# maven
-
-target/
-
-# Me
+# cf4m
 
 run/
 src/test/
-pom.xml
 
 #vuepress
 
