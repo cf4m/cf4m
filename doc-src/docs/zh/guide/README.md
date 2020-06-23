@@ -82,7 +82,7 @@ public enum Example {
 
     instance;
 
-    public CF4M cf4M = new CF4M(this);
+    public CF4M cf4M = new CF4M(this, Minecraft.getMinecraft().mcDataDir.toString());
 
 }
 ```
