@@ -21,7 +21,7 @@ module.exports = {
                 ],
             },
             {
-                text: 'GitHub', link: 'https://github.com/Enaium/cf4m',
+                text: 'GitHub', link: 'https://github.com/cf4m/cf4m',
             }
         ]
     }

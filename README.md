@@ -1,5 +1,5 @@
 
-![](https://enaium.github.io/cf4m/hero.png)
+![](https://cf4m.github.io/cf4m/hero.png)
 
 # Client Framework for Minecraft (CF4M)
 
@@ -71,4 +71,4 @@ dependencies {
 ### Libraries
 
 [releases](https://github.com/cf4m/cf4m/releases)
- 
+
