@@ -20,7 +20,7 @@
 <dependency>
 	<groupId>cn.enaium</groupId>
 	<artifactId>cf4m</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 </dependency>
 ```
 
@@ -33,7 +33,7 @@ allprojects {
 	}
 }
 dependencies {
-	implementation 'cn.enaium:cf4m:1.2.0'
+	implementation 'cn.enaium:cf4m:1.2.1'
 }
 ```
 
@@ -49,9 +49,9 @@ dependencies {
 	</repository>
 </repositories>
 <dependency>
-	<groupId>com.github.Enaium</groupId>
+	<groupId>com.github.cf4m</groupId>
 	<artifactId>cf4m</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 </dependency>
 ```
 
@@ -64,11 +64,11 @@ allprojects {
 	}
 }
 dependencies {
-	implementation 'com.github.Enaium:cf4m:1.2.0'
+	implementation 'com.github.cf4m:cf4m:1.2.1'
 }
 ```
 
 ### Libraries
 
-[releases](https://github.com/Enaium/cf4m/releases)
+[releases](https://github.com/cf4m/cf4m/releases)
  
