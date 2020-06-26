@@ -1,7 +1,7 @@
 package cn.enaium.cf4m.module;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.event.EventTarget;
+import cn.enaium.cf4m.event.EventAT;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import com.google.common.reflect.ClassPath;
 
@@ -35,7 +35,7 @@ public class ModuleManager {
         }
     }
 
-    @EventTarget
+    @EventAT
     public void onKey(KeyboardEvent keyboardEvent) {
         for (Module module : modules) {
             if (module.getKeyCode() == keyboardEvent.getKeyCode())

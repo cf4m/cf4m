@@ -27,7 +27,7 @@ public class EventManager {
         @SuppressWarnings("unchecked")
         Class<? extends Event> clazz = (Class<? extends Event>) method.getParameterTypes()[0];
 
-        Data methodData = new Data(o, method, method.getAnnotation(EventTarget.class).priority());
+        Data methodData = new Data(o, method, method.getAnnotation(EventAT.class).priority());
 
         if (!methodData.getTarget().isAccessible())
             methodData.getTarget().setAccessible(true);
@@ -47,7 +47,7 @@ public class EventManager {
     }
 
     private boolean isMethodBad(Method method) {
-        return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(EventTarget.class);
+        return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(EventAT.class);
     }
 
     public CopyOnWriteArrayList<Data> get(Class<? extends Event> clazz) {
