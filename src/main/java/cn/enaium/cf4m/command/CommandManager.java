@@ -30,7 +30,7 @@ public class CommandManager {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(CF4M.getInstance().packName)) {
-                    Class<?> clazz = info.load();
+                    Class<?> clazz = Class.forName(info.getName());
                     if (clazz.isAnnotationPresent(CommandAT.class)) {
                         commands.put(clazz.getAnnotation(CommandAT.class).value(), (Command) clazz.newInstance());
                     }

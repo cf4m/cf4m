@@ -22,7 +22,7 @@ public class ConfigManager {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(CF4M.getInstance().packName)) {
-                    Class<?> clazz = info.load();
+                    Class<?> clazz = Class.forName(info.getName());
                     if (clazz.isAnnotationPresent(ConfigAT.class)) {
                         configs.add((Config) clazz.newInstance());
                     }
