@@ -19,7 +19,7 @@ sidebar: auto
 <dependency>
 	<groupId>cn.enaium</groupId>
 	<artifactId>cf4m</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ allprojects {
 	}
 }
 dependencies {
-	implementation 'cn.enaium:cf4m:1.2.1'
+	implementation 'cn.enaium:cf4m:1.2.2'
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 <dependency>
 	<groupId>com.github.cf4m</groupId>
 	<artifactId>cf4m</artifactId>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 </dependency>
 ```
 
@@ -63,7 +63,7 @@ allprojects {
 	}
 }
 dependencies {
-	implementation 'com.github.cf4m:cf4m:1.2.1'
+	implementation 'com.github.cf4m:cf4m:1.2.2'
 }
 ```
 
@@ -82,7 +82,7 @@ public enum Example {
 
     instance;
 
-    public CF4M cf4M = new CF4M(this, Minecraft.getMinecraft().mcDataDir.toString());
+    public CF4M cf4M = new CF4M(this, Minecraft.getMinecraft().mcDataDir.toString() + "/Example");
 
 }
 ```
