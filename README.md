@@ -3,7 +3,7 @@
 
 # Client Framework for Minecraft (CF4M)
 
-[![](https://jitpack.io/v/Enaium/cf4m.svg)](https://jitpack.io/#Enaium/cf4m)
+[![](https://jitpack.io/v/cf4m/cf4m.svg)](https://jitpack.io/#Enaium/cf4m)
 
 ## Install
 
