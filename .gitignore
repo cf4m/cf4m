@@ -23,6 +23,10 @@ bin/
 .classpath
 .project
 
+# maven
+
+target/
+
 # cf4m
 
 run/
