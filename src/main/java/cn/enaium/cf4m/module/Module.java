@@ -107,7 +107,7 @@ public class Module {
         CF4M.getInstance().eventManager.register(this);
     }
 
-    private void onDisable() {
+    protected void onDisable() {
         CF4M.getInstance().eventManager.unregister(this);
     }
 
