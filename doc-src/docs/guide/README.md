@@ -6,70 +6,14 @@ sidebar: auto
 
 ## Install
 
-### Maven
-
-```xml
-<repositories>
-	<repository>
-        <name>Enaium</name>
-		<id>Enaium</id>
-		<url>https://enaium.gitee.io/maven</url>
-	</repository>
-</repositories>
-<dependency>
-	<groupId>cn.enaium</groupId>
-	<artifactId>cf4m</artifactId>
-	<version>1.2.3</version>
-</dependency>
-```
-
-### Gradle
-
-```groovy
-allprojects {
-	repositories {
-		maven { url 'https://enaium.gitee.io/maven' }
-	}
-}
-dependencies {
-	implementation 'cn.enaium:cf4m:1.2.3'
-}
-```
-
 ### JitPack
 
-#### Maven
+[![](https://img.shields.io/jitpack/v/github/cf4m/cf4m?style=flat-square)](https://jitpack.io/#cf4m/cf4m)
 
-```xml
-<repositories>
-	<repository>
-		<id>jitpack.io</id>
-		<url>https://jitpack.io</url>
-	</repository>
-</repositories>
-<dependency>
-	<groupId>com.github.cf4m</groupId>
-	<artifactId>cf4m</artifactId>
-	<version>1.2.3</version>
-</dependency>
-```
+### Releases
 
-#### Gradle
+[![](https://img.shields.io/github/v/release/cf4m/cf4m?style=flat-square)](https://github.com/cf4m/cf4m/releases)
 
-```groovy
-allprojects {
-	repositories {
-		maven { url 'https://jitpack.io' }
-	}
-}
-dependencies {
-	implementation 'com.github.cf4m:cf4m:1.2.3'
-}
-```
-
-### Libraries
-
-[releases](https://github.com/cf4m/cf4m/releases)
 
 ## Usage
 
