@@ -63,7 +63,7 @@ public class Sprint extends Module {
         super("Sprint", "Sprint", Keyboard.KEY_V, Category.MOVEMENT);
     }
 
-    @EventTarget
+    @EventAT
     private void onUpdate(UpdateEvent updateEvent) {
         Minecraft.getMinecraft().thePlayer.setSprinting(true);
     }
@@ -99,7 +99,7 @@ Plus `@ModuleAT` annotation CF4M will automatically add it to ModuleManager for 
         super("Sprint", "Sprint", Keyboard.KEY_V, Category.MOVEMENT);
     }
 
-    @EventTarget
+    @EventAT
     private void onUpdate(UpdateEvent updateEvent) {
         Minecraft.getMinecraft().thePlayer.setSprinting(true);
     }
