@@ -29,4 +29,8 @@ public class ModeSetting extends Setting {
     public void setCurrent(String current) {
         this.current = current;
     }
+
+    public List<String> getModes() {
+        return modes;
+    }
 }
