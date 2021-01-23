@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+    id 'maven'
+}
+
+group 'cn.enaium.cf4m'
+version '1.2.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('com.google.guava:guava:17.0')
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        def mavenLib = new File(System.getProperty('user.dir'))
+        repository(url: "file://${mavenLib.parent}/maven")
+    }
+}
+artifacts { archives sourcesJar }
