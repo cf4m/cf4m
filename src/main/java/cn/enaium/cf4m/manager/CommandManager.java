@@ -1,8 +1,11 @@
-package cn.enaium.cf4m.command;
+package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
+import cn.enaium.cf4m.command.Command;
+import cn.enaium.cf4m.command.CommandAT;
 import cn.enaium.cf4m.module.Module;
 import cn.enaium.cf4m.module.ModuleAT;
+import com.google.common.collect.Maps;
 import com.google.common.reflect.ClassPath;
 
 import java.util.HashMap;
@@ -18,7 +21,7 @@ public class CommandManager {
     /**
      * Command list.
      */
-    public HashMap<String[], Command> commands;
+    public HashMap<String[], Command> commands = Maps.newHashMap();
 
     /**
      * Prefix.
@@ -26,18 +29,14 @@ public class CommandManager {
     public String prefix = "`";
 
     public CommandManager() {
-        commands = new HashMap<>();
         try {
-            for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
-                if (info.getName().startsWith(CF4M.getInstance().packName)) {
-                    Class<?> clazz = Class.forName(info.getName());
-                    if (clazz.isAnnotationPresent(CommandAT.class)) {
-                        commands.put(clazz.getAnnotation(CommandAT.class).value(), (Command) clazz.newInstance());
-                    }
+            for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
+                if (clazz.isAnnotationPresent(CommandAT.class)) {
+                    commands.put(clazz.getAnnotation(CommandAT.class).value(), (Command) clazz.newInstance());
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            e.getStackTrace();
         }
     }
 

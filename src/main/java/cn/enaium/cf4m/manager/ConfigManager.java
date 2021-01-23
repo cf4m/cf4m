@@ -1,8 +1,11 @@
-package cn.enaium.cf4m.config;
+package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
+import cn.enaium.cf4m.config.Config;
+import cn.enaium.cf4m.config.ConfigAT;
 import cn.enaium.cf4m.module.Module;
 import cn.enaium.cf4m.module.ModuleAT;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
 
 import java.io.File;
@@ -15,21 +18,18 @@ import java.util.ArrayList;
  */
 public class ConfigManager {
 
-    public ArrayList<Config> configs = new ArrayList<>();
+    public ArrayList<Config> configs = Lists.newArrayList();
 
     public ConfigManager() {
         new File(CF4M.getInstance().clientDataDir + "/configs/").mkdir();
         try {
-            for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
-                if (info.getName().startsWith(CF4M.getInstance().packName)) {
-                    Class<?> clazz = Class.forName(info.getName());
-                    if (clazz.isAnnotationPresent(ConfigAT.class)) {
-                        configs.add((Config) clazz.newInstance());
-                    }
+            for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
+                if (clazz.isAnnotationPresent(ConfigAT.class)) {
+                    configs.add((Config) clazz.newInstance());
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            e.getStackTrace();
         }
     }
 

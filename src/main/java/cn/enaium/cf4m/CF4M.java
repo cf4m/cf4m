@@ -1,10 +1,6 @@
 package cn.enaium.cf4m;
 
-import cn.enaium.cf4m.command.CommandManager;
-import cn.enaium.cf4m.config.ConfigManager;
-import cn.enaium.cf4m.event.EventManager;
-import cn.enaium.cf4m.module.ModuleManager;
-import cn.enaium.cf4m.setting.SettingManager;
+import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
 
@@ -28,6 +24,11 @@ public class CF4M {
      * .minecraft/{clientName} path.
      */
     public String clientDataDir;
+
+    /**
+     * ClassManager.
+     */
+    public ClassManager classManager;
 
     /**
      * EventManager.
@@ -67,8 +68,9 @@ public class CF4M {
     /**
      * Start.
      */
-    public void start() {
+    public void run() {
         new File(CF4M.getInstance().clientDataDir).mkdir();
+        classManager = new ClassManager();
         eventManager = new EventManager();
         moduleManager = new ModuleManager();
         settingManager = new SettingManager();
