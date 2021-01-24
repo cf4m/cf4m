@@ -44,7 +44,7 @@ public class SettingManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 }

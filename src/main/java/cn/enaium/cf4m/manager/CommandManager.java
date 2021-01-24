@@ -3,13 +3,9 @@ package cn.enaium.cf4m.manager;
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.command.Command;
 import cn.enaium.cf4m.command.CommandAT;
-import cn.enaium.cf4m.module.Module;
-import cn.enaium.cf4m.module.ModuleAT;
 import com.google.common.collect.Maps;
-import com.google.common.reflect.ClassPath;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +32,7 @@ public class CommandManager {
                 }
             }
         } catch (Exception e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -76,12 +72,5 @@ public class CommandManager {
             }
         }
         return null;
-    }
-
-    /**
-     * @return Get Command list
-     */
-    public HashMap<String[], Command> getCommands() {
-        return commands;
     }
 }

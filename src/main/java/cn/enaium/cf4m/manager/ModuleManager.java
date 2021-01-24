@@ -31,7 +31,7 @@ public class ModuleManager {
                 }
             }
         } catch (Exception e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 

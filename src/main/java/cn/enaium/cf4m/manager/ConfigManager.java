@@ -29,7 +29,7 @@ public class ConfigManager {
                 }
             }
         } catch (Exception e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 
