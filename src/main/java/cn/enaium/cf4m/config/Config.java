@@ -44,7 +44,7 @@ public class Config {
         try {
             new File(getPath()).createNewFile();
         }catch (IOException e) {
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
