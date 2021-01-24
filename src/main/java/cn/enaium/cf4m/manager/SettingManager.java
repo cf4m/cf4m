@@ -1,7 +1,9 @@
-package cn.enaium.cf4m.setting;
+package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.SettingAT;
 import cn.enaium.cf4m.setting.settings.*;
 
 import java.lang.reflect.Field;
@@ -42,7 +44,7 @@ public class SettingManager {
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 }

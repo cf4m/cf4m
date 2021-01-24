@@ -1,10 +1,14 @@
-package cn.enaium.cf4m.module;
+package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.event.EventAT;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
+import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleAT;
+import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -16,22 +20,18 @@ public class ModuleManager {
     /**
      * Module list.
      */
-    public ArrayList<Module> modules;
+    public ArrayList<Module> modules = Lists.newArrayList();
 
     public ModuleManager() {
-        modules = new ArrayList<>();
         CF4M.getInstance().eventManager.register(this);
         try {
-            for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
-                if (info.getName().startsWith(CF4M.getInstance().packName)) {
-                    Class<?> clazz = Class.forName(info.getName());
-                    if (clazz.isAnnotationPresent(ModuleAT.class)) {
-                        modules.add((Module) clazz.newInstance());
-                    }
+            for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
+                if (clazz.isAnnotationPresent(ModuleAT.class)) {
+                    modules.add((Module) clazz.newInstance());
                 }
             }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
