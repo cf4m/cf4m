@@ -1,6 +1,6 @@
 # Client Framework for Minecraft (CF4M)
 
-![](https://cf4m.github.io/hero.png)
+[![](https://cf4m.github.io/hero.png)]("https://cf4m.github.io")
 
 ## Install
 
