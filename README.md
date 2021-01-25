@@ -15,7 +15,3 @@
 ### [or Releases](https://github.com/cf4m/cf4m/releases)
 
 [![Releases](https://img.shields.io/github/v/release/cf4m/cf4m?style=flat-square)](https://github.com/cf4m/cf4m/releases)
-
-### or Copy the source code to the project
-
-[![GitHub](https://img.shields.io/github/stars/cf4m/cf4m?style=social)](https://github.com/cf4m/cf4m)
