@@ -14,7 +14,7 @@ import java.util.ArrayList;
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class ConfigManager {
 

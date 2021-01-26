@@ -7,7 +7,7 @@ import java.io.File;
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class CF4M {
     /**
@@ -28,7 +28,7 @@ public class CF4M {
     /**
      * ClassManager.
      */
-    public ClassManager classManager;
+    public IClassManager classManager;
 
     /**
      * EventManager.
@@ -63,6 +63,7 @@ public class CF4M {
         instance = this;
         this.packName = o.getClass().getPackage().getName();
         this.clientDataDir = clientDataDir;
+        this.classManager = new ClassManager();
     }
 
     /**
@@ -70,7 +71,6 @@ public class CF4M {
      */
     public void run() {
         new File(CF4M.getInstance().clientDataDir).mkdir();
-        classManager = new ClassManager();
         eventManager = new EventManager();
         moduleManager = new ModuleManager();
         settingManager = new SettingManager();
