@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.setting.Setting;
 
 /**
@@ -14,8 +14,8 @@ public class LongSetting extends Setting {
     private Long min;
     private Long max;
 
-    public LongSetting(Module module, String name, String info, Long current, Long min, Long max) {
-        super(module, name, info);
+    public LongSetting(ModuleBean moduleBean, String name, String info, Long current, Long min, Long max) {
+        super(moduleBean, name, info);
         this.current = current;
         this.min = min;
         this.max = max;

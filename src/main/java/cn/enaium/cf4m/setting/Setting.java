@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.setting;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 
 /**
  * Project: cf4m
@@ -12,7 +12,7 @@ public class Setting {
     /**
      * Module.
      */
-    private Module module;
+    private ModuleBean moduleBean;
 
     /**
      * Name.
@@ -25,12 +25,12 @@ public class Setting {
     private String info;
 
     /**
-     * @param module Setting module
+     * @param moduleBean Setting module
      * @param name   Setting module
      * @param info   Setting module
      */
-    public Setting(Module module, String name, String info) {
-        this.module = module;
+    public Setting(ModuleBean moduleBean, String name, String info) {
+        this.moduleBean = moduleBean;
         this.name = name;
         this.info = info;
     }
@@ -38,12 +38,12 @@ public class Setting {
     /**
      * @return Module
      */
-    public Module getModule() {
-        return module;
+    public ModuleBean getModule() {
+        return moduleBean;
     }
 
-    public void setModule(Module module) {
-        this.module = module;
+    public void setModule(ModuleBean moduleBean) {
+        this.moduleBean = moduleBean;
     }
 
     public String getName() {

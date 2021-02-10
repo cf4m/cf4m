@@ -1,9 +1,8 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.setting.Setting;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +15,8 @@ public class ModeSetting extends Setting {
     private String current;
     private List<String> modes;
 
-    public ModeSetting(Module module, String name, String info, String current, List<String> modes) {
-        super(module, name, info);
+    public ModeSetting(ModuleBean moduleBean, String name, String info, String current, List<String> modes) {
+        super(moduleBean, name, info);
         this.current = current;
         this.modes = modes;
     }

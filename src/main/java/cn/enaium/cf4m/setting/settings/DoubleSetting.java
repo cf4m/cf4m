@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.setting.Setting;
 
 /**
@@ -14,8 +14,8 @@ public class DoubleSetting extends Setting {
     private Double min;
     private Double max;
 
-    public DoubleSetting(Module module, String name, String info, Double current, Double min, Double max) {
-        super(module, name, info);
+    public DoubleSetting(ModuleBean moduleBean, String name, String info, Double current, Double min, Double max) {
+        super(moduleBean, name, info);
         this.current = current;
         this.min = min;
         this.max = max;

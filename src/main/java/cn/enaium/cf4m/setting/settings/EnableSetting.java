@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.setting.Setting;
 
 /**
@@ -12,8 +12,8 @@ public class EnableSetting extends Setting {
 
     private boolean enable;
 
-    public EnableSetting(Module module, String name, String info, boolean enable) {
-        super(module, name, info);
+    public EnableSetting(ModuleBean moduleBean, String name, String info, boolean enable) {
+        super(moduleBean, name, info);
         this.enable = enable;
     }
 

@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.setting.Setting;
 
 /**
@@ -14,8 +14,8 @@ public class IntegerSetting extends Setting {
     private Integer min;
     private Integer max;
 
-    public IntegerSetting(Module module, String name, String info, Integer current, Integer min, Integer max) {
-        super(module, name, info);
+    public IntegerSetting(ModuleBean moduleBean, String name, String info, Integer current, Integer min, Integer max) {
+        super(moduleBean, name, info);
         this.current = current;
         this.min = min;
         this.max = max;
