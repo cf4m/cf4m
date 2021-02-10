@@ -2,11 +2,8 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.config.Config;
-import cn.enaium.cf4m.config.ConfigAT;
-import cn.enaium.cf4m.module.Module;
-import cn.enaium.cf4m.module.ModuleAT;
+import cn.enaium.cf4m.annotation.ConfigAT;
 import com.google.common.collect.Lists;
-import com.google.common.reflect.ClassPath;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ public class ConfigManager {
     public ArrayList<Config> configs = Lists.newArrayList();
 
     public ConfigManager() {
+        new File(CF4M.getInstance().clientDataDir);
         new File(CF4M.getInstance().clientDataDir + "/configs/").mkdir();
         try {
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
