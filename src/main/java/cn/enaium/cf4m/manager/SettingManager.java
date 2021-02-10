@@ -1,9 +1,9 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.setting.Setting;
-import cn.enaium.cf4m.setting.SettingAT;
+import cn.enaium.cf4m.annotation.SettingAT;
 import cn.enaium.cf4m.setting.settings.*;
 
 import java.lang.reflect.Field;
@@ -23,22 +23,22 @@ public class SettingManager {
     public SettingManager() {
         settings = new ArrayList<>();
         try {
-            for (Module module : CF4M.getInstance().moduleManager.modules) {
-                for (Field field : module.getClass().getDeclaredFields()) {
+            for (ModuleBean moduleBean : CF4M.getInstance().module.getModules()) {
+                for (Field field : moduleBean.getClazz().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (field.isAnnotationPresent(SettingAT.class)) {
                         if (field.getType().equals(EnableSetting.class)) {
-                            settings.add((EnableSetting) field.get(module));
+                            settings.add((EnableSetting) field.get(moduleBean.getClazz()));
                         } else if (field.getType().equals(IntegerSetting.class)) {
-                            settings.add((IntegerSetting) field.get(module));
+                            settings.add((IntegerSetting) field.get(moduleBean.getClazz()));
                         } else if (field.getType().equals(FloatSetting.class)) {
-                            settings.add((FloatSetting) field.get(module));
+                            settings.add((FloatSetting) field.get(moduleBean.getClazz()));
                         } else if (field.getType().equals(DoubleSetting.class)) {
-                            settings.add((DoubleSetting) field.get(module));
+                            settings.add((DoubleSetting) field.get(moduleBean.getClazz()));
                         } else if (field.getType().equals(LongSetting.class)) {
-                            settings.add((LongSetting) field.get(module));
+                            settings.add((LongSetting) field.get(moduleBean.getClazz()));
                         } else if (field.getType().equals(ModeSetting.class)) {
-                            settings.add((ModeSetting) field.get(module));
+                            settings.add((ModeSetting) field.get(moduleBean.getClazz()));
                         }
                     }
                 }
