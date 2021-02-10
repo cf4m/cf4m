@@ -2,7 +2,7 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.command.Command;
-import cn.enaium.cf4m.command.CommandAT;
+import cn.enaium.cf4m.annotation.CommandAT;
 import com.google.common.collect.Maps;
 
 import java.util.HashMap;
