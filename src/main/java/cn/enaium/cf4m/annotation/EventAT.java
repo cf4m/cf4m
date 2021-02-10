@@ -1,4 +1,6 @@
-package cn.enaium.cf4m.event;
+package cn.enaium.cf4m.annotation;
+
+import cn.enaium.cf4m.event.EventPriority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

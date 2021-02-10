@@ -1,9 +1,11 @@
-package cn.enaium.cf4m.module;
+package cn.enaium.cf4m.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Project: cf4m
@@ -12,5 +14,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModuleAT {
+public @interface CommandAT {
+    String[] value();
 }

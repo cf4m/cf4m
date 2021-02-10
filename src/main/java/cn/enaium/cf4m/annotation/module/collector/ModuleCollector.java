@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.setting;
+package cn.enaium.cf4m.annotation.module.collector;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * -----------------------------------------------------------
  * Copyright © 2020 | Enaium | All rights reserved.
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SettingAT {
+public @interface ModuleCollector {
 }
