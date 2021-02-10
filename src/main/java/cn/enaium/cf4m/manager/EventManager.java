@@ -2,7 +2,7 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.event.Data;
 import cn.enaium.cf4m.event.Event;
-import cn.enaium.cf4m.event.EventAT;
+import cn.enaium.cf4m.annotation.EventAT;
 
 import java.lang.reflect.Method;
 import java.util.*;
