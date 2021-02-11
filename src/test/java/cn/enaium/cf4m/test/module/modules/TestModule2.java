@@ -1,13 +1,20 @@
 package cn.enaium.cf4m.test.module.modules;
 
-import cn.enaium.cf4m.annotation.module.ModuleAT;
+import cn.enaium.cf4m.annotation.SettingAT;
+import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.module.Category;
+import cn.enaium.cf4m.setting.settings.*;
 
 /**
  * Project: cf4m
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-@ModuleAT(name = "TestModule2", category = Category.COMBAT)
+@Module(value = "TestModule2", category = Category.COMBAT)
 public class TestModule2 {
+    @SettingAT
+    private EnableSetting test1 = new EnableSetting(this, "test1", "test1", false);
+
+    @SettingAT
+    private IntegerSetting test2 = new IntegerSetting(this, "test1", "test1", 1, 1, 1);
 }

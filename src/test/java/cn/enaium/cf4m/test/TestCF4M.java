@@ -1,8 +1,8 @@
 package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.module.ModuleBean;
-import cn.enaium.cf4m.module.ValueBean;
+import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.test.module.TestValue;
 
 /**
  * Project: cf4m
@@ -17,22 +17,36 @@ public class TestCF4M {
     public void run() throws IllegalAccessException {
         CF4M cf4M = new CF4M(this, null);
         cf4M.run();
+        System.out.println("Test modules==========");
+        for (Object module : CF4M.getInstance().module.getModules()) {
+            System.out.println(module);
+        }
 
-        for (ModuleBean moduleBean : CF4M.getInstance().module.getModules()) {
-            System.out.println("Module============");
-            System.out.println(moduleBean.getName());
-            System.out.println("Values============");
-            for (ValueBean valueBean : moduleBean.getValueBeans()) {
-                if (moduleBean.getName().equals("TestModule2")) {
-                    if (valueBean.getField().getType().getName().equals("java.lang.Boolean")) {
-                        valueBean.getField().set(valueBean.getObject(), true);
-                    } else if (valueBean.getField().getType().getName().equals("java.lang.Integer")) {
-                        valueBean.getField().set(valueBean.getObject(), 23333);
-                    }
-                }
+        System.out.println("Test settings==========");
+        for (Setting setting : CF4M.getInstance().module.getSettings()) {
+            System.out.println(setting.getName() + "|" + setting.getModule());
+        }
 
-                System.out.println(valueBean.getName() + "|" + valueBean.getField().get(valueBean.getObject()));
+        System.out.println("Test settings for module==========");
+        for (Setting setting : CF4M.getInstance().module.getSettings("TestModule2")) {
+            System.out.println(setting.getName() + "|" + setting.getModule());
+        }
+
+        System.out.println("Test set value==========");
+        for (Object module : CF4M.getInstance().module.getModules()) {
+            if (CF4M.getInstance().module.getName(module).equals("TestModule")) {
+                CF4M.getInstance().module.setValue(module, "AnyName", true);
+                CF4M.getInstance().module.setValue(module, "AnyName2", 777);
+                CF4M.getInstance().module.setValue(module, "AnyName3", new TestValue("77", 13));
             }
+        }
+        System.out.println("Test set value^^^^^^^^^^");
+
+        System.out.println("Test get value==========");
+        for (Object module : CF4M.getInstance().module.getModules()) {
+            System.out.println(CF4M.getInstance().module.<Boolean>getValue(module, "AnyName"));
+            System.out.println(CF4M.getInstance().module.<Integer>getValue(module, "AnyName2"));
+            System.out.println(CF4M.getInstance().module.<TestValue>getValue(module, "AnyName3"));
         }
     }
 }
