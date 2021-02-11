@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.annotation.module;
+package cn.enaium.cf4m.annotation.module.docker;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,9 +8,9 @@ import java.lang.annotation.Target;
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Copyright © 2020 | Enaium | All rights reserved.
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OnEnable {
+public @interface Docker {
 }

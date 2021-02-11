@@ -1,4 +1,6 @@
-package cn.enaium.cf4m.annotation;
+package cn.enaium.cf4m.annotation.module;
+
+import cn.enaium.cf4m.module.Category;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +14,12 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ConfigAT {
+public @interface Module {
+    String value();
+
+    boolean enable() default false;
+
+    int key() default 0;
+
+    Category category() default Category.NONE;
 }

@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.annotation.module.collector;
+package cn.enaium.cf4m.annotation.module.docker;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModuleValue {
+public @interface Value {
     String value();
 }
