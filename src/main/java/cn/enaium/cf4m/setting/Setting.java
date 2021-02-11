@@ -12,7 +12,7 @@ public class Setting {
     /**
      * Module.
      */
-    private ModuleBean moduleBean;
+    private Object module;
 
     /**
      * Name.
@@ -25,12 +25,12 @@ public class Setting {
     private String info;
 
     /**
-     * @param moduleBean Setting module
+     * @param module Setting module
      * @param name   Setting module
      * @param info   Setting module
      */
-    public Setting(ModuleBean moduleBean, String name, String info) {
-        this.moduleBean = moduleBean;
+    public Setting(Object module, String name, String info) {
+        this.module = module;
         this.name = name;
         this.info = info;
     }
@@ -38,12 +38,8 @@ public class Setting {
     /**
      * @return Module
      */
-    public ModuleBean getModule() {
-        return moduleBean;
-    }
-
-    public void setModule(ModuleBean moduleBean) {
-        this.moduleBean = moduleBean;
+    public Object getModule() {
+        return module;
     }
 
     public String getName() {
@@ -56,9 +52,5 @@ public class Setting {
 
     public String getInfo() {
         return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
     }
 }

@@ -14,8 +14,8 @@ public class FloatSetting extends Setting {
     private Float min;
     private Float max;
 
-    public FloatSetting(ModuleBean moduleBean, String name, String info, Float current, Float min, Float max) {
-        super(moduleBean, name, info);
+    public FloatSetting(Object module, String name, String info, Float current, Float min, Float max) {
+        super(module, name, info);
         this.current = current;
         this.min = min;
         this.max = max;

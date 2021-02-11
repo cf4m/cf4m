@@ -12,23 +12,17 @@ import java.util.Set;
  */
 public class ModuleBean {
     private String name;
-    private Class<?> clazz;
     private Object object;
     private Set<ValueBean> valueBeans;
 
-    public ModuleBean(String name, Class<?> clazz, Object object, Set<ValueBean> valueBeans) {
+    public ModuleBean(String name, Object object, Set<ValueBean> valueBeans) {
         this.name = name;
-        this.clazz = clazz;
         this.object = object;
         this.valueBeans = valueBeans;
     }
 
     public String getName() {
         return name;
-    }
-
-    public Class<?> getClazz() {
-        return clazz;
     }
 
     public Object getObject() {

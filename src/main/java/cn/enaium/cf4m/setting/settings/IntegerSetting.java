@@ -14,8 +14,8 @@ public class IntegerSetting extends Setting {
     private Integer min;
     private Integer max;
 
-    public IntegerSetting(ModuleBean moduleBean, String name, String info, Integer current, Integer min, Integer max) {
-        super(moduleBean, name, info);
+    public IntegerSetting(Object module, String name, String info, Integer current, Integer min, Integer max) {
+        super(module, name, info);
         this.current = current;
         this.min = min;
         this.max = max;

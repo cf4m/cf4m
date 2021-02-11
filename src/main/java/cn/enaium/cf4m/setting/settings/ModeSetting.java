@@ -15,8 +15,8 @@ public class ModeSetting extends Setting {
     private String current;
     private List<String> modes;
 
-    public ModeSetting(ModuleBean moduleBean, String name, String info, String current, List<String> modes) {
-        super(moduleBean, name, info);
+    public ModeSetting(Object module, String name, String info, String current, List<String> modes) {
+        super(module, name, info);
         this.current = current;
         this.modes = modes;
     }

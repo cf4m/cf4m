@@ -14,8 +14,8 @@ public class DoubleSetting extends Setting {
     private Double min;
     private Double max;
 
-    public DoubleSetting(ModuleBean moduleBean, String name, String info, Double current, Double min, Double max) {
-        super(moduleBean, name, info);
+    public DoubleSetting(Object module, String name, String info, Double current, Double min, Double max) {
+        super(module, name, info);
         this.current = current;
         this.min = min;
         this.max = max;

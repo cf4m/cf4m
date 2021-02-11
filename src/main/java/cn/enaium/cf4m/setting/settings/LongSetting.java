@@ -14,8 +14,8 @@ public class LongSetting extends Setting {
     private Long min;
     private Long max;
 
-    public LongSetting(ModuleBean moduleBean, String name, String info, Long current, Long min, Long max) {
-        super(moduleBean, name, info);
+    public LongSetting(Object module, String name, String info, Long current, Long min, Long max) {
+        super(module, name, info);
         this.current = current;
         this.min = min;
         this.max = max;

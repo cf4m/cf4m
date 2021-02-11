@@ -6,5 +6,5 @@ package cn.enaium.cf4m.module;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public enum Category {
-    COMBAT, RENDER, MOVEMENT, PLAYER, OTHER
+    COMBAT, RENDER, MOVEMENT, PLAYER, OTHER, NONE
 }
