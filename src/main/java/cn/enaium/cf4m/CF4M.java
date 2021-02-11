@@ -1,10 +1,6 @@
 package cn.enaium.cf4m;
 
-import cn.enaium.cf4m.annotation.module.collector.ModuleCollector;
 import cn.enaium.cf4m.manager.*;
-import cn.enaium.cf4m.module.IModule;
-
-import java.io.File;
 
 /**
  * Project: cf4m
@@ -43,11 +39,6 @@ public class CF4M {
     public ModuleManager module;
 
     /**
-     * SettingManager.
-     */
-    public SettingManager setting;
-
-    /**
      * CommandManager.
      */
     public CommandManager command;
@@ -75,7 +66,6 @@ public class CF4M {
 
         event = new EventManager();
         module = new ModuleManager();
-        setting = new SettingManager();
         command = new CommandManager();
         if (clientDataDir != null) {
             config = new ConfigManager();
