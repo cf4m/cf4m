@@ -1,20 +1,22 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.EventAT;
-import cn.enaium.cf4m.annotation.module.collector.ModuleCollector;
-import cn.enaium.cf4m.annotation.module.OnDisable;
-import cn.enaium.cf4m.annotation.module.OnEnable;
-import cn.enaium.cf4m.annotation.module.collector.ModuleValue;
+import cn.enaium.cf4m.annotation.*;
+import cn.enaium.cf4m.annotation.module.docker.*;
+import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.module.ModuleBean;
-import cn.enaium.cf4m.annotation.module.ModuleAT;
 import cn.enaium.cf4m.module.ValueBean;
+import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.settings.*;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.*;
 
 /**
@@ -23,62 +25,76 @@ import java.util.*;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class ModuleManager {
+    private Set<ModuleBean> moduleBeans = new HashSet<>();
+
     /**
      * Module list.
      */
-    private Set<ModuleBean> modules = new HashSet<>();
+    private ArrayList<Object> modules = Lists.newArrayList();
 
-    private HashMap<String, Field> fieldHashMap = Maps.newHashMap();
+    private ArrayList<Setting> settings = Lists.newArrayList();
+
+    private HashMap<String, Field> findFields = Maps.newHashMap();
 
     private Class<?> collector = null;
 
     public ModuleManager() {
         CF4M.getInstance().event.register(this);
         try {
+            //Find Value
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
-                if (clazz.isAnnotationPresent(ModuleCollector.class)) {
+                if (clazz.isAnnotationPresent(Docker.class)) {
                     collector = clazz;
                     for (Field field : clazz.getDeclaredFields()) {
                         field.setAccessible(true);
-                        if (field.isAnnotationPresent(ModuleValue.class)) {
-                            ModuleValue moduleValue = field.getAnnotation(ModuleValue.class);
-//                            String value = moduleValue.value();
-//                            Object castValue = null;
-//                            switch (field.getName()) {
-//                                case "java.lang.Boolean":
-//                                    castValue = Boolean.parseBoolean(value);
-//                                    break;
-//                                case "java.lang.Integer":
-//                                    castValue = Integer.parseInt(value);
-//                                    break;
-//                                case "java.lang.Float":
-//                                    castValue = Float.parseFloat(value);
-//                                    break;
-//                                case "java.lang.Double":
-//                                    castValue = Double.parseDouble(value);
-//                                    break;
-//                                case "java.lang.Long":
-//                                    castValue = Long.parseLong(value);
-//                                    break;
-//                            }
-//                            if (castValue != null) {
-//                                field.set(clazz.newInstance(), castValue);
-//                            }
-                            fieldHashMap.put(moduleValue.value(), field);
+                        if (field.isAnnotationPresent(Value.class)) {
+                            Value value = field.getAnnotation(Value.class);
+                            findFields.put(value.value(), field);
                         }
                     }
                 }
             }
 
+            //Add ModuleBean and ValueBean
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
-                if (clazz.isAnnotationPresent(ModuleAT.class)) {
-                    ModuleAT moduleAT = clazz.getAnnotation(ModuleAT.class);
-                    Object o = collector.newInstance();
+                if (clazz.isAnnotationPresent(Module.class)) {
+                    Module module = clazz.getAnnotation(Module.class);
+                    Object o = null;
+                    if (collector != null) {
+                        o = collector.newInstance();
+                    }
                     Set<ValueBean> valueBeans = new HashSet<>();
-                    for (Map.Entry<String, Field> entry : fieldHashMap.entrySet()) {
+                    for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), o));
                     }
-                    modules.add(new ModuleBean(moduleAT.name(), clazz, clazz.newInstance(), valueBeans));
+                    moduleBeans.add(new ModuleBean(module.value(), clazz.newInstance(), valueBeans));
+                }
+            }
+
+            //Add Module
+            for (ModuleBean moduleBean : moduleBeans) {
+                modules.add(moduleBean.getObject());
+            }
+
+            //Add Setting
+            for (ModuleBean moduleBean : moduleBeans) {
+                for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
+                    field.setAccessible(true);
+                    if (field.isAnnotationPresent(SettingAT.class)) {
+                        if (field.getType().equals(EnableSetting.class)) {
+                            settings.add((EnableSetting) field.get(moduleBean.getObject()));
+                        } else if (field.getType().equals(IntegerSetting.class)) {
+                            settings.add((IntegerSetting) field.get(moduleBean.getObject()));
+                        } else if (field.getType().equals(FloatSetting.class)) {
+                            settings.add((FloatSetting) field.get(moduleBean.getObject()));
+                        } else if (field.getType().equals(DoubleSetting.class)) {
+                            settings.add((DoubleSetting) field.get(moduleBean.getObject()));
+                        } else if (field.getType().equals(LongSetting.class)) {
+                            settings.add((LongSetting) field.get(moduleBean.getObject()));
+                        } else if (field.getType().equals(ModeSetting.class)) {
+                            settings.add((ModeSetting) field.get(moduleBean.getObject()));
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
@@ -86,68 +102,163 @@ public class ModuleManager {
         }
     }
 
-    public Boolean getBoolean(String name, Object o) throws IllegalAccessException {
-        for (ModuleBean moduleBean : modules) {
-            for (ValueBean valueBean : moduleBean.getValueBeans()) {
-                if (valueBean.getName().equals(name)) {
-                    return valueBean.getField().getBoolean(o);
-                }
+    public String getName(Object object) {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(object)) {
+                return moduleBean.getObject().getClass().getAnnotation(Module.class).value();
+            }
+        }
+        return null;
+    }
+
+    public boolean isEnable(Object object) {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(object)) {
+                return moduleBean.getObject().getClass().getAnnotation(Module.class).enable();
             }
         }
         return false;
     }
 
-    public void setBoolean(String name, Boolean value, Object o) throws IllegalAccessException {
-        for (ModuleBean moduleBean : modules) {
-            for (ValueBean valueBean : moduleBean.getValueBeans()) {
-                if (valueBean.getName().equals(name)) {
-                    valueBean.getField().setBoolean(o, value);
-                }
+    public void setEnable(Object object, boolean value) throws NoSuchFieldException, IllegalAccessException {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(object)) {
+                TypeAnnotation(Proxy.getInvocationHandler(moduleBean.getObject().getClass().getAnnotation(Module.class)), "enable", value);
             }
         }
     }
 
-
-    public String getName(Class<?> clazz) {
-        return clazz.getAnnotation(ModuleAT.class).name();
+    public int getKey(Object object) {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(object)) {
+                return moduleBean.getObject().getClass().getAnnotation(Module.class).key();
+            }
+        }
+        return 0;
     }
 
-    public Category getCategory(Class<?> clazz) {
-        return clazz.getAnnotation(ModuleAT.class).category();
+    public void setKey(Object object, int value) throws NoSuchFieldException, IllegalAccessException {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(object)) {
+                TypeAnnotation(Proxy.getInvocationHandler(moduleBean.getObject().getClass().getAnnotation(Module.class)), "key", value);
+            }
+        }
+    }
+
+    public Category getCategory(Object object) {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(object)) {
+                return moduleBean.getObject().getClass().getAnnotation(Module.class).category();
+            }
+        }
+        return Category.NONE;
+    }
+
+    public <T> T getValue(Object object, String name) {
+        try {
+            for (ModuleBean moduleBean : moduleBeans) {
+                if (moduleBean.getObject().equals(object)) {
+                    for (ValueBean valueBean : moduleBean.getValueBeans()) {
+                        if (valueBean.getName().equals(name)) {
+                            return (T) valueBean.getField().get(valueBean.getObject());
+                        }
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public <T> void setValue(Object object, String name, T value) {
+        try {
+            for (ModuleBean moduleBean : moduleBeans) {
+                if (moduleBean.getObject().equals(object)) {
+                    for (ValueBean valueBean : moduleBean.getValueBeans()) {
+                        if (valueBean.getName().equals(name)) {
+                            valueBean.getField().set(valueBean.getObject(), value);
+                        }
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void enable(Object object) {
+        try {
+            for (ModuleBean moduleBean : moduleBeans) {
+                if (!moduleBean.getObject().equals(object))
+                    continue;
+
+                Class<?> clazz = object.getClass();
+                setEnable(object, !isEnable(object));
+                for (Method method : clazz.getDeclaredMethods()) {
+                    method.setAccessible(true);
+                    if (isEnable(object)) {
+                        CF4M.getInstance().event.register(object);
+                        if (method.isAnnotationPresent(Enable.class)) {
+                            method.invoke(object);
+                        }
+                    } else {
+                        CF4M.getInstance().event.unregister(object);
+                        if (method.isAnnotationPresent(Disable.class)) {
+                            method.invoke(object);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @EventAT
     private void onKey(KeyboardEvent keyboardEvent) {
-        try {
-            for (ModuleBean moduleBean : modules) {
-                if (moduleBean.getClazz().getAnnotation(ModuleAT.class).keyCode() == keyboardEvent.getKeyCode()) {
-                    Class<?> clazz = moduleBean.getClazz();
-                    Object object = moduleBean.getObject();
-                    boolean enable = !getBoolean("Enable", object);
-                    setBoolean("Enable", enable, object);
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        if (enable) {
-                            if (method.isAnnotationPresent(OnEnable.class)) {
-                                CF4M.getInstance().event.register(object);
-                                method.invoke(object);
-                            }
-                        } else {
-                            if (method.isAnnotationPresent(OnDisable.class)) {
-                                CF4M.getInstance().event.unregister(object);
-                                method.invoke(object);
-                            }
-                        }
-                    }
-
-                }
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (getKey(moduleBean.getObject()) == keyboardEvent.getKey()) {
+                enable(moduleBean.getObject());
             }
-
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
         }
     }
 
-    public Set<ModuleBean> getModules() {
+    private void TypeAnnotation(InvocationHandler invocationHandler, String name, Object value) throws NoSuchFieldException, IllegalAccessException {
+        Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
+        memberValues.setAccessible(true);
+        Map<String, Object> map = (Map<String, Object>) memberValues.get(invocationHandler);
+        map.put(name, value);
+    }
+
+    public ArrayList<Object> getModules() {
         return modules;
+    }
+
+    public Object getModule(String name) {
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getName().equalsIgnoreCase(name)) {
+                return moduleBean.getObject();
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Setting> getSettings() {
+        return settings;
+    }
+
+    public ArrayList<Setting> getSettings(Object module) {
+        ArrayList<Setting> s = Lists.newArrayList();
+        for (ModuleBean moduleBean : moduleBeans) {
+            if (moduleBean.getObject().equals(module)) {
+                for (Setting setting : settings) {
+                    if (setting.getModule().equals(moduleBean.getObject())) {
+                        s.add(setting);
+                    }
+                }
+            }
+        }
+        return s;
     }
 }
