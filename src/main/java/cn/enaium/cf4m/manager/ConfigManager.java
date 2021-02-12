@@ -8,6 +8,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +25,7 @@ public class ConfigManager {
     public HashMap<Object, String> configs = Maps.newHashMap();
 
     public ConfigManager() {
-        new File(CF4M.getInstance().clientDataDir);
+        new File(CF4M.getInstance().clientDataDir).mkdir();
         new File(CF4M.getInstance().clientDataDir + "/configs/").mkdir();
         try {
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
@@ -45,14 +47,19 @@ public class ConfigManager {
         return null;
     }
 
-    public String getPath(String name) {
-        return CF4M.getInstance().clientDataDir + "/configs/" + name + ".json";
+    public String getPath(Object object) {
+        for (Map.Entry<Object, String> entry : configs.entrySet()) {
+            if (entry.getKey().equals(object)) {
+                return CF4M.getInstance().clientDataDir + "/configs/" + entry.getValue() + ".json";
+            }
+        }
+        return null;
     }
 
     public void load() {
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
-                if (new File(getPath(entry.getValue())).exists()) {
+                if (new File(getPath(entry.getKey())).exists()) {
                     for (Method method : entry.getKey().getClass().getMethods()) {
                         method.setAccessible(true);
                         if (method.isAnnotationPresent(Load.class)) {
@@ -61,7 +68,7 @@ public class ConfigManager {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
@@ -69,8 +76,8 @@ public class ConfigManager {
     public void save() {
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
-                new File(getPath(entry.getValue())).createNewFile();
-                if (new File(getPath(entry.getValue())).exists()) {
+                new File(getPath(entry.getKey())).createNewFile();
+                if (new File(getPath(entry.getKey())).exists()) {
                     for (Method method : entry.getKey().getClass().getMethods()) {
                         method.setAccessible(true);
                         if (method.isAnnotationPresent(Save.class)) {
@@ -79,7 +86,7 @@ public class ConfigManager {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }

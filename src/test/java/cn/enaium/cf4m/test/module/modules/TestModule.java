@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.test.module.modules;
 
-import cn.enaium.cf4m.annotation.SettingAT;
+import cn.enaium.cf4m.annotation.Setting;
 import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.setting.settings.DoubleSetting;
@@ -17,15 +17,15 @@ import java.util.Arrays;
  */
 @Module(value = "TestModule", category = Category.COMBAT)
 public class TestModule {
-    @SettingAT
+    @Setting
     private FloatSetting test3 = new FloatSetting(this, "test1", "test1", 1.0F, 1.0F, 1.0F);
 
-    @SettingAT
+    @Setting
     private DoubleSetting test4 = new DoubleSetting(this, "test1", "test1", 1.0D, 1.0D, 1.0D);
 
-    @SettingAT
+    @Setting
     private LongSetting test5 = new LongSetting(this, "test1", "test1", 1L, 1L, 1L);
 
-    @SettingAT
+    @Setting
     private ModeSetting test6 = new ModeSetting(this, "test1", "test1", "Mode1", Arrays.asList("Mode1", "Mode2"));
 }

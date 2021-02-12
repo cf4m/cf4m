@@ -2,13 +2,14 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.*;
-import cn.enaium.cf4m.annotation.module.docker.*;
+import cn.enaium.cf4m.annotation.module.expand.Expand;
+import cn.enaium.cf4m.annotation.module.expand.Value;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.module.ValueBean;
-import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.SettingBase;
 import cn.enaium.cf4m.setting.settings.*;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -32,19 +33,19 @@ public class ModuleManager {
      */
     private ArrayList<Object> modules = Lists.newArrayList();
 
-    private ArrayList<Setting> settings = Lists.newArrayList();
+    private ArrayList<SettingBase> settings = Lists.newArrayList();
 
     private HashMap<String, Field> findFields = Maps.newHashMap();
 
-    private Class<?> collector = null;
+    private Class<?> expand = null;
 
     public ModuleManager() {
         CF4M.getInstance().event.register(this);
         try {
             //Find Value
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
-                if (clazz.isAnnotationPresent(Docker.class)) {
-                    collector = clazz;
+                if (clazz.isAnnotationPresent(Expand.class)) {
+                    expand = clazz;
                     for (Field field : clazz.getDeclaredFields()) {
                         field.setAccessible(true);
                         if (field.isAnnotationPresent(Value.class)) {
@@ -60,8 +61,8 @@ public class ModuleManager {
                 if (clazz.isAnnotationPresent(Module.class)) {
                     Module module = clazz.getAnnotation(Module.class);
                     Object o = null;
-                    if (collector != null) {
-                        o = collector.newInstance();
+                    if (expand != null) {
+                        o = expand.newInstance();
                     }
                     Set<ValueBean> valueBeans = new HashSet<>();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
@@ -80,7 +81,7 @@ public class ModuleManager {
             for (ModuleBean moduleBean : moduleBeans) {
                 for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
                     field.setAccessible(true);
-                    if (field.isAnnotationPresent(SettingAT.class)) {
+                    if (field.isAnnotationPresent(Setting.class)) {
                         if (field.getType().equals(EnableSetting.class)) {
                             settings.add((EnableSetting) field.get(moduleBean.getObject()));
                         } else if (field.getType().equals(IntegerSetting.class)) {
@@ -215,7 +216,7 @@ public class ModuleManager {
         }
     }
 
-    @EventAT
+    @Event
     private void onKey(KeyboardEvent keyboardEvent) {
         for (ModuleBean moduleBean : moduleBeans) {
             if (getKey(moduleBean.getObject()) == keyboardEvent.getKey()) {
@@ -244,15 +245,15 @@ public class ModuleManager {
         return null;
     }
 
-    public ArrayList<Setting> getSettings() {
+    public ArrayList<SettingBase> getSettings() {
         return settings;
     }
 
-    public ArrayList<Setting> getSettings(Object module) {
-        ArrayList<Setting> s = Lists.newArrayList();
+    public ArrayList<SettingBase> getSettings(Object module) {
+        ArrayList<SettingBase> s = Lists.newArrayList();
         for (ModuleBean moduleBean : moduleBeans) {
             if (moduleBean.getObject().equals(module)) {
-                for (Setting setting : settings) {
+                for (SettingBase setting : settings) {
                     if (setting.getModule().equals(moduleBean.getObject())) {
                         s.add(setting);
                     }

@@ -1,7 +1,7 @@
 package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.SettingBase;
 import cn.enaium.cf4m.test.module.TestValue;
 
 /**
@@ -23,12 +23,12 @@ public class TestCF4M {
         }
 
         System.out.println("Test settings==========");
-        for (Setting setting : CF4M.getInstance().module.getSettings()) {
+        for (SettingBase setting : CF4M.getInstance().module.getSettings()) {
             System.out.println(setting.getName() + "|" + setting.getModule());
         }
 
         System.out.println("Test settings for module==========");
-        for (Setting setting : CF4M.getInstance().module.getSettings("TestModule2")) {
+        for (SettingBase setting : CF4M.getInstance().module.getSettings("TestModule2")) {
             System.out.println(setting.getName() + "|" + setting.getModule());
         }
 

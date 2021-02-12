@@ -1,14 +1,13 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.ModuleBean;
-import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.SettingBase;
 
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class FloatSetting extends Setting {
+public class FloatSetting extends SettingBase {
 
     private Float current;
     private Float min;

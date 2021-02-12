@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.test.module.modules;
 
-import cn.enaium.cf4m.annotation.SettingAT;
+import cn.enaium.cf4m.annotation.Setting;
 import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.setting.settings.*;
@@ -12,9 +12,9 @@ import cn.enaium.cf4m.setting.settings.*;
  */
 @Module(value = "TestModule2", category = Category.COMBAT)
 public class TestModule2 {
-    @SettingAT
+    @Setting
     private EnableSetting test1 = new EnableSetting(this, "test1", "test1", false);
 
-    @SettingAT
+    @Setting
     private IntegerSetting test2 = new IntegerSetting(this, "test1", "test1", 1, 1, 1);
 }

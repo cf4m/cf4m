@@ -1,5 +1,6 @@
 package cn.enaium.cf4m;
 
+import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.manager.*;
 
 /**
@@ -24,9 +25,14 @@ public class CF4M {
     public String clientDataDir;
 
     /**
+     * CF4M configuration
+     */
+    public IConfiguration configuration;
+
+    /**
      * ClassManager.
      */
-    public IClassManager classManager;
+    public ClassManager classManager;
 
     /**
      * EventManager.
@@ -56,6 +62,8 @@ public class CF4M {
         instance = this;
         this.packName = o.getClass().getPackage().getName();
         this.clientDataDir = clientDataDir;
+        this.configuration = new IConfiguration() {
+        };
         this.classManager = new ClassManager();
     }
 
@@ -63,7 +71,6 @@ public class CF4M {
      * Start.
      */
     public void run() {
-
         event = new EventManager();
         module = new ModuleManager();
         command = new CommandManager();

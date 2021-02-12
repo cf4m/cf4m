@@ -1,10 +1,11 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.command.Command;
-import cn.enaium.cf4m.annotation.CommandAT;
+import cn.enaium.cf4m.annotation.Command;
+import cn.enaium.cf4m.command.ICommand;
 import com.google.common.collect.Maps;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,18 +18,18 @@ public class CommandManager {
     /**
      * Command list.
      */
-    public HashMap<String[], Command> commands = Maps.newHashMap();
+    private final HashMap<String[], ICommand> commands = Maps.newHashMap();
 
     /**
      * Prefix.
      */
-    public String prefix = "`";
+    private final String prefix = CF4M.getInstance().configuration.prefix();
 
     public CommandManager() {
         try {
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
-                if (clazz.isAnnotationPresent(CommandAT.class)) {
-                    commands.put(clazz.getAnnotation(CommandAT.class).value(), (Command) clazz.newInstance());
+                if (clazz.isAnnotationPresent(Command.class)) {
+                    commands.put(clazz.getAnnotation(Command.class).value(), (ICommand) clazz.newInstance());
                 }
             }
         } catch (Exception e) {
@@ -50,27 +51,31 @@ public class CommandManager {
         if (safe) {
             String beheaded = rawMessage.split(prefix)[1];
             String[] args = beheaded.split(" ");
-            Command command = getCommand(args[0]);
-            if (command != null) {
-                command.run(args);
+
+            for (Map.Entry<String[], ICommand> entry : commands.entrySet()) {
+                String[] key = entry.getKey();
+
+                for (String s : key) {
+                    if (s.equalsIgnoreCase(args[0])) {
+                        ICommand command = entry.getValue();
+                        if (!command.run(args)) {
+                            String[] usages = command.usage().split("\n");
+                            for (String usage : usages) {
+                                CF4M.getInstance().configuration.message(Arrays.toString(entry.getKey()) + " " + usage);
+                            }
+                        }
+                    }
+                }
             }
+        } else {
+            CF4M.getInstance().configuration.message("Try " + prefix + "help");
         }
+
+
         return true;
     }
 
-    /**
-     * @param name Index.
-     * @return Whether match index.
-     */
-    private Command getCommand(String name) {
-        for (Map.Entry entry : commands.entrySet()) {
-            String[] key = (String[]) entry.getKey();
-            for (String s : key) {
-                if (s.equalsIgnoreCase(name)) {
-                    return (Command) entry.getValue();
-                }
-            }
-        }
-        return null;
+    public HashMap<String[], ICommand> getCommands() {
+        return commands;
     }
 }
