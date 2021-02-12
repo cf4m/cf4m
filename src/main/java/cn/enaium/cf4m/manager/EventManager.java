@@ -1,8 +1,8 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.event.Data;
-import cn.enaium.cf4m.event.Event;
-import cn.enaium.cf4m.event.EventAT;
+import cn.enaium.cf4m.event.EventBase;
+import cn.enaium.cf4m.annotation.Event;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -10,10 +10,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EventManager {
 
-    private HashMap<Class<? extends Event>, CopyOnWriteArrayList<Data>> REGISTRY_MAP;
+    private HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<Data>> REGISTRY_MAP;
 
     public EventManager() {
-        REGISTRY_MAP = new HashMap<Class<? extends Event>, CopyOnWriteArrayList<Data>>();
+        REGISTRY_MAP = new HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<Data>>();
     }
 
     public void register(Object o) {
@@ -29,9 +29,9 @@ public class EventManager {
     private void register(Method method, Object o) {
 
         @SuppressWarnings("unchecked")
-        Class<? extends Event> clazz = (Class<? extends Event>) method.getParameterTypes()[0];
+        Class<? extends EventBase> clazz = (Class<? extends EventBase>) method.getParameterTypes()[0];
 
-        Data methodData = new Data(o, method, method.getAnnotation(EventAT.class).priority());
+        Data methodData = new Data(o, method, method.getAnnotation(Event.class).priority());
 
         if (!methodData.getTarget().isAccessible())
             methodData.getTarget().setAccessible(true);
@@ -51,10 +51,10 @@ public class EventManager {
     }
 
     private boolean isMethodBad(Method method) {
-        return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(EventAT.class);
+        return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(Event.class);
     }
 
-    public CopyOnWriteArrayList<Data> get(Class<? extends Event> clazz) {
+    public CopyOnWriteArrayList<Data> get(Class<? extends EventBase> clazz) {
         return REGISTRY_MAP.get(clazz);
     }
 

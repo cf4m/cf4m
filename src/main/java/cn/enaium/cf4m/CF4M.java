@@ -1,8 +1,7 @@
 package cn.enaium.cf4m;
 
+import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.manager.*;
-
-import java.io.File;
 
 /**
  * Project: cf4m
@@ -26,34 +25,34 @@ public class CF4M {
     public String clientDataDir;
 
     /**
+     * CF4M configuration
+     */
+    public IConfiguration configuration;
+
+    /**
      * ClassManager.
      */
-    public IClassManager classManager;
+    public ClassManager classManager;
 
     /**
      * EventManager.
      */
-    public EventManager eventManager;
+    public EventManager event;
 
     /**
      * ModuleManager.
      */
-    public ModuleManager moduleManager;
-
-    /**
-     * SettingManager.
-     */
-    public SettingManager settingManager;
+    public ModuleManager module;
 
     /**
      * CommandManager.
      */
-    public CommandManager commandManager;
+    public CommandManager command;
 
     /**
      * ConfigManager.
      */
-    public ConfigManager configManager;
+    public ConfigManager config;
 
     /**
      * @param o             MainClass.
@@ -63,6 +62,8 @@ public class CF4M {
         instance = this;
         this.packName = o.getClass().getPackage().getName();
         this.clientDataDir = clientDataDir;
+        this.configuration = new IConfiguration() {
+        };
         this.classManager = new ClassManager();
     }
 
@@ -70,20 +71,22 @@ public class CF4M {
      * Start.
      */
     public void run() {
-        new File(CF4M.getInstance().clientDataDir).mkdir();
-        eventManager = new EventManager();
-        moduleManager = new ModuleManager();
-        settingManager = new SettingManager();
-        commandManager = new CommandManager();
-        configManager = new ConfigManager();
-        configManager.load();
+        event = new EventManager();
+        module = new ModuleManager();
+        command = new CommandManager();
+        if (clientDataDir != null) {
+            config = new ConfigManager();
+            config.load();
+        }
     }
 
     /**
      * Stop.
      */
     public void stop() {
-        configManager.save();
+        if (clientDataDir != null) {
+            config.save();
+        }
     }
 
     /**

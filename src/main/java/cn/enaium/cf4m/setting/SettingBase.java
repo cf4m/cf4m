@@ -1,18 +1,18 @@
 package cn.enaium.cf4m.setting;
 
-import cn.enaium.cf4m.module.Module;
+import cn.enaium.cf4m.module.ModuleBean;
 
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class Setting {
+public class SettingBase {
 
     /**
      * Module.
      */
-    private Module module;
+    private Object module;
 
     /**
      * Name.
@@ -29,7 +29,7 @@ public class Setting {
      * @param name   Setting module
      * @param info   Setting module
      */
-    public Setting(Module module, String name, String info) {
+    public SettingBase(Object module, String name, String info) {
         this.module = module;
         this.name = name;
         this.info = info;
@@ -38,12 +38,8 @@ public class Setting {
     /**
      * @return Module
      */
-    public Module getModule() {
+    public Object getModule() {
         return module;
-    }
-
-    public void setModule(Module module) {
-        this.module = module;
     }
 
     public String getName() {
@@ -56,9 +52,5 @@ public class Setting {
 
     public String getInfo() {
         return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
     }
 }

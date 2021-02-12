@@ -6,12 +6,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import cn.enaium.cf4m.CF4M;
 
 
-public abstract class Event {
+public abstract class EventBase {
 
     private boolean cancelled;
     private Type type;
 
-    public Event(Type type) {
+    public EventBase(Type type) {
         this.type = type;
         this.cancelled = false;
     }
@@ -23,7 +23,7 @@ public abstract class Event {
     public void call() {
         cancelled = false;
 
-        CopyOnWriteArrayList<Data> dataList = CF4M.getInstance().eventManager.get(this.getClass());
+        CopyOnWriteArrayList<Data> dataList = CF4M.getInstance().event.get(this.getClass());
 
         if (dataList == null)
             return;

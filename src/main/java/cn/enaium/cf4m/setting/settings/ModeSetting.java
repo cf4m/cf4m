@@ -1,22 +1,20 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
-import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.SettingBase;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class ModeSetting extends Setting {
+public class ModeSetting extends SettingBase {
 
     private String current;
     private List<String> modes;
 
-    public ModeSetting(Module module, String name, String info, String current, List<String> modes) {
+    public ModeSetting(Object module, String name, String info, String current, List<String> modes) {
         super(module, name, info);
         this.current = current;
         this.modes = modes;

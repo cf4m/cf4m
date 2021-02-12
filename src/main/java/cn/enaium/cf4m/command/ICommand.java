@@ -5,16 +5,16 @@ import java.util.List;
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public interface Command {
+public interface ICommand {
     /**
      * @param args input.
      */
-    void run(String[] args);
+    boolean run(String[] args);
 
     /**
      * @return usages.
      */
-    List<String> usage();
+    String usage();
 }

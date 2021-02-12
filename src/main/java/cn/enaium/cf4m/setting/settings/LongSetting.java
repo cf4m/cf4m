@@ -1,20 +1,19 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.module.Module;
-import cn.enaium.cf4m.setting.Setting;
+import cn.enaium.cf4m.setting.SettingBase;
 
 /**
  * Project: cf4m
  * -----------------------------------------------------------
- * Copyright © 2020 | Enaium | All rights reserved.
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class LongSetting extends Setting {
+public class LongSetting extends SettingBase {
 
     private Long current;
     private Long min;
     private Long max;
 
-    public LongSetting(Module module, String name, String info, Long current, Long min, Long max) {
+    public LongSetting(Object module, String name, String info, Long current, Long min, Long max) {
         super(module, name, info);
         this.current = current;
         this.min = min;
