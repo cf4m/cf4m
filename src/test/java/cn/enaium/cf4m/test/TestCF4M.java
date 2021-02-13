@@ -10,11 +10,11 @@ import cn.enaium.cf4m.test.module.TestValue;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class TestCF4M {
-    public static void main(String[] args) throws IllegalAccessException {
+    public static void main(String[] args) {
         new TestCF4M().run();
     }
 
-    public void run() throws IllegalAccessException {
+    public void run() {
         CF4M cf4M = new CF4M(this, null);
         cf4M.run();
         System.out.println("Test modules==========");

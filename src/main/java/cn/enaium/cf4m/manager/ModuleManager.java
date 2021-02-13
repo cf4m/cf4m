@@ -121,10 +121,14 @@ public class ModuleManager {
         return false;
     }
 
-    public void setEnable(Object object, boolean value) throws NoSuchFieldException, IllegalAccessException {
+    public void setEnable(Object object, boolean value) {
         for (ModuleBean moduleBean : moduleBeans) {
             if (moduleBean.getObject().equals(object)) {
-                TypeAnnotation(Proxy.getInvocationHandler(moduleBean.getObject().getClass().getAnnotation(Module.class)), "enable", value);
+                try {
+                    TypeAnnotation(Proxy.getInvocationHandler(moduleBean.getObject().getClass().getAnnotation(Module.class)), "enable", value);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -138,10 +142,14 @@ public class ModuleManager {
         return 0;
     }
 
-    public void setKey(Object object, int value) throws NoSuchFieldException, IllegalAccessException {
+    public void setKey(Object object, int value) {
         for (ModuleBean moduleBean : moduleBeans) {
             if (moduleBean.getObject().equals(object)) {
-                TypeAnnotation(Proxy.getInvocationHandler(moduleBean.getObject().getClass().getAnnotation(Module.class)), "key", value);
+                try {
+                    TypeAnnotation(Proxy.getInvocationHandler(moduleBean.getObject().getClass().getAnnotation(Module.class)), "key", value);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
