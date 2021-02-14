@@ -21,7 +21,7 @@ public class ClassManager {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(CF4M.getInstance().packName)) {
-                    Class<?> clazz = loadClass(info.load());
+                    Class<?> clazz = loadClass(Class.forName(info.getName()));
                     if (clazz.isAnnotationPresent(Configuration.class)) {
                         CF4M.getInstance().configuration = (IConfiguration) clazz.newInstance();
                     }
