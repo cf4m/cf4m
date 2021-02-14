@@ -21,8 +21,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 uploadArchives {
     repositories.mavenDeployer {
-        def mavenLib = new File(System.getProperty('user.dir'))
-        repository(url: "file://${mavenLib.parent}/maven")
+        def MAVEN_URL = System.getenv('MAVEN_URL')
+        if(MAVEN_URL != null) {
+            repository(url: "file://${new File(MAVEN_URL)}")
+        }
     }
 }
 artifacts { archives sourcesJar }
