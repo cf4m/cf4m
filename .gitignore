@@ -30,7 +30,3 @@ target/
 # cf4m
 
 run/
-
-#vuepress
-
-doc-src/node_modules
