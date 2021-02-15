@@ -55,16 +55,24 @@ public class CF4M {
     public ConfigManager config;
 
     /**
-     * @param o             MainClass.
+     * @param clazz         MainClass.
      * @param clientDataDir .minecraft/{clientName} path.
      */
-    public CF4M(Object o, String clientDataDir) {
+    public CF4M(Class<?> clazz, String clientDataDir) {
         instance = this;
-        this.packName = o.getClass().getPackage().getName();
+        this.packName = clazz.getPackage().getName();
         this.clientDataDir = clientDataDir;
         this.configuration = new IConfiguration() {
         };
         this.classManager = new ClassManager();
+    }
+
+    /**
+     * @param o             this.
+     * @param clientDataDir .minecraft/{clientName} path.
+     */
+    public CF4M(Object o, String clientDataDir) {
+        this(o.getClass(),clientDataDir);
     }
 
     /**
