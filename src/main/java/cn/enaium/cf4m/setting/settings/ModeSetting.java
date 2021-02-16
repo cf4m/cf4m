@@ -31,4 +31,15 @@ public class ModeSetting extends SettingBase {
     public List<String> getModes() {
         return modes;
     }
+
+    public int getCurrentModeIndex() {
+        int index = 0;
+        for (String s : modes) {
+            if (s.equalsIgnoreCase(current)) {
+                return index;
+            }
+            index++;
+        }
+        return index;
+    }
 }

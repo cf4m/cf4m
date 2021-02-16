@@ -26,8 +26,8 @@ public class SettingBase {
 
     /**
      * @param module Setting module
-     * @param name   Setting module
-     * @param info   Setting module
+     * @param name   Setting name
+     * @param info   Setting info
      */
     public SettingBase(Object module, String name, String info) {
         this.module = module;
