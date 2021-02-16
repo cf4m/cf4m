@@ -24,12 +24,12 @@ public class TestCF4M {
 
         System.out.println("Test settings==========");
         for (SettingBase setting : CF4M.getInstance().module.getSettings()) {
-            System.out.println(setting.getName() + "|" + setting.getModule());
+            System.out.println(CF4M.getInstance().module.getName(setting.getModule()) + "|" + setting.getName() + "|" + setting.getModule() + "|" + setting.getClass().getSimpleName());
         }
 
         System.out.println("Test settings for module==========");
         for (SettingBase setting : CF4M.getInstance().module.getSettings("TestModule2")) {
-            System.out.println(setting.getName() + "|" + setting.getModule());
+            System.out.println(setting.getName() + "|" + setting.getModule() + "|" + setting.getClass().getSimpleName());
         }
 
         System.out.println("Test set value==========");
