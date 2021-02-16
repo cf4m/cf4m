@@ -11,6 +11,7 @@ import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
 import cn.enaium.cf4m.setting.settings.*;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -26,23 +27,20 @@ import java.util.*;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class ModuleManager {
-    private Set<ModuleBean> moduleBeans = new HashSet<>();
 
     /**
      * Module list.
      */
-    private ArrayList<Object> modules = Lists.newArrayList();
+    private final Set<ModuleBean> moduleBeans = new HashSet<>();
 
-    private ArrayList<SettingBase> settings = Lists.newArrayList();
-
-    private HashMap<String, Field> findFields = Maps.newHashMap();
-
-    private Class<?> expand = null;
+    private final ArrayList<SettingBase> settings = Lists.newArrayList();
 
     public ModuleManager() {
         CF4M.getInstance().event.register(this);
         try {
             //Find Value
+            Class<?> expand = null;
+            HashMap<String, Field> findFields = Maps.newHashMap();
             for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
                 if (clazz.isAnnotationPresent(Expand.class)) {
                     expand = clazz;
@@ -72,28 +70,13 @@ public class ModuleManager {
                 }
             }
 
-            //Add Module
-            for (ModuleBean moduleBean : moduleBeans) {
-                modules.add(moduleBean.getObject());
-            }
-
             //Add Setting
             for (ModuleBean moduleBean : moduleBeans) {
                 for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (field.isAnnotationPresent(Setting.class)) {
-                        if (field.getType().equals(EnableSetting.class)) {
-                            settings.add((EnableSetting) field.get(moduleBean.getObject()));
-                        } else if (field.getType().equals(IntegerSetting.class)) {
-                            settings.add((IntegerSetting) field.get(moduleBean.getObject()));
-                        } else if (field.getType().equals(FloatSetting.class)) {
-                            settings.add((FloatSetting) field.get(moduleBean.getObject()));
-                        } else if (field.getType().equals(DoubleSetting.class)) {
-                            settings.add((DoubleSetting) field.get(moduleBean.getObject()));
-                        } else if (field.getType().equals(LongSetting.class)) {
-                            settings.add((LongSetting) field.get(moduleBean.getObject()));
-                        } else if (field.getType().equals(ModeSetting.class)) {
-                            settings.add((ModeSetting) field.get(moduleBean.getObject()));
+                        if (field.getType().getSuperclass().equals(SettingBase.class)) {
+                            settings.add((SettingBase) field.get(moduleBean.getObject()));
                         }
                     }
                 }
@@ -241,6 +224,20 @@ public class ModuleManager {
     }
 
     public ArrayList<Object> getModules() {
+        ArrayList<Object> modules = new ArrayList<>();
+        for (ModuleBean moduleBean : moduleBeans) {
+            modules.add(moduleBean.getObject());
+        }
+        return modules;
+    }
+
+    public ArrayList<Object> getModules(Category category) {
+        ArrayList<Object> modules = new ArrayList<>();
+        for (Object module : getModules()) {
+            if (getCategory(module).equals(category)) {
+                modules.add(module);
+            }
+        }
         return modules;
     }
 
@@ -248,6 +245,15 @@ public class ModuleManager {
         for (ModuleBean moduleBean : moduleBeans) {
             if (moduleBean.getName().equalsIgnoreCase(name)) {
                 return moduleBean.getObject();
+            }
+        }
+        return null;
+    }
+
+    public SettingBase getSetting(Object module, String name) {
+        for (SettingBase s : settings) {
+            if (s.getModule().equals(module) && s.getName().equalsIgnoreCase(name)) {
+                return s;
             }
         }
         return null;
