@@ -4,14 +4,12 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +26,7 @@ public class ConfigManager {
         new File(CF4M.getInstance().clientDataDir).mkdir();
         new File(CF4M.getInstance().clientDataDir + "/configs/").mkdir();
         try {
-            for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
+            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
                 if (clazz.isAnnotationPresent(Config.class)) {
                     configs.put(clazz.newInstance(), clazz.getAnnotation(Config.class).value());
                 }

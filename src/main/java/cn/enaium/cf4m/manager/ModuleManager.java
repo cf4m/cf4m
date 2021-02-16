@@ -10,8 +10,6 @@ import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
-import cn.enaium.cf4m.setting.settings.*;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -41,7 +39,7 @@ public class ModuleManager {
             //Find Value
             Class<?> expand = null;
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
+            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
                 if (clazz.isAnnotationPresent(Expand.class)) {
                     expand = clazz;
                     for (Field field : clazz.getDeclaredFields()) {
@@ -55,7 +53,7 @@ public class ModuleManager {
             }
 
             //Add ModuleBean and ValueBean
-            for (Class<?> clazz : CF4M.getInstance().classManager.getClasses()) {
+            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
                 if (clazz.isAnnotationPresent(Module.class)) {
                     Module module = clazz.getAnnotation(Module.class);
                     Object o = null;
@@ -75,7 +73,11 @@ public class ModuleManager {
                 for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (field.isAnnotationPresent(Setting.class)) {
-                        if (field.getType().getSuperclass().equals(SettingBase.class)) {
+                        Class<?> superClass = field.getType().getSuperclass();
+                        if (superClass == null)
+                            continue;
+
+                        if (superClass.equals(SettingBase.class)) {
                             settings.add((SettingBase) field.get(moduleBean.getObject()));
                         }
                     }

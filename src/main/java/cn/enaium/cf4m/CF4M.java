@@ -32,7 +32,7 @@ public class CF4M {
     /**
      * ClassManager.
      */
-    public ClassManager classManager;
+    public ClassManager clazz;
 
     /**
      * EventManager.
@@ -64,7 +64,7 @@ public class CF4M {
         this.clientDataDir = clientDataDir;
         this.configuration = new IConfiguration() {
         };
-        this.classManager = new ClassManager();
+        this.clazz = new ClassManager();
     }
 
     /**
