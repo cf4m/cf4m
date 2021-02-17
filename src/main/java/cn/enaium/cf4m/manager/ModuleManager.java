@@ -61,7 +61,7 @@ public class ModuleManager {
                     if (expand != null) {
                         o = expand.newInstance();
                     }
-                    Set<ValueBean> valueBeans = new HashSet<>();
+                    Set<ValueBean> valueBeans = Sets.newHashSet();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), o));
                     }
