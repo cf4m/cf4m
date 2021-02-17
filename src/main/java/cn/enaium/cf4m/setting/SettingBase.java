@@ -12,17 +12,17 @@ public class SettingBase {
     /**
      * Module.
      */
-    private Object module;
+    private final Object module;
 
     /**
      * Name.
      */
-    private String name;
+    private final String name;
 
     /**
      * Info.
      */
-    private String info;
+    private final String info;
 
     /**
      * @param module Setting module
@@ -44,10 +44,6 @@ public class SettingBase {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getInfo() {
