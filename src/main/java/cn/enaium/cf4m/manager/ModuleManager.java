@@ -12,6 +12,7 @@ import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -29,9 +30,9 @@ public class ModuleManager {
     /**
      * Module list.
      */
-    private final Set<ModuleBean> moduleBeans = new HashSet<>();
+    private final Set<ModuleBean> moduleBeans = Sets.newHashSet();
 
-    private final ArrayList<SettingBase> settings = Lists.newArrayList();
+    private final Set<SettingBase> settings = Sets.newHashSet();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -39,7 +40,7 @@ public class ModuleManager {
             //Find Value
             Class<?> expand = null;
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
+            for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
                 if (clazz.isAnnotationPresent(Extend.class)) {
                     expand = clazz;
                     for (Field field : clazz.getDeclaredFields()) {
@@ -53,14 +54,14 @@ public class ModuleManager {
             }
 
             //Add ModuleBean and ValueBean
-            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
+            for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
                 if (clazz.isAnnotationPresent(Module.class)) {
                     Module module = clazz.getAnnotation(Module.class);
                     Object o = null;
                     if (expand != null) {
                         o = expand.newInstance();
                     }
-                    Set<ValueBean> valueBeans = new HashSet<>();
+                    Set<ValueBean> valueBeans = Sets.newHashSet();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), o));
                     }
@@ -72,14 +73,12 @@ public class ModuleManager {
             for (ModuleBean moduleBean : moduleBeans) {
                 for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
                     field.setAccessible(true);
-                    if (field.isAnnotationPresent(Setting.class)) {
-                        Class<?> superClass = field.getType().getSuperclass();
-                        if (superClass == null)
-                            continue;
+                    Class<?> superClass = field.getType().getSuperclass();
+                    if (superClass == null)
+                        continue;
 
-                        if (superClass.equals(SettingBase.class)) {
-                            settings.add((SettingBase) field.get(moduleBean.getObject()));
-                        }
+                    if (superClass.equals(SettingBase.class)) {
+                        settings.add((SettingBase) field.get(moduleBean.getObject()));
                     }
                 }
             }
@@ -97,7 +96,7 @@ public class ModuleManager {
         return null;
     }
 
-    public boolean isEnable(Object object) {
+    public boolean getEnable(Object object) {
         for (ModuleBean moduleBean : moduleBeans) {
             if (moduleBean.getObject().equals(object)) {
                 return moduleBean.getObject().getClass().getAnnotation(Module.class).enable();
@@ -188,10 +187,10 @@ public class ModuleManager {
                     continue;
 
                 Class<?> clazz = object.getClass();
-                setEnable(object, !isEnable(object));
+                setEnable(object, !getEnable(object));
                 for (Method method : clazz.getDeclaredMethods()) {
                     method.setAccessible(true);
-                    if (isEnable(object)) {
+                    if (getEnable(object)) {
                         CF4M.INSTANCE.event.register(object);
                         if (method.isAnnotationPresent(Enable.class)) {
                             method.invoke(object);
@@ -261,7 +260,7 @@ public class ModuleManager {
         return null;
     }
 
-    public ArrayList<SettingBase> getSettings() {
+    public Set<SettingBase> getSettings() {
         return settings;
     }
 

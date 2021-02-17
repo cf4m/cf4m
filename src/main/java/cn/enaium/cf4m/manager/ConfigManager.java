@@ -28,7 +28,7 @@ public class ConfigManager {
         new File(CF4M.INSTANCE.clientDataDir).mkdir();
         new File(CF4M.INSTANCE.clientDataDir + "/configs/").mkdir();
         try {
-            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
+            for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
                 if (clazz.isAnnotationPresent(Config.class)) {
                     configs.put(clazz.newInstance(), clazz.getAnnotation(Config.class).value());
                 }

@@ -1,8 +1,5 @@
 package cn.enaium.cf4m.module;
 
-import cn.enaium.cf4m.CF4M;
-
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -11,9 +8,9 @@ import java.util.Set;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class ModuleBean {
-    private String name;
-    private Object object;
-    private Set<ValueBean> valueBeans;
+    private final String name;
+    private final Object object;
+    private final Set<ValueBean> valueBeans;
 
     public ModuleBean(String name, Object object, Set<ValueBean> valueBeans) {
         this.name = name;

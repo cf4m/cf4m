@@ -3,6 +3,7 @@ package cn.enaium.cf4m.manager;
 import cn.enaium.cf4m.event.Data;
 import cn.enaium.cf4m.event.EventBase;
 import cn.enaium.cf4m.annotation.Event;
+import com.google.common.collect.Maps;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -13,7 +14,7 @@ public class EventManager {
     private HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<Data>> REGISTRY_MAP;
 
     public EventManager() {
-        REGISTRY_MAP = new HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<Data>>();
+        REGISTRY_MAP = Maps.newHashMap();
     }
 
     public void register(Object o) {
@@ -23,7 +24,7 @@ public class EventManager {
                 register(method, o);
         });
 
-        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.sort(((o1, o2) -> (o1.getPriority().getValue() - o2.getPriority().getValue()))));
+        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.sort((Comparator.comparingInt(o2 -> o2.getPriority().getValue()))));
     }
 
     private void register(Method method, Object o) {

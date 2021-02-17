@@ -16,7 +16,7 @@ public class EnableSetting extends SettingBase {
         this.enable = enable;
     }
 
-    public boolean isEnable() {
+    public boolean getEnable() {
         return enable;
     }
 
