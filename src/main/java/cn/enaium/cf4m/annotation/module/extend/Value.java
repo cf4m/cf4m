@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.annotation.module.expand;
+package cn.enaium.cf4m.annotation.module.extend;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Expand {
+public @interface Value {
+    String value();
 }
