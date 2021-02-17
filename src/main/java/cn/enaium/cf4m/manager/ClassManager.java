@@ -20,10 +20,10 @@ public class ClassManager {
     public ClassManager() {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
-                if (info.getName().startsWith(CF4M.getInstance().packName)) {
+                if (info.getName().startsWith(CF4M.INSTANCE.packName)) {
                     Class<?> clazz = Class.forName(info.getName());
                     if (clazz.isAnnotationPresent(Configuration.class)) {
-                        CF4M.getInstance().configuration = (IConfiguration) clazz.newInstance();
+                        CF4M.INSTANCE.configuration = (IConfiguration) clazz.newInstance();
                     }
                     classes.add(clazz);
                 }

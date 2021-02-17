@@ -2,8 +2,8 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.*;
-import cn.enaium.cf4m.annotation.module.expand.Expand;
-import cn.enaium.cf4m.annotation.module.expand.Value;
+import cn.enaium.cf4m.annotation.module.extend.Extend;
+import cn.enaium.cf4m.annotation.module.extend.Value;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
@@ -34,13 +34,13 @@ public class ModuleManager {
     private final ArrayList<SettingBase> settings = Lists.newArrayList();
 
     public ModuleManager() {
-        CF4M.getInstance().event.register(this);
+        CF4M.INSTANCE.event.register(this);
         try {
             //Find Value
             Class<?> expand = null;
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
-                if (clazz.isAnnotationPresent(Expand.class)) {
+            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
+                if (clazz.isAnnotationPresent(Extend.class)) {
                     expand = clazz;
                     for (Field field : clazz.getDeclaredFields()) {
                         field.setAccessible(true);
@@ -53,7 +53,7 @@ public class ModuleManager {
             }
 
             //Add ModuleBean and ValueBean
-            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
+            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
                 if (clazz.isAnnotationPresent(Module.class)) {
                     Module module = clazz.getAnnotation(Module.class);
                     Object o = null;
@@ -192,12 +192,12 @@ public class ModuleManager {
                 for (Method method : clazz.getDeclaredMethods()) {
                     method.setAccessible(true);
                     if (isEnable(object)) {
-                        CF4M.getInstance().event.register(object);
+                        CF4M.INSTANCE.event.register(object);
                         if (method.isAnnotationPresent(Enable.class)) {
                             method.invoke(object);
                         }
                     } else {
-                        CF4M.getInstance().event.unregister(object);
+                        CF4M.INSTANCE.event.unregister(object);
                         if (method.isAnnotationPresent(Disable.class)) {
                             method.invoke(object);
                         }

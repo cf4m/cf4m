@@ -23,11 +23,11 @@ public class CommandManager {
     /**
      * Prefix.
      */
-    private final String prefix = CF4M.getInstance().configuration.prefix();
+    private final String prefix = CF4M.INSTANCE.configuration.prefix();
 
     public CommandManager() {
         try {
-            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
+            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
                 if (clazz.isAnnotationPresent(Command.class)) {
                     commands.put(clazz.getAnnotation(Command.class).value(), (ICommand) clazz.newInstance());
                 }
@@ -61,14 +61,14 @@ public class CommandManager {
                         if (!command.run(args)) {
                             String[] usages = command.usage().split("\n");
                             for (String usage : usages) {
-                                CF4M.getInstance().configuration.message(Arrays.toString(entry.getKey()) + " " + usage);
+                                CF4M.INSTANCE.configuration.message(Arrays.toString(entry.getKey()) + " " + usage);
                             }
                         }
                     }
                 }
             }
         } else {
-            CF4M.getInstance().configuration.message("Try " + prefix + "help");
+            CF4M.INSTANCE.configuration.message("Try " + prefix + "help");
         }
 
 

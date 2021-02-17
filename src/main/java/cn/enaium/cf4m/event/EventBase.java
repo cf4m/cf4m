@@ -23,7 +23,7 @@ public abstract class EventBase {
     public void call() {
         cancelled = false;
 
-        CopyOnWriteArrayList<Data> dataList = CF4M.getInstance().event.get(this.getClass());
+        CopyOnWriteArrayList<Data> dataList = CF4M.INSTANCE.event.get(this.getClass());
 
         if (dataList == null)
             return;

@@ -8,11 +8,9 @@ import cn.enaium.cf4m.manager.*;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class CF4M {
-    /**
-     * Instance.
-     */
-    private static CF4M instance;
+public enum CF4M {
+
+    INSTANCE;
 
     /**
      * Client package.
@@ -58,49 +56,31 @@ public class CF4M {
      * @param clazz         MainClass.
      * @param clientDataDir .minecraft/{clientName} path.
      */
-    public CF4M(Class<?> clazz, String clientDataDir) {
-        instance = this;
+    public void run(Class<?> clazz, String clientDataDir) {
         this.packName = clazz.getPackage().getName();
         this.clientDataDir = clientDataDir;
         this.configuration = new IConfiguration() {
         };
         this.clazz = new ClassManager();
+        event = new EventManager();
+        module = new ModuleManager();
+        command = new CommandManager();
+        config = new ConfigManager();
+        config.load();
     }
 
     /**
      * @param o             this.
      * @param clientDataDir .minecraft/{clientName} path.
      */
-    public CF4M(Object o, String clientDataDir) {
-        this(o.getClass(),clientDataDir);
-    }
-
-    /**
-     * Start.
-     */
-    public void run() {
-        event = new EventManager();
-        module = new ModuleManager();
-        command = new CommandManager();
-        if (clientDataDir != null) {
-            config = new ConfigManager();
-            config.load();
-        }
+    public void run(Object o, String clientDataDir) {
+        run(o.getClass(), clientDataDir);
     }
 
     /**
      * Stop.
      */
     public void stop() {
-        if (clientDataDir != null) {
-            config.save();
-        }
-    }
-
-    /**
-     * @return Instance.
-     */
-    public static CF4M getInstance() {
-        return instance;
+        config.save();
     }
 }

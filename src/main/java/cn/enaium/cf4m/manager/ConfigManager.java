@@ -23,10 +23,12 @@ public class ConfigManager {
     public HashMap<Object, String> configs = Maps.newHashMap();
 
     public ConfigManager() {
-        new File(CF4M.getInstance().clientDataDir).mkdir();
-        new File(CF4M.getInstance().clientDataDir + "/configs/").mkdir();
+        if (CF4M.INSTANCE.clientDataDir == null)
+            return;
+        new File(CF4M.INSTANCE.clientDataDir).mkdir();
+        new File(CF4M.INSTANCE.clientDataDir + "/configs/").mkdir();
         try {
-            for (Class<?> clazz : CF4M.getInstance().clazz.getClasses()) {
+            for (Class<?> clazz : CF4M.INSTANCE.clazz.getClasses()) {
                 if (clazz.isAnnotationPresent(Config.class)) {
                     configs.put(clazz.newInstance(), clazz.getAnnotation(Config.class).value());
                 }
@@ -48,13 +50,15 @@ public class ConfigManager {
     public String getPath(Object object) {
         for (Map.Entry<Object, String> entry : configs.entrySet()) {
             if (entry.getKey().equals(object)) {
-                return CF4M.getInstance().clientDataDir + "/configs/" + entry.getValue() + ".json";
+                return CF4M.INSTANCE.clientDataDir + "/configs/" + entry.getValue() + ".json";
             }
         }
         return null;
     }
 
     public void load() {
+        if (CF4M.INSTANCE.clientDataDir == null)
+            return;
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
                 if (new File(getPath(entry.getKey())).exists()) {
@@ -72,6 +76,8 @@ public class ConfigManager {
     }
 
     public void save() {
+        if (CF4M.INSTANCE.clientDataDir == null)
+            return;
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
                 new File(getPath(entry.getKey())).createNewFile();
