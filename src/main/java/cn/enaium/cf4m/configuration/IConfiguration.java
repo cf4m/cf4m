@@ -9,10 +9,18 @@ import java.lang.reflect.Method;
  */
 public interface IConfiguration {
 
+    /**
+     *
+     * @param message print chat message
+     */
     default void message(String message) {
         System.out.println(message);
     }
 
+    /**
+     *
+     * @return Command prefix
+     */
     default String prefix() {
         return "`";
     }

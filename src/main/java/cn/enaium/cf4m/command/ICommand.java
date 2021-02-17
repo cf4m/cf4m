@@ -14,7 +14,7 @@ public interface ICommand {
     boolean run(String[] args);
 
     /**
-     * @return usages.
+     * @return usage.
      */
     String usage();
 }

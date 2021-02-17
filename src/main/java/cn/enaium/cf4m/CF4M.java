@@ -30,7 +30,7 @@ public enum CF4M {
     /**
      * ClassManager.
      */
-    public ClassManager clazz;
+    public ClassManager type;
 
     /**
      * EventManager.
@@ -61,7 +61,7 @@ public enum CF4M {
         this.clientDataDir = clientDataDir;
         this.configuration = new IConfiguration() {
         };
-        this.clazz = new ClassManager();
+        this.type = new ClassManager();
         event = new EventManager();
         module = new ModuleManager();
         command = new CommandManager();
