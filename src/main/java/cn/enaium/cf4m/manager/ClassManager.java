@@ -21,11 +21,11 @@ public class ClassManager {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(CF4M.INSTANCE.packName)) {
-                    Class<?> clazz = Class.forName(info.getName());
-                    if (clazz.isAnnotationPresent(Configuration.class)) {
-                        CF4M.INSTANCE.configuration = (IConfiguration) clazz.newInstance();
+                    Class<?> type = Class.forName(info.getName());
+                    if (type.isAnnotationPresent(Configuration.class)) {
+                        CF4M.INSTANCE.configuration = (IConfiguration) type.newInstance();
                     }
-                    classes.add(clazz);
+                    classes.add(type);
                 }
             }
         } catch (Exception e) {

@@ -3,6 +3,8 @@ package cn.enaium.cf4m;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.manager.*;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Project: cf4m
  * -----------------------------------------------------------
@@ -53,34 +55,28 @@ public enum CF4M {
     public ConfigManager config;
 
     /**
-     * @param clazz         MainClass.
+     * @param mainClass     MainClass.
      * @param clientDataDir .minecraft/{clientName} path.
      */
-    public void run(Class<?> clazz, String clientDataDir) {
-        this.packName = clazz.getPackage().getName();
+    public void run(Class<?> mainClass, String clientDataDir) {
+        this.packName = mainClass.getPackage().getName();
         this.clientDataDir = clientDataDir;
         this.configuration = new IConfiguration() {
         };
-        this.type = new ClassManager();
+        type = new ClassManager();
         event = new EventManager();
         module = new ModuleManager();
         command = new CommandManager();
         config = new ConfigManager();
         config.load();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
     }
 
     /**
-     * @param o             this.
+     * @param o             MainObject.
      * @param clientDataDir .minecraft/{clientName} path.
      */
     public void run(Object o, String clientDataDir) {
         run(o.getClass(), clientDataDir);
-    }
-
-    /**
-     * Stop.
-     */
-    public void stop() {
-        config.save();
     }
 }

@@ -1,7 +1,5 @@
 package cn.enaium.cf4m.setting;
 
-import cn.enaium.cf4m.module.ModuleBean;
-
 /**
  * Project: cf4m
  * -----------------------------------------------------------
