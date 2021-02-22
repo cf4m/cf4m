@@ -5,7 +5,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.enaium.cf4m.CF4M;
 
-
+/**
+ * Project: cf4m
+ * -----------------------------------------------------------
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
+ */
 public abstract class EventBase {
 
     private boolean cancelled;
@@ -23,15 +27,15 @@ public abstract class EventBase {
     public void call() {
         cancelled = false;
 
-        CopyOnWriteArrayList<Data> dataList = CF4M.INSTANCE.event.get(this.getClass());
+        CopyOnWriteArrayList<MethodBean> methodBeanList = CF4M.INSTANCE.event.get(this.getClass());
 
-        if (dataList == null)
+        if (methodBeanList == null)
             return;
 
-        dataList.forEach(data -> {
+        methodBeanList.forEach(methodBean -> {
 
             try {
-                data.getTarget().invoke(data.getSource(), this);
+                methodBean.getTarget().invoke(methodBean.getSource(), this);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }

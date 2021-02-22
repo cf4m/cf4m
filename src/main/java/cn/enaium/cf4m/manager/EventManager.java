@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.manager;
 
-import cn.enaium.cf4m.event.Data;
+import cn.enaium.cf4m.event.MethodBean;
 import cn.enaium.cf4m.event.EventBase;
 import cn.enaium.cf4m.annotation.Event;
 import com.google.common.collect.Maps;
@@ -9,9 +9,14 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Project: cf4m
+ * -----------------------------------------------------------
+ * Copyright © 2020-2021 | Enaium | All rights reserved.
+ */
 public class EventManager {
 
-    private HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<Data>> REGISTRY_MAP;
+    private final HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<MethodBean>> REGISTRY_MAP;
 
     public EventManager() {
         REGISTRY_MAP = Maps.newHashMap();
@@ -32,22 +37,22 @@ public class EventManager {
         @SuppressWarnings("unchecked")
         Class<? extends EventBase> clazz = (Class<? extends EventBase>) method.getParameterTypes()[0];
 
-        Data methodData = new Data(o, method, method.getAnnotation(Event.class).priority());
+        MethodBean methodBean = new MethodBean(o, method, method.getAnnotation(Event.class).priority());
 
-        if (!methodData.getTarget().isAccessible())
-            methodData.getTarget().setAccessible(true);
+        if (!methodBean.getTarget().isAccessible())
+            methodBean.getTarget().setAccessible(true);
 
 
         if (REGISTRY_MAP.containsKey(clazz)) {
-            if (!REGISTRY_MAP.get(clazz).contains(methodData))
-                REGISTRY_MAP.get(clazz).add(methodData);
+            if (!REGISTRY_MAP.get(clazz).contains(methodBean))
+                REGISTRY_MAP.get(clazz).add(methodBean);
         } else {
-            REGISTRY_MAP.put(clazz, new CopyOnWriteArrayList<Data>(Collections.singletonList(methodData)));
+            REGISTRY_MAP.put(clazz, new CopyOnWriteArrayList<>(Collections.singletonList(methodBean)));
         }
     }
 
     public void unregister(Object o) {
-        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.removeIf(methodData -> methodData.getSource().equals(o)));
+        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.removeIf(methodMethodBean -> methodMethodBean.getSource().equals(o)));
         REGISTRY_MAP.entrySet().removeIf(hashSetEntry -> hashSetEntry.getValue().isEmpty());
     }
 
@@ -55,7 +60,7 @@ public class EventManager {
         return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(Event.class);
     }
 
-    public CopyOnWriteArrayList<Data> get(Class<? extends EventBase> clazz) {
+    public CopyOnWriteArrayList<MethodBean> get(Class<? extends EventBase> clazz) {
         return REGISTRY_MAP.get(clazz);
     }
 
