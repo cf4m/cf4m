@@ -3,6 +3,7 @@ package cn.enaium.cf4m.manager;
 import cn.enaium.cf4m.annotation.Event;
 import cn.enaium.cf4m.event.Listener;
 import cn.enaium.cf4m.event.MethodBean;
+import com.google.common.collect.Maps;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -20,10 +21,15 @@ public class EventManager {
      * <K> listener
      * <V> event
      */
-    private final HashMap<Class<? extends Listener>, CopyOnWriteArrayList<MethodBean>> events = new HashMap<>();
+    private final HashMap<Class<? extends Listener>, CopyOnWriteArrayList<MethodBean>> events;
+
+    public EventManager() {
+        events = Maps.newHashMap();
+    }
 
     /**
      * Register all event
+     *
      * @param o Object
      */
     public void register(Object o) {
@@ -50,6 +56,7 @@ public class EventManager {
 
     /**
      * Unregister all event
+     *
      * @param o Object
      */
     public void unregister(Object o) {
