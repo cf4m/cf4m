@@ -4,9 +4,9 @@ import java.lang.reflect.Method;
 
 public class Data {
 
-    private Object source;
-    private Method target;
-    private EventPriority priority;
+    private final Object source;
+    private final Method target;
+    private final EventPriority priority;
 
     public Data(Object source, Method target, EventPriority priority) {
         this.source = source;
