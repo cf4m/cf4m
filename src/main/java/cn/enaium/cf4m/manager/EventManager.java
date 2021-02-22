@@ -39,8 +39,8 @@ public class EventManager {
 
         MethodBean methodBean = new MethodBean(o, method, method.getAnnotation(Event.class).priority());
 
-        if (!methodBean.getTarget().isAccessible())
-            methodBean.getTarget().setAccessible(true);
+        if (!methodBean.getMethod().isAccessible())
+            methodBean.getMethod().setAccessible(true);
 
 
         if (REGISTRY_MAP.containsKey(clazz)) {
@@ -52,7 +52,7 @@ public class EventManager {
     }
 
     public void unregister(Object o) {
-        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.removeIf(methodMethodBean -> methodMethodBean.getSource().equals(o)));
+        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.removeIf(methodMethodBean -> methodMethodBean.getObject().equals(o)));
         REGISTRY_MAP.entrySet().removeIf(hashSetEntry -> hashSetEntry.getValue().isEmpty());
     }
 

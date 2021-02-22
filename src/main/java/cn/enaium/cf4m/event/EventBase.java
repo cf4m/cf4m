@@ -35,7 +35,7 @@ public abstract class EventBase {
         methodBeanList.forEach(methodBean -> {
 
             try {
-                methodBean.getTarget().invoke(methodBean.getSource(), this);
+                methodBean.getMethod().invoke(methodBean.getObject(), this);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -49,7 +49,7 @@ public abstract class EventBase {
         return type;
     }
 
-    public boolean isCancelled() {
+    public boolean getCancelled() {
         return cancelled;
     }
 

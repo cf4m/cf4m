@@ -9,22 +9,22 @@ import java.lang.reflect.Method;
  */
 public class MethodBean {
 
-    private final Object source;
-    private final Method target;
+    private final Object object;
+    private final Method method;
     private final EventPriority priority;
 
-    public MethodBean(Object source, Method target, EventPriority priority) {
-        this.source = source;
-        this.target = target;
+    public MethodBean(Object object, Method method, EventPriority priority) {
+        this.object = object;
+        this.method = method;
         this.priority = priority;
     }
 
-    public Object getSource() {
-        return source;
+    public Object getObject() {
+        return object;
     }
 
-    public Method getTarget() {
-        return target;
+    public Method getMethod() {
+        return method;
     }
 
     public EventPriority getPriority() {
