@@ -1,7 +1,7 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.annotation.Event;
-import cn.enaium.cf4m.event.EventBase;
+import cn.enaium.cf4m.event.Listener;
 import cn.enaium.cf4m.event.MethodBean;
 
 import java.lang.reflect.Method;
@@ -20,7 +20,7 @@ public class EventManager {
      * <K> listener
      * <V> event
      */
-    private final HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<MethodBean>> events = new HashMap<>();
+    private final HashMap<Class<? extends Listener>, CopyOnWriteArrayList<MethodBean>> events = new HashMap<>();
 
     /**
      * Register all event
@@ -33,7 +33,7 @@ public class EventManager {
             if (method.getParameterTypes().length == 1 && method.isAnnotationPresent(Event.class)) {
                 method.setAccessible(true);
                 @SuppressWarnings("unchecked")
-                Class<? extends EventBase> listener = (Class<? extends EventBase>) method.getParameterTypes()[0];
+                Class<? extends Listener> listener = (Class<? extends Listener>) method.getParameterTypes()[0];
 
                 MethodBean methodBean = new MethodBean(o, method);
 
@@ -57,7 +57,7 @@ public class EventManager {
         events.entrySet().removeIf(event -> event.getValue().isEmpty());
     }
 
-    public CopyOnWriteArrayList<MethodBean> getEvent(Class<? extends EventBase> type) {
+    public CopyOnWriteArrayList<MethodBean> getEvent(Class<? extends Listener> type) {
         return events.get(type);
     }
 }

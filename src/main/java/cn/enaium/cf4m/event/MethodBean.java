@@ -8,15 +8,12 @@ import java.lang.reflect.Method;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class MethodBean {
-
     private final Object object;
     private final Method method;
-    private final EventPriority priority;
 
-    public MethodBean(Object object, Method method, EventPriority priority) {
+    public MethodBean(Object object, Method method) {
         this.object = object;
         this.method = method;
-        this.priority = priority;
     }
 
     public Object getObject() {
@@ -25,9 +22,5 @@ public class MethodBean {
 
     public Method getMethod() {
         return method;
-    }
-
-    public EventPriority getPriority() {
-        return priority;
     }
 }
