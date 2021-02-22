@@ -10,6 +10,7 @@ import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -18,12 +19,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Project: cf4m
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
+@SuppressWarnings({"unchecked", "unused"})
 public class ModuleManager {
 
     /**
@@ -55,7 +58,6 @@ public class ModuleManager {
             //Add ModuleBean and ValueBean
             for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
                 if (clazz.isAnnotationPresent(Module.class)) {
-                    Module module = clazz.getAnnotation(Module.class);
                     Object o = null;
                     if (extend != null) {
                         o = extend.newInstance();
@@ -219,13 +221,12 @@ public class ModuleManager {
     private void TypeAnnotation(InvocationHandler invocationHandler, String name, Object value) throws NoSuchFieldException, IllegalAccessException {
         Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
         memberValues.setAccessible(true);
-        @SuppressWarnings("unchecked")
         Map<String, Object> map = (Map<String, Object>) memberValues.get(invocationHandler);
         map.put(name, value);
     }
 
     public ArrayList<Object> getModules() {
-        ArrayList<Object> modules = new ArrayList<>();
+        ArrayList<Object> modules = Lists.newArrayList();
         for (ModuleBean moduleBean : moduleBeans) {
             modules.add(moduleBean.getObject());
         }
@@ -233,13 +234,7 @@ public class ModuleManager {
     }
 
     public ArrayList<Object> getModules(Category category) {
-        ArrayList<Object> modules = new ArrayList<>();
-        for (Object module : getModules()) {
-            if (getCategory(module).equals(category)) {
-                modules.add(module);
-            }
-        }
-        return modules;
+        return getModules().stream().filter(module -> getCategory(module).equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
     }
 
     public Object getModule(String name) {
@@ -260,17 +255,11 @@ public class ModuleManager {
         return null;
     }
 
-    public Set<SettingBase> getSettings() {
-        return settings;
+    public ArrayList<SettingBase> getSettings() {
+        return Lists.newArrayList(settings);
     }
 
-    public Set<SettingBase> getSettings(Object module) {
-        Set<SettingBase> s = Sets.newHashSet();
-        for (SettingBase setting : settings) {
-            if (setting.getModule().equals(module)) {
-                s.add(setting);
-            }
-        }
-        return s;
+    public ArrayList<SettingBase> getSettings(Object module) {
+        return settings.stream().filter(setting -> setting.getModule().equals(module)).collect(Collectors.toCollection(Lists::newArrayList));
     }
 }

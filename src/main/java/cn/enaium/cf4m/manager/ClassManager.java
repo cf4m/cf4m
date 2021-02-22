@@ -14,6 +14,7 @@ import java.util.ArrayList;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
+@SuppressWarnings("unused")
 public class ClassManager {
     private final ArrayList<Class<?>> classes = Lists.newArrayList();
 
