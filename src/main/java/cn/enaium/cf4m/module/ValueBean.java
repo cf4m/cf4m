@@ -12,6 +12,11 @@ public class ValueBean {
     private final Field field;
     private final Object object;
 
+    /**
+     * @param name   value name
+     * @param field  value field
+     * @param object for module
+     */
     public ValueBean(String name, Field field, Object object) {
         this.name = name;
         this.field = field;
