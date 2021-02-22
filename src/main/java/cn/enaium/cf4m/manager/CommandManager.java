@@ -27,9 +27,9 @@ public class CommandManager {
 
     public CommandManager() {
         try {
-            for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
-                if (clazz.isAnnotationPresent(Command.class)) {
-                    commands.put(clazz.getAnnotation(Command.class).value(), (ICommand) clazz.newInstance());
+            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
+                if (type.isAnnotationPresent(Command.class)) {
+                    commands.put(type.getAnnotation(Command.class).value(), (ICommand) type.newInstance());
                 }
             }
         } catch (Exception e) {

@@ -42,10 +42,10 @@ public class ModuleManager {
             //Find Value
             Class<?> extend = null;
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
-                if (clazz.isAnnotationPresent(Extend.class)) {
-                    extend = clazz;
-                    for (Field field : clazz.getDeclaredFields()) {
+            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
+                if (type.isAnnotationPresent(Extend.class)) {
+                    extend = type;
+                    for (Field field : type.getDeclaredFields()) {
                         field.setAccessible(true);
                         if (field.isAnnotationPresent(Value.class)) {
                             Value value = field.getAnnotation(Value.class);
@@ -56,8 +56,8 @@ public class ModuleManager {
             }
 
             //Add ModuleBean and ValueBean
-            for (Class<?> clazz : CF4M.INSTANCE.type.getClasses()) {
-                if (clazz.isAnnotationPresent(Module.class)) {
+            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
+                if (type.isAnnotationPresent(Module.class)) {
                     Object o = null;
                     if (extend != null) {
                         o = extend.newInstance();
@@ -66,7 +66,7 @@ public class ModuleManager {
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), o));
                     }
-                    moduleBeans.add(new ModuleBean(clazz.newInstance(), valueBeans));
+                    moduleBeans.add(new ModuleBean(type.newInstance(), valueBeans));
                 }
             }
 
@@ -74,11 +74,7 @@ public class ModuleManager {
             for (ModuleBean moduleBean : moduleBeans) {
                 for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
                     field.setAccessible(true);
-                    Class<?> superClass = field.getType().getSuperclass();
-                    if (superClass == null)
-                        continue;
-
-                    if (superClass.equals(SettingBase.class)) {
+                    if (Objects.equals(field.getType().getSuperclass(), SettingBase.class)) {
                         settings.add((SettingBase) field.get(moduleBean.getObject()));
                     }
                 }

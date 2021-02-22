@@ -1,12 +1,12 @@
 package cn.enaium.cf4m.manager;
 
-import cn.enaium.cf4m.event.MethodBean;
-import cn.enaium.cf4m.event.EventBase;
 import cn.enaium.cf4m.annotation.Event;
-import com.google.common.collect.Maps;
+import cn.enaium.cf4m.event.EventBase;
+import cn.enaium.cf4m.event.MethodBean;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -16,52 +16,48 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EventManager {
 
-    private final HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<MethodBean>> REGISTRY_MAP;
+    /**
+     * <K> listener
+     * <V> event
+     */
+    private final HashMap<Class<? extends EventBase>, CopyOnWriteArrayList<MethodBean>> events = new HashMap<>();
 
-    public EventManager() {
-        REGISTRY_MAP = Maps.newHashMap();
-    }
-
+    /**
+     * Register all event
+     * @param o Object
+     */
     public void register(Object o) {
+        Class<?> type = o.getClass();
 
-        Arrays.stream(o.getClass().getDeclaredMethods()).forEach(method -> {
-            if (!isMethodBad(method))
-                register(method, o);
-        });
+        for (Method method : type.getDeclaredMethods()) {
+            if (method.getParameterTypes().length == 1 && method.isAnnotationPresent(Event.class)) {
+                method.setAccessible(true);
+                @SuppressWarnings("unchecked")
+                Class<? extends EventBase> listener = (Class<? extends EventBase>) method.getParameterTypes()[0];
 
-        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.sort((Comparator.comparingInt(o2 -> o2.getPriority().getValue()))));
-    }
+                MethodBean methodBean = new MethodBean(o, method);
 
-    private void register(Method method, Object o) {
-
-        @SuppressWarnings("unchecked")
-        Class<? extends EventBase> clazz = (Class<? extends EventBase>) method.getParameterTypes()[0];
-
-        MethodBean methodBean = new MethodBean(o, method, method.getAnnotation(Event.class).priority());
-
-        if (!methodBean.getMethod().isAccessible())
-            methodBean.getMethod().setAccessible(true);
-
-
-        if (REGISTRY_MAP.containsKey(clazz)) {
-            if (!REGISTRY_MAP.get(clazz).contains(methodBean))
-                REGISTRY_MAP.get(clazz).add(methodBean);
-        } else {
-            REGISTRY_MAP.put(clazz, new CopyOnWriteArrayList<>(Collections.singletonList(methodBean)));
+                if (events.containsKey(listener)) {
+                    if (!events.get(listener).contains(methodBean)) {
+                        events.get(listener).add(methodBean);
+                    }
+                } else {
+                    events.put(listener, new CopyOnWriteArrayList<>(Collections.singletonList(methodBean)));
+                }
+            }
         }
     }
 
+    /**
+     * Unregister all event
+     * @param o Object
+     */
     public void unregister(Object o) {
-        REGISTRY_MAP.values().forEach(flexibleArray -> flexibleArray.removeIf(methodMethodBean -> methodMethodBean.getObject().equals(o)));
-        REGISTRY_MAP.entrySet().removeIf(hashSetEntry -> hashSetEntry.getValue().isEmpty());
+        events.values().forEach(methodBeans -> methodBeans.removeIf(methodMethodBean -> methodMethodBean.getObject().equals(o)));
+        events.entrySet().removeIf(event -> event.getValue().isEmpty());
     }
 
-    private boolean isMethodBad(Method method) {
-        return method.getParameterTypes().length != 1 || !method.isAnnotationPresent(Event.class);
+    public CopyOnWriteArrayList<MethodBean> getEvent(Class<? extends EventBase> type) {
+        return events.get(type);
     }
-
-    public CopyOnWriteArrayList<MethodBean> get(Class<? extends EventBase> clazz) {
-        return REGISTRY_MAP.get(clazz);
-    }
-
 }
