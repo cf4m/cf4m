@@ -20,6 +20,9 @@ public class Listener {
         cancelled = false;
     }
 
+    /**
+     * Call all event
+     */
     public void call() {
         CopyOnWriteArrayList<MethodBean> methodBeans = CF4M.INSTANCE.event.getEvent(this.getClass());
 
@@ -48,6 +51,9 @@ public class Listener {
         return at;
     }
 
+    /**
+     * At head or tail
+     */
     public enum At {
         HEAD,
         TAIL
