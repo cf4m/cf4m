@@ -8,18 +8,12 @@ import java.util.Set;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class ModuleBean {
-    private final String name;
     private final Object object;
     private final Set<ValueBean> valueBeans;
 
-    public ModuleBean(String name, Object object, Set<ValueBean> valueBeans) {
-        this.name = name;
+    public ModuleBean(Object object, Set<ValueBean> valueBeans) {
         this.object = object;
         this.valueBeans = valueBeans;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Object getObject() {
