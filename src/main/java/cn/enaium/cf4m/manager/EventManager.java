@@ -24,15 +24,14 @@ public class EventManager {
      * <K> listener
      * <V> event
      */
-    private final Multimap<Class<? extends Listener>, MethodBean> events;
+    private final HashMap<Class<? extends Listener>, CopyOnWriteArrayList<MethodBean>> events;
 
     public EventManager() {
-        events = ArrayListMultimap.create();
+        events = Maps.newHashMap();
     }
 
     /**
      * Register all event
-     *
      * @param o Object
      */
     public void register(Object o) {
@@ -43,19 +42,26 @@ public class EventManager {
                 method.setAccessible(true);
                 @SuppressWarnings("unchecked")
                 Class<? extends Listener> listener = (Class<? extends Listener>) method.getParameterTypes()[0];
-                events.put(listener, new MethodBean(o, method));
+                MethodBean methodBean = new MethodBean(o, method);
+
+                if (events.containsKey(listener)) {
+                    if (!events.get(listener).contains(methodBean)) {
+                        events.get(listener).add(methodBean);
+                    }
+                } else {
+                    events.put(listener, new CopyOnWriteArrayList<>(Collections.singletonList(methodBean)));
+                }
             }
         }
     }
 
     /**
      * Unregister all event
-     *
      * @param o Object
      */
     public void unregister(Object o) {
-        events.asMap().values().forEach(methodBeans -> methodBeans.removeIf(methodMethodBean -> methodMethodBean.getObject().equals(o)));
-        events.asMap().entrySet().removeIf(event -> event.getValue().isEmpty());
+        events.values().forEach(methodBeans -> methodBeans.removeIf(methodMethodBean -> methodMethodBean.getObject().equals(o)));
+        events.entrySet().removeIf(event -> event.getValue().isEmpty());
     }
 
     public Collection<MethodBean> getEvent(Class<? extends Listener> type) {
