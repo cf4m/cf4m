@@ -165,10 +165,7 @@ public class ModuleManager {
 
     public void enable(Object object) {
         try {
-            for (Object module : getModules()) {
-                if (!module.equals(object))
-                    continue;
-
+            if (modules.containsKey(object)) {
                 Class<?> type = object.getClass();
                 setEnable(object, !getEnable(object));
                 for (Method method : type.getDeclaredMethods()) {
