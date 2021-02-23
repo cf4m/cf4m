@@ -7,7 +7,6 @@ import cn.enaium.cf4m.annotation.module.extend.Value;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
-import cn.enaium.cf4m.module.ModuleBean;
 import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
 import com.google.common.collect.Lists;
@@ -30,11 +29,16 @@ import java.util.stream.Collectors;
 public class ModuleManager {
 
     /**
-     * Module list.
+     * <K> module
+     * <V> values
      */
-    private final Set<ModuleBean> moduleBeans = Sets.newHashSet();
+    private final HashMap<Object, Set<ValueBean>> modules = Maps.newHashMap();
 
-    private final Set<SettingBase> settings = Sets.newHashSet();
+    /**
+     * <K> module
+     * <V> settings
+     */
+    private final HashMap<Object, Set<SettingBase>> settings = Maps.newHashMap();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -66,16 +70,16 @@ public class ModuleManager {
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), o));
                     }
-                    moduleBeans.add(new ModuleBean(type.newInstance(), valueBeans));
+                    modules.put(type.newInstance(), valueBeans);
                 }
             }
 
             //Add Setting
-            for (ModuleBean moduleBean : moduleBeans) {
-                for (Field field : moduleBean.getObject().getClass().getDeclaredFields()) {
+            for (Object module : modules.keySet()) {
+                for (Field field : module.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (Objects.equals(field.getType().getSuperclass(), SettingBase.class)) {
-                        settings.add((SettingBase) field.get(moduleBean.getObject()));
+                        settings.put(module, Collections.singleton((SettingBase) field.get(module)));
                     }
                 }
             }
@@ -85,73 +89,59 @@ public class ModuleManager {
     }
 
     public String getName(Object object) {
-        for (Object module : getModules()) {
-            if (module.equals(object)) {
-                return module.getClass().getAnnotation(Module.class).value();
-            }
+        if (modules.containsKey(object)) {
+            return object.getClass().getAnnotation(Module.class).value();
         }
         return null;
     }
 
     public boolean getEnable(Object object) {
-        for (Object module : getModules()) {
-            if (module.equals(object)) {
-                return module.getClass().getAnnotation(Module.class).enable();
-            }
+        if (modules.containsKey(object)) {
+            return object.getClass().getAnnotation(Module.class).enable();
         }
         return false;
     }
 
     public void setEnable(Object object, boolean value) {
-        for (Object module : getModules()) {
-            if (module.equals(object)) {
-                try {
-                    TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "enable", value);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+        if (modules.containsKey(object)) {
+            try {
+                TypeAnnotation(Proxy.getInvocationHandler(object.getClass().getAnnotation(Module.class)), "enable", value);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
     }
 
     public int getKey(Object object) {
-        for (Object module : getModules()) {
-            if (module.equals(object)) {
-                return module.getClass().getAnnotation(Module.class).key();
-            }
+        if (modules.containsKey(object)) {
+            return object.getClass().getAnnotation(Module.class).key();
         }
         return 0;
     }
 
     public void setKey(Object object, int value) {
-        for (Object module : getModules()) {
-            if (module.equals(object)) {
-                try {
-                    TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "key", value);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+        if (modules.containsKey(object)) {
+            try {
+                TypeAnnotation(Proxy.getInvocationHandler(object.getClass().getAnnotation(Module.class)), "key", value);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
     }
 
     public Category getCategory(Object object) {
-        for (Object module : getModules()) {
-            if (module.equals(object)) {
-                return module.getClass().getAnnotation(Module.class).category();
-            }
+        if (modules.containsKey(object)) {
+            return object.getClass().getAnnotation(Module.class).category();
         }
         return Category.NONE;
     }
 
     public <T> T getValue(Object object, String name) {
         try {
-            for (ModuleBean moduleBean : moduleBeans) {
-                if (moduleBean.getObject().equals(object)) {
-                    for (ValueBean valueBean : moduleBean.getValueBeans()) {
-                        if (valueBean.getName().equals(name)) {
-                            return (T) valueBean.getField().get(valueBean.getObject());
-                        }
+            if (modules.containsKey(object)) {
+                for (ValueBean valueBean : modules.get(object)) {
+                    if (valueBean.getName().equals(name)) {
+                        return (T) valueBean.getField().get(valueBean.getObject());
                     }
                 }
             }
@@ -163,12 +153,10 @@ public class ModuleManager {
 
     public <T> void setValue(Object object, String name, T value) {
         try {
-            for (ModuleBean moduleBean : moduleBeans) {
-                if (moduleBean.getObject().equals(object)) {
-                    for (ValueBean valueBean : moduleBean.getValueBeans()) {
-                        if (valueBean.getName().equals(name)) {
-                            valueBean.getField().set(valueBean.getObject(), value);
-                        }
+            if (modules.containsKey(object)) {
+                for (ValueBean valueBean : modules.get(object)) {
+                    if (valueBean.getName().equals(name)) {
+                        valueBean.getField().set(valueBean.getObject(), value);
                     }
                 }
             }
@@ -221,12 +209,8 @@ public class ModuleManager {
         map.put(name, value);
     }
 
-    public ArrayList<Object> getModules() {
-        ArrayList<Object> modules = Lists.newArrayList();
-        for (ModuleBean moduleBean : moduleBeans) {
-            modules.add(moduleBean.getObject());
-        }
-        return modules;
+    public Set<Object> getModules() {
+        return modules.keySet();
     }
 
     public ArrayList<Object> getModules(Category category) {
@@ -243,19 +227,14 @@ public class ModuleManager {
     }
 
     public SettingBase getSetting(Object module, String name) {
-        for (SettingBase s : settings) {
-            if (s.getModule().equals(module) && s.getName().equalsIgnoreCase(name)) {
-                return s;
-            }
-        }
-        return null;
+        return settings.get(module).stream().filter(setting -> setting.getName().equals(name)).collect(Collectors.toCollection(Lists::newArrayList)).get(0);
     }
 
-    public ArrayList<SettingBase> getSettings() {
-        return Lists.newArrayList(settings);
+    public HashMap<Object, Set<SettingBase>> getSettings() {
+        return settings;
     }
 
-    public ArrayList<SettingBase> getSettings(Object module) {
-        return settings.stream().filter(setting -> setting.getModule().equals(module)).collect(Collectors.toCollection(Lists::newArrayList));
+    public Set<SettingBase> getSettings(Object module) {
+        return settings.get(module);
     }
 }
