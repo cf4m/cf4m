@@ -9,9 +9,7 @@ import cn.enaium.cf4m.event.events.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -32,19 +30,19 @@ public class ModuleManager {
      * <K> module
      * <V> values
      */
-    private final HashMap<Object, Set<ValueBean>> modules = Maps.newHashMap();
+    private final Multimap<Object, ValueBean> modules = ArrayListMultimap.create();
 
     /**
      * <K> module
      * <V> settings
      */
-    private final HashMap<Object, Set<SettingBase>> settings = Maps.newHashMap();
+    private final Multimap<Object, SettingBase> settings = ArrayListMultimap.create();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
         try {
             //Find Value
-            Class<?> extend = null;
+            Class<?> extend = null;//Extend class
             HashMap<String, Field> findFields = Maps.newHashMap();
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Extend.class)) {
@@ -53,33 +51,33 @@ public class ModuleManager {
                         field.setAccessible(true);
                         if (field.isAnnotationPresent(Value.class)) {
                             Value value = field.getAnnotation(Value.class);
-                            findFields.put(value.value(), field);
+                            findFields.put(value.value(), field);//Add value
                         }
                     }
                 }
             }
 
-            //Add ModuleBean and ValueBean
+            //Add Modules
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Module.class)) {
-                    Object o = null;
+                    Object extendObject = null;
                     if (extend != null) {
-                        o = extend.newInstance();
+                        extendObject = extend.newInstance();
                     }
-                    Set<ValueBean> valueBeans = Sets.newHashSet();
+                    Object moduleObject = type.newInstance();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
-                        valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), o));
+                        modules.put(moduleObject, new ValueBean(entry.getKey(), entry.getValue(), extendObject));
                     }
-                    modules.put(type.newInstance(), valueBeans);
                 }
             }
 
-            //Add Setting
+            //Add Settings
             for (Object module : modules.keySet()) {
                 for (Field field : module.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (Objects.equals(field.getType().getSuperclass(), SettingBase.class)) {
-                        settings.put(module, Collections.singleton((SettingBase) field.get(module)));
+                        SettingBase setting = (SettingBase) field.get(module);
+                        settings.put(module, (SettingBase) field.get(module));
                     }
                 }
             }
@@ -230,11 +228,7 @@ public class ModuleManager {
         return settings.get(module).stream().filter(setting -> setting.getName().equals(name)).collect(Collectors.toCollection(Lists::newArrayList)).get(0);
     }
 
-    public HashMap<Object, Set<SettingBase>> getSettings() {
-        return settings;
-    }
-
-    public Set<SettingBase> getSettings(Object module) {
+    public Collection<SettingBase> getSettings(Object module) {
         return settings.get(module);
     }
 }

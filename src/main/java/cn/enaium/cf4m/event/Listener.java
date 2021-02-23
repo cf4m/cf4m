@@ -3,6 +3,7 @@ package cn.enaium.cf4m.event;
 import cn.enaium.cf4m.CF4M;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -24,7 +25,7 @@ public class Listener {
      * Call all event
      */
     public void call() {
-        CopyOnWriteArrayList<MethodBean> methodBeans = CF4M.INSTANCE.event.getEvent(this.getClass());
+        Collection<MethodBean> methodBeans = CF4M.INSTANCE.event.getEvent(this.getClass());
 
         if (methodBeans == null) {
             return;
