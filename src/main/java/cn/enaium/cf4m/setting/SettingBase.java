@@ -8,11 +8,6 @@ package cn.enaium.cf4m.setting;
 public class SettingBase {
 
     /**
-     * Module.
-     */
-    private final Object module;
-
-    /**
      * Name.
      */
     private final String name;
@@ -23,21 +18,12 @@ public class SettingBase {
     private final String info;
 
     /**
-     * @param module Setting module
-     * @param name   Setting name
-     * @param info   Setting info
+     * @param name Setting name
+     * @param info Setting info
      */
-    public SettingBase(Object module, String name, String info) {
-        this.module = module;
+    public SettingBase(String name, String info) {
         this.name = name;
         this.info = info;
-    }
-
-    /**
-     * @return Module
-     */
-    public Object getModule() {
-        return module;
     }
 
     public String getName() {

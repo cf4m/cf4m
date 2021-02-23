@@ -11,8 +11,8 @@ public class EnableSetting extends SettingBase {
 
     private boolean enable;
 
-    public EnableSetting(Object module, String name, String info, boolean enable) {
-        super(module, name, info);
+    public EnableSetting(String name, String info, boolean enable) {
+        super(name, info);
         this.enable = enable;
     }
 
