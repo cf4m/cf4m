@@ -70,7 +70,6 @@ public class ModuleManager {
                 for (Field field : module.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (Objects.equals(field.getType().getSuperclass(), SettingBase.class)) {
-                        SettingBase setting = (SettingBase) field.get(module);
                         settings.put(module, (SettingBase) field.get(module));
                     }
                 }
