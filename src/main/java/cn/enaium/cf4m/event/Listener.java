@@ -3,7 +3,6 @@ package cn.enaium.cf4m.event;
 import cn.enaium.cf4m.CF4M;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -14,18 +13,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Listener {
 
     private final At at;
-    private boolean cancelled;
+    private boolean cancel;
 
     public Listener(At at) {
         this.at = at;
-        cancelled = false;
+        cancel = false;
     }
 
     /**
      * Call all event
      */
     public void call() {
-        Collection<MethodBean> methodBeans = CF4M.INSTANCE.event.getEvent(this.getClass());
+        CopyOnWriteArrayList<MethodBean> methodBeans = CF4M.INSTANCE.event.getEvent(this.getClass());
 
         if (methodBeans == null) {
             return;
@@ -34,18 +33,18 @@ public class Listener {
         methodBeans.forEach(event -> {
             try {
                 event.getMethod().invoke(event.getObject(), this);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                e.getCause().printStackTrace();
             }
         });
     }
 
-    public boolean getCancelled() {
-        return cancelled;
+    public boolean getCancel() {
+        return cancel;
     }
 
-    public void cancel() {
-        this.cancelled = true;
+    public void setCancel(boolean cancel) {
+        this.cancel = cancel;
     }
 
     public At getAt() {
@@ -57,6 +56,7 @@ public class Listener {
      */
     public enum At {
         HEAD,
-        TAIL
+        TAIL,
+        NONE
     }
 }
