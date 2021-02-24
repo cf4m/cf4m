@@ -13,8 +13,8 @@ public class DoubleSetting extends SettingBase {
     private Double min;
     private Double max;
 
-    public DoubleSetting(String name, String info, Double current, Double min, Double max) {
-        super(name, info);
+    public DoubleSetting(String name, Double current, Double min, Double max) {
+        super(name);
         this.current = current;
         this.min = min;
         this.max = max;

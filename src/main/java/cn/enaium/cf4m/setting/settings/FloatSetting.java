@@ -13,8 +13,8 @@ public class FloatSetting extends SettingBase {
     private Float min;
     private Float max;
 
-    public FloatSetting(String name, String info, Float current, Float min, Float max) {
-        super(name, info);
+    public FloatSetting(String name, Float current, Float min, Float max) {
+        super(name);
         this.current = current;
         this.min = min;
         this.max = max;

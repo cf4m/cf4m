@@ -13,8 +13,8 @@ public class LongSetting extends SettingBase {
     private Long min;
     private Long max;
 
-    public LongSetting(String name, String info, Long current, Long min, Long max) {
-        super(name, info);
+    public LongSetting(String name, Long current, Long min, Long max) {
+        super(name);
         this.current = current;
         this.min = min;
         this.max = max;

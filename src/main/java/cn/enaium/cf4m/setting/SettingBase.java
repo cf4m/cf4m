@@ -13,24 +13,13 @@ public class SettingBase {
     private final String name;
 
     /**
-     * Info.
-     */
-    private final String info;
-
-    /**
      * @param name Setting name
-     * @param info Setting info
      */
-    public SettingBase(String name, String info) {
+    public SettingBase(String name) {
         this.name = name;
-        this.info = info;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getInfo() {
-        return info;
     }
 }

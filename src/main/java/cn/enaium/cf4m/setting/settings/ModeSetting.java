@@ -12,10 +12,10 @@ import java.util.List;
 public class ModeSetting extends SettingBase {
 
     private String current;
-    private List<String> modes;
+    private final List<String> modes;
 
-    public ModeSetting(String name, String info, String current, List<String> modes) {
-        super(name, info);
+    public ModeSetting(String name, String current, List<String> modes) {
+        super(name);
         this.current = current;
         this.modes = modes;
     }

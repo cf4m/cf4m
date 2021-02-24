@@ -13,8 +13,8 @@ public class IntegerSetting extends SettingBase {
     private Integer min;
     private Integer max;
 
-    public IntegerSetting(String name, String info, Integer current, Integer min, Integer max) {
-        super(name, info);
+    public IntegerSetting(String name, Integer current, Integer min, Integer max) {
+        super(name);
         this.current = current;
         this.min = min;
         this.max = max;
