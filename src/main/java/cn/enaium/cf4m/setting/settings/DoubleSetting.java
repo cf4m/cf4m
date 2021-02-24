@@ -1,20 +1,17 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.setting.SettingBase;
-
 /**
  * Project: cf4m
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class DoubleSetting extends SettingBase {
+public class DoubleSetting {
 
     private Double current;
     private Double min;
     private Double max;
 
-    public DoubleSetting(String name, Double current, Double min, Double max) {
-        super(name);
+    public DoubleSetting(Double current, Double min, Double max) {
         this.current = current;
         this.min = min;
         this.max = max;

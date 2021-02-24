@@ -8,7 +8,6 @@ import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.event.events.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.module.ValueBean;
-import cn.enaium.cf4m.setting.SettingBase;
 import com.google.common.collect.*;
 
 import java.lang.reflect.*;
@@ -28,12 +27,6 @@ public class ModuleManager {
      * <V> values
      */
     private final HashMultimap<Object, ValueBean> modules = HashMultimap.create();
-
-    /**
-     * <K> module
-     * <V> settings
-     */
-    private final HashMultimap<Object, SettingBase> settings = HashMultimap.create();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -61,16 +54,6 @@ public class ModuleManager {
                     Object moduleObject = type.newInstance();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         modules.put(moduleObject, new ValueBean(entry.getKey(), entry.getValue(), extendObject));
-                    }
-                }
-            }
-
-            //Add Settings
-            for (Object module : modules.keySet()) {
-                for (Field field : module.getClass().getDeclaredFields()) {
-                    field.setAccessible(true);
-                    if (Objects.equals(field.getType().getSuperclass(), SettingBase.class)) {
-                        settings.put(module, (SettingBase) field.get(module));
                     }
                 }
             }
@@ -202,7 +185,7 @@ public class ModuleManager {
     }
 
     public ArrayList<Object> getModules(Category category) {
-        return getModules().stream().filter(module -> getCategory(module).equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
+        return getModules().stream().filter(module -> !getCategory(module).equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
     }
 
     public Object getModule(String name) {
@@ -212,13 +195,5 @@ public class ModuleManager {
             }
         }
         return null;
-    }
-
-    public SettingBase getSetting(Object module, String name) {
-        return settings.get(module).stream().filter(setting -> setting.getName().equals(name)).collect(Collectors.toCollection(Lists::newArrayList)).get(0);
-    }
-
-    public Set<SettingBase> getSettings(Object module) {
-        return settings.get(module);
     }
 }

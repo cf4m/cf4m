@@ -1,7 +1,5 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.setting.SettingBase;
-
 import java.util.List;
 
 /**
@@ -9,13 +7,12 @@ import java.util.List;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class ModeSetting extends SettingBase {
+public class ModeSetting {
 
     private String current;
     private final List<String> modes;
 
-    public ModeSetting(String name, String current, List<String> modes) {
-        super(name);
+    public ModeSetting(String current, List<String> modes) {
         this.current = current;
         this.modes = modes;
     }

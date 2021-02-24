@@ -46,6 +46,11 @@ public enum CF4M {
     public ModuleManager module;
 
     /**
+     * SettingManager
+     */
+    public SettingManager setting;
+
+    /**
      * CommandManager.
      */
     public CommandManager command;
@@ -66,6 +71,7 @@ public enum CF4M {
         type = new ClassManager();
         event = new EventManager();
         module = new ModuleManager();
+        setting = new SettingManager();
         command = new CommandManager();
         config = new ConfigManager();
         config.load();

@@ -1,20 +1,17 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.setting.SettingBase;
-
 /**
  * Project: cf4m
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class FloatSetting extends SettingBase {
+public class FloatSetting {
 
     private Float current;
     private Float min;
     private Float max;
 
-    public FloatSetting(String name, Float current, Float min, Float max) {
-        super(name);
+    public FloatSetting(Float current, Float min, Float max) {
         this.current = current;
         this.min = min;
         this.max = max;

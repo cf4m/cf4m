@@ -1,18 +1,15 @@
 package cn.enaium.cf4m.setting.settings;
 
-import cn.enaium.cf4m.setting.SettingBase;
-
 /**
  * Project: cf4m
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class EnableSetting extends SettingBase {
+public class EnableSetting {
 
     private boolean enable;
 
-    public EnableSetting(String name, boolean enable) {
-        super(name);
+    public EnableSetting(boolean enable) {
         this.enable = enable;
     }
 
