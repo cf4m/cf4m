@@ -6,6 +6,7 @@ import cn.enaium.cf4m.configuration.IConfiguration;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class ClassManager {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getCause().printStackTrace();
         }
     }
 

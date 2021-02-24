@@ -33,7 +33,7 @@ public class CommandManager {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getCause().printStackTrace();
         }
     }
 

@@ -11,10 +11,7 @@ import cn.enaium.cf4m.module.ValueBean;
 import cn.enaium.cf4m.setting.SettingBase;
 import com.google.common.collect.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,13 +27,13 @@ public class ModuleManager {
      * <K> module
      * <V> values
      */
-    private final Multimap<Object, ValueBean> modules = ArrayListMultimap.create();
+    private final HashMultimap<Object, ValueBean> modules = HashMultimap.create();
 
     /**
      * <K> module
      * <V> settings
      */
-    private final Multimap<Object, SettingBase> settings = ArrayListMultimap.create();
+    private final HashMultimap<Object, SettingBase> settings = HashMultimap.create();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -60,10 +57,7 @@ public class ModuleManager {
             //Add Modules
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Module.class)) {
-                    Object extendObject = null;
-                    if (extend != null) {
-                        extendObject = extend.newInstance();
-                    }
+                    Object extendObject = extend != null ? extend.newInstance() : null;
                     Object moduleObject = type.newInstance();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
                         modules.put(moduleObject, new ValueBean(entry.getKey(), entry.getValue(), extendObject));
@@ -82,7 +76,7 @@ public class ModuleManager {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getCause().printStackTrace();
         }
     }
 
@@ -104,8 +98,8 @@ public class ModuleManager {
         if (modules.containsKey(object)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(object.getClass().getAnnotation(Module.class)), "enable", value);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                e.getCause().printStackTrace();
             }
         }
     }
@@ -121,8 +115,8 @@ public class ModuleManager {
         if (modules.containsKey(object)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(object.getClass().getAnnotation(Module.class)), "key", value);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                e.getCause().printStackTrace();
             }
         }
     }
@@ -143,8 +137,8 @@ public class ModuleManager {
                     }
                 }
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.getCause().printStackTrace();
         }
         return null;
     }
@@ -158,18 +152,18 @@ public class ModuleManager {
                     }
                 }
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.getCause().printStackTrace();
         }
     }
 
     public void enable(Object object) {
-        try {
-            if (modules.containsKey(object)) {
-                Class<?> type = object.getClass();
-                setEnable(object, !getEnable(object));
-                for (Method method : type.getDeclaredMethods()) {
-                    method.setAccessible(true);
+        if (modules.containsKey(object)) {
+            Class<?> type = object.getClass();
+            setEnable(object, !getEnable(object));
+            for (Method method : type.getDeclaredMethods()) {
+                method.setAccessible(true);
+                try {
                     if (getEnable(object)) {
                         CF4M.INSTANCE.event.register(object);
                         if (method.isAnnotationPresent(Enable.class)) {
@@ -181,10 +175,10 @@ public class ModuleManager {
                             method.invoke(object);
                         }
                     }
+                } catch (Exception e) {
+                    e.getCause().printStackTrace();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -225,7 +219,7 @@ public class ModuleManager {
         return settings.get(module).stream().filter(setting -> setting.getName().equals(name)).collect(Collectors.toCollection(Lists::newArrayList)).get(0);
     }
 
-    public Collection<SettingBase> getSettings(Object module) {
+    public Set<SettingBase> getSettings(Object module) {
         return settings.get(module);
     }
 }
