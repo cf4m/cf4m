@@ -16,7 +16,7 @@ public class ValueBean {
     /**
      * @param name   value name
      * @param field  value field
-     * @param object for module
+     * @param object for extend
      */
     public ValueBean(String name, Field field, Object object) {
         this.name = name;
