@@ -2,14 +2,10 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Setting;
-import cn.enaium.cf4m.setting.SettingBean;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 /**
  * Project: cf4m
@@ -22,7 +18,7 @@ public class SettingManager {
      * <K> module
      * <V> settings
      */
-    private final HashMultimap<Object, SettingBean> settings = HashMultimap.create();
+    private final HashMultimap<Object, Field> settings = HashMultimap.create();
 
     public SettingManager() {
         try {
@@ -30,7 +26,7 @@ public class SettingManager {
                 for (Field field : module.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
                     if (field.isAnnotationPresent(Setting.class)) {
-                        settings.put(module, new SettingBean(field.getAnnotation(Setting.class).value(), field, field.get(module)));
+                        settings.put(module, field);
                     }
                 }
             }
@@ -41,20 +37,28 @@ public class SettingManager {
 
     public String getName(Object module, Object setting) {
         if (settings.containsKey(module)) {
-            for (SettingBean settingBean : settings.get(module)) {
-                if (settingBean.getFieldObject().equals(setting)) {
-                    return settingBean.getField().getAnnotation(Setting.class).value();
+            for (Field field : settings.get(module)) {
+                try {
+                    if (field.get(module).equals(setting)) {
+                        return field.getAnnotation(Setting.class).value();
+                    }
+                } catch (Exception e) {
+                    e.getCause().printStackTrace();
                 }
             }
         }
         return null;
     }
 
-    public Set<Object> getSettings(Object module) {
-        Set<Object> setting = Sets.newHashSet();
-        for (SettingBean settingBean : settings.get(module)) {
-            setting.add(settingBean.getFieldObject());
-        }
+    public ArrayList<Object> getSettings(Object module) {
+        ArrayList<Object> setting = new ArrayList<>();
+        settings.get(module).forEach(field -> {
+            try {
+                setting.add(field.get(module));
+            } catch (Exception e) {
+                e.getCause().printStackTrace();
+            }
+        });
         return setting;
     }
 }

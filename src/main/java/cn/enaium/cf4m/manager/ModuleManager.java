@@ -180,8 +180,8 @@ public class ModuleManager {
         map.put(name, value);
     }
 
-    public Set<Object> getModules() {
-        return modules.keySet();
+    public ArrayList<Object> getModules() {
+        return Lists.newArrayList(modules.keySet());
     }
 
     public ArrayList<Object> getModules(Category category) {
