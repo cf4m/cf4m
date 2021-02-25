@@ -3,6 +3,7 @@ package cn.enaium.cf4m;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.manager.*;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,7 +23,7 @@ public enum CF4M {
     /**
      * .minecraft/{clientName} path.
      */
-    public String clientDataDir;
+    public String dir;
 
     /**
      * CF4M configuration
@@ -45,6 +46,11 @@ public enum CF4M {
     public ModuleManager module;
 
     /**
+     * SettingManager
+     */
+    public SettingManager setting;
+
+    /**
      * CommandManager.
      */
     public CommandManager command;
@@ -55,17 +61,17 @@ public enum CF4M {
     public ConfigManager config;
 
     /**
-     * @param mainClass     MainClass.
-     * @param clientDataDir .minecraft/{clientName} path.
+     * @param mainClass MainClass.
      */
-    public void run(Class<?> mainClass, String clientDataDir) {
+    public void run(Class<?> mainClass) {
         this.packName = mainClass.getPackage().getName();
-        this.clientDataDir = clientDataDir;
+        this.dir = new File(".", mainClass.getSimpleName()).toString();
         this.configuration = new IConfiguration() {
         };
         type = new ClassManager();
         event = new EventManager();
         module = new ModuleManager();
+        setting = new SettingManager();
         command = new CommandManager();
         config = new ConfigManager();
         config.load();
@@ -73,10 +79,27 @@ public enum CF4M {
     }
 
     /**
-     * @param o             MainObject.
-     * @param clientDataDir .minecraft/{clientName} path.
+     * @param o MainObject.
      */
-    public void run(Object o, String clientDataDir) {
-        run(o.getClass(), clientDataDir);
+    public void run(Object o) {
+        run(o.getClass());
+    }
+
+    /**
+     * @param mainClass MainClass.
+     * @param dir       .minecraft/{clientName} path.
+     */
+    public void run(Class<?> mainClass, String dir) {
+        this.dir = dir;
+        run(mainClass);
+    }
+
+    /**
+     * @param o   MainObject.
+     * @param dir .minecraft/{clientName} path.
+     */
+    public void run(Object o, String dir) {
+        this.dir = dir;
+        run(o);
     }
 }

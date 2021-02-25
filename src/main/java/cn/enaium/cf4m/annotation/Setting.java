@@ -1,6 +1,4 @@
-package cn.enaium.cf4m.annotation.module;
-
-import cn.enaium.cf4m.module.Category;
+package cn.enaium.cf4m.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,16 +10,10 @@ import java.lang.annotation.Target;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Module {
+public @interface Setting {
     String value();
-
-    boolean enable() default false;
-
-    int key() default 0;
-
-    Category category() default Category.NONE;
 
     String description() default "";
 }

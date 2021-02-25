@@ -11,9 +11,9 @@ public class KeyboardEvent extends Listener {
 
     private final int key;
 
-    public KeyboardEvent(int keyCode) {
-        super(At.TAIL);
-        this.key = keyCode;
+    public KeyboardEvent(int key) {
+        super(At.NONE);
+        this.key = key;
     }
 
     public int getKey() {

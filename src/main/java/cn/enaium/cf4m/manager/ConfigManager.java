@@ -23,10 +23,8 @@ public class ConfigManager {
     public HashMap<Object, String> configs = Maps.newHashMap();
 
     public ConfigManager() {
-        if (CF4M.INSTANCE.clientDataDir == null)
-            return;
-        new File(CF4M.INSTANCE.clientDataDir).mkdir();
-        new File(CF4M.INSTANCE.clientDataDir + "/configs/").mkdir();
+        new File(CF4M.INSTANCE.dir).mkdir();
+        new File(CF4M.INSTANCE.dir, "configs").mkdir();
         try {
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Config.class)) {
@@ -34,7 +32,7 @@ public class ConfigManager {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.getCause().printStackTrace();
         }
     }
 
@@ -50,15 +48,13 @@ public class ConfigManager {
     public String getPath(Object object) {
         for (Map.Entry<Object, String> entry : configs.entrySet()) {
             if (entry.getKey().equals(object)) {
-                return CF4M.INSTANCE.clientDataDir + "/configs/" + entry.getValue() + ".json";
+                return CF4M.INSTANCE.dir + File.separator + "configs" + File.separator + entry.getValue() + ".json";
             }
         }
         return null;
     }
 
     public void load() {
-        if (CF4M.INSTANCE.clientDataDir == null)
-            return;
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
                 if (new File(getPath(entry.getKey())).exists()) {
@@ -70,14 +66,12 @@ public class ConfigManager {
                     }
                 }
             }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.getCause().printStackTrace();
         }
     }
 
     public void save() {
-        if (CF4M.INSTANCE.clientDataDir == null)
-            return;
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
                 new File(getPath(entry.getKey())).createNewFile();
@@ -90,8 +84,8 @@ public class ConfigManager {
                     }
                 }
             }
-        } catch (IOException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.getCause().printStackTrace();
         }
     }
 }

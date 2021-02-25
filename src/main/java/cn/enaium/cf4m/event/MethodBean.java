@@ -10,10 +10,12 @@ import java.lang.reflect.Method;
 public class MethodBean {
     private final Object object;
     private final Method method;
+    private final int priority;
 
-    public MethodBean(Object object, Method method) {
+    public MethodBean(Object object, Method method, int priority) {
         this.object = object;
         this.method = method;
+        this.priority = priority;
     }
 
     public Object getObject() {
@@ -22,5 +24,9 @@ public class MethodBean {
 
     public Method getMethod() {
         return method;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 }

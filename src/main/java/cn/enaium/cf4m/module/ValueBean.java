@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
 public class ValueBean {
+
     private final String name;
     private final Field field;
     private final Object object;
@@ -15,7 +16,7 @@ public class ValueBean {
     /**
      * @param name   value name
      * @param field  value field
-     * @param object for module
+     * @param object for extend
      */
     public ValueBean(String name, Field field, Object object) {
         this.name = name;
