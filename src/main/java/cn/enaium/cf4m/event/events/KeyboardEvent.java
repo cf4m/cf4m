@@ -12,7 +12,7 @@ public class KeyboardEvent extends Listener {
     private final int key;
 
     public KeyboardEvent(int key) {
-        super(At.TAIL);
+        super(At.NONE);
         this.key = key;
     }
 
