@@ -17,7 +17,7 @@ public class SettingManager {
 
     /**
      * <K> module
-     * <V> settings
+     * <V> settingFields
      */
     private final LinkedHashMultimap<Object, Field> settings = LinkedHashMultimap.create();
 
