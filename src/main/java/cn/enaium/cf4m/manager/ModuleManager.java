@@ -26,7 +26,7 @@ public class ModuleManager {
      * <K> module
      * <V> values
      */
-    private final HashMultimap<Object, ValueBean> modules = HashMultimap.create();
+    private final LinkedHashMultimap<Object, ValueBean> modules = LinkedHashMultimap.create();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -62,58 +62,58 @@ public class ModuleManager {
         }
     }
 
-    public String getName(Object object) {
-        if (modules.containsKey(object)) {
-            return object.getClass().getAnnotation(Module.class).value();
+    public String getName(Object module) {
+        if (modules.containsKey(module)) {
+            return module.getClass().getAnnotation(Module.class).value();
         }
         return null;
     }
 
-    public boolean getEnable(Object object) {
-        if (modules.containsKey(object)) {
-            return object.getClass().getAnnotation(Module.class).enable();
+    public boolean getEnable(Object module) {
+        if (modules.containsKey(module)) {
+            return module.getClass().getAnnotation(Module.class).enable();
         }
         return false;
     }
 
-    public void setEnable(Object object, boolean value) {
-        if (modules.containsKey(object)) {
+    public void setEnable(Object module, boolean value) {
+        if (modules.containsKey(module)) {
             try {
-                TypeAnnotation(Proxy.getInvocationHandler(object.getClass().getAnnotation(Module.class)), "enable", value);
+                TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "enable", value);
             } catch (Exception e) {
                 e.getCause().printStackTrace();
             }
         }
     }
 
-    public int getKey(Object object) {
-        if (modules.containsKey(object)) {
-            return object.getClass().getAnnotation(Module.class).key();
+    public int getKey(Object module) {
+        if (modules.containsKey(module)) {
+            return module.getClass().getAnnotation(Module.class).key();
         }
         return 0;
     }
 
-    public void setKey(Object object, int value) {
-        if (modules.containsKey(object)) {
+    public void setKey(Object module, int value) {
+        if (modules.containsKey(module)) {
             try {
-                TypeAnnotation(Proxy.getInvocationHandler(object.getClass().getAnnotation(Module.class)), "key", value);
+                TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "key", value);
             } catch (Exception e) {
                 e.getCause().printStackTrace();
             }
         }
     }
 
-    public Category getCategory(Object object) {
-        if (modules.containsKey(object)) {
-            return object.getClass().getAnnotation(Module.class).category();
+    public Category getCategory(Object module) {
+        if (modules.containsKey(module)) {
+            return module.getClass().getAnnotation(Module.class).category();
         }
         return Category.NONE;
     }
 
-    public <T> T getValue(Object object, String name) {
+    public <T> T getValue(Object module, String name) {
         try {
-            if (modules.containsKey(object)) {
-                for (ValueBean valueBean : modules.get(object)) {
+            if (modules.containsKey(module)) {
+                for (ValueBean valueBean : modules.get(module)) {
                     if (valueBean.getName().equals(name)) {
                         return (T) valueBean.getField().get(valueBean.getObject());
                     }
@@ -125,10 +125,10 @@ public class ModuleManager {
         return null;
     }
 
-    public <T> void setValue(Object object, String name, T value) {
+    public <T> void setValue(Object module, String name, T value) {
         try {
-            if (modules.containsKey(object)) {
-                for (ValueBean valueBean : modules.get(object)) {
+            if (modules.containsKey(module)) {
+                for (ValueBean valueBean : modules.get(module)) {
                     if (valueBean.getName().equals(name)) {
                         valueBean.getField().set(valueBean.getObject(), value);
                     }
@@ -139,22 +139,22 @@ public class ModuleManager {
         }
     }
 
-    public void enable(Object object) {
-        if (modules.containsKey(object)) {
-            Class<?> type = object.getClass();
-            setEnable(object, !getEnable(object));
+    public void enable(Object module) {
+        if (modules.containsKey(module)) {
+            Class<?> type = module.getClass();
+            setEnable(module, !getEnable(module));
             for (Method method : type.getDeclaredMethods()) {
                 method.setAccessible(true);
                 try {
-                    if (getEnable(object)) {
-                        CF4M.INSTANCE.event.register(object);
+                    if (getEnable(module)) {
+                        CF4M.INSTANCE.event.register(module);
                         if (method.isAnnotationPresent(Enable.class)) {
-                            method.invoke(object);
+                            method.invoke(module);
                         }
                     } else {
-                        CF4M.INSTANCE.event.unregister(object);
+                        CF4M.INSTANCE.event.unregister(module);
                         if (method.isAnnotationPresent(Disable.class)) {
-                            method.invoke(object);
+                            method.invoke(module);
                         }
                     }
                 } catch (Exception e) {
@@ -165,9 +165,9 @@ public class ModuleManager {
     }
 
     @Event
-    private void onKey(KeyboardEvent keyboardEvent) {
+    private void onKey(KeyboardEvent e) {
         for (Object module : getModules()) {
-            if (getKey(module) == keyboardEvent.getKey()) {
+            if (getKey(module) == e.getKey()) {
                 enable(module);
             }
         }

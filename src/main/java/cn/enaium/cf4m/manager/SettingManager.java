@@ -2,7 +2,7 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Setting;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class SettingManager {
      * <K> module
      * <V> settings
      */
-    private final HashMultimap<Object, Field> settings = HashMultimap.create();
+    private final LinkedHashMultimap<Object, Field> settings = LinkedHashMultimap.create();
 
     public SettingManager() {
         try {
