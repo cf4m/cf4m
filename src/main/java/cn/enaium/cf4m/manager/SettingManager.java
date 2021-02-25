@@ -36,6 +36,21 @@ public class SettingManager {
         }
     }
 
+    public String getName(Object module, Object setting) {
+        if (settings.containsKey(module)) {
+            for (Field field : settings.get(module)) {
+                try {
+                    if (field.get(module).equals(setting)) {
+                        return field.getAnnotation(Setting.class).value();
+                    }
+                } catch (Exception e) {
+                    e.getCause().printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
     public String getDescription(Object module, Object setting) {
         if (settings.containsKey(module)) {
             for (Field field : settings.get(module)) {
@@ -51,16 +66,10 @@ public class SettingManager {
         return null;
     }
 
-    public String getName(Object module, Object setting) {
-        if (settings.containsKey(module)) {
-            for (Field field : settings.get(module)) {
-                try {
-                    if (field.get(module).equals(setting)) {
-                        return field.getAnnotation(Setting.class).value();
-                    }
-                } catch (Exception e) {
-                    e.getCause().printStackTrace();
-                }
+    public Object getSetting(Object module, String name) {
+        for (Object setting : getSettings(module)) {
+            if (getName(module, setting).equalsIgnoreCase(name)) {
+                return setting;
             }
         }
         return null;
