@@ -110,6 +110,13 @@ public class ModuleManager {
         return Category.NONE;
     }
 
+    public String getDescription(Object module) {
+        if (modules.containsKey(module)) {
+            return module.getClass().getAnnotation(Module.class).description();
+        }
+        return null;
+    }
+
     public <T> T getValue(Object module, String name) {
         try {
             if (modules.containsKey(module)) {

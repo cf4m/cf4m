@@ -6,6 +6,7 @@ import com.google.common.collect.LinkedHashMultimap;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Project: cf4m
@@ -35,6 +36,21 @@ public class SettingManager {
         }
     }
 
+    public String getDescription(Object module, Object setting) {
+        if (settings.containsKey(module)) {
+            for (Field field : settings.get(module)) {
+                try {
+                    if (field.get(module).equals(setting)) {
+                        return field.getAnnotation(Setting.class).description();
+                    }
+                } catch (Exception e) {
+                    e.getCause().printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
     public String getName(Object module, Object setting) {
         if (settings.containsKey(module)) {
             for (Field field : settings.get(module)) {
@@ -51,7 +67,7 @@ public class SettingManager {
     }
 
     public ArrayList<Object> getSettings(Object module) {
-        if(settings.containsKey(module)) {
+        if (settings.containsKey(module)) {
             ArrayList<Object> setting = new ArrayList<>();
             settings.get(module).forEach(field -> {
                 try {
