@@ -51,14 +51,17 @@ public class SettingManager {
     }
 
     public ArrayList<Object> getSettings(Object module) {
-        ArrayList<Object> setting = new ArrayList<>();
-        settings.get(module).forEach(field -> {
-            try {
-                setting.add(field.get(module));
-            } catch (Exception e) {
-                e.getCause().printStackTrace();
-            }
-        });
-        return setting;
+        if(settings.containsKey(module)) {
+            ArrayList<Object> setting = new ArrayList<>();
+            settings.get(module).forEach(field -> {
+                try {
+                    setting.add(field.get(module));
+                } catch (Exception e) {
+                    e.getCause().printStackTrace();
+                }
+            });
+            return setting;
+        }
+        return null;
     }
 }
