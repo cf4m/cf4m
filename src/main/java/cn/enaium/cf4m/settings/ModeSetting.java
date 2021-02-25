@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.setting.settings;
+package cn.enaium.cf4m.settings;
 
 import java.util.List;
 
