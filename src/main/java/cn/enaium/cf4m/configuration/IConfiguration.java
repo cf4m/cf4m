@@ -8,7 +8,6 @@ package cn.enaium.cf4m.configuration;
 public interface IConfiguration {
 
     /**
-     *
      * @param message print chat message
      */
     default void message(String message) {
@@ -16,10 +15,13 @@ public interface IConfiguration {
     }
 
     /**
-     *
      * @return Command prefix
      */
     default String prefix() {
         return "`";
+    }
+
+    default boolean config() {
+        return true;
     }
 }

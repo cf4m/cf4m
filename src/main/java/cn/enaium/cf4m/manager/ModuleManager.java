@@ -149,17 +149,23 @@ public class ModuleManager {
     public void enable(Object module) {
         if (modules.containsKey(module)) {
             Class<?> type = module.getClass();
+
             setEnable(module, !getEnable(module));
+
+            if (getEnable(module)) {
+                CF4M.INSTANCE.event.register(module);
+            } else {
+                CF4M.INSTANCE.event.unregister(module);
+            }
+
             for (Method method : type.getDeclaredMethods()) {
                 method.setAccessible(true);
                 try {
                     if (getEnable(module)) {
-                        CF4M.INSTANCE.event.register(module);
                         if (method.isAnnotationPresent(Enable.class)) {
                             method.invoke(module);
                         }
                     } else {
-                        CF4M.INSTANCE.event.unregister(module);
                         if (method.isAnnotationPresent(Disable.class)) {
                             method.invoke(module);
                         }

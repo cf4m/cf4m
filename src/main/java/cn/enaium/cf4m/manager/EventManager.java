@@ -54,7 +54,7 @@ public class EventManager {
                     events.put(listener, new CopyOnWriteArrayList<>(Collections.singletonList(methodBean)));
                 }
 
-                events.values().forEach(flexibleArray -> flexibleArray.sort((Comparator.comparingInt(MethodBean::getPriority))));
+                events.values().forEach(methodBeans -> methodBeans.sort((Comparator.comparingInt(MethodBean::getPriority))));
             }
         }
     }
