@@ -24,6 +24,8 @@ public class Listener {
      * Call all event
      */
     public void call() {
+        cancel = false;
+
         CopyOnWriteArrayList<MethodBean> methodBeans = CF4M.INSTANCE.event.getEvent(this.getClass());
 
         if (methodBeans == null) {
