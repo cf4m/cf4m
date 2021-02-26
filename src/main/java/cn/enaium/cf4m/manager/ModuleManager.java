@@ -26,7 +26,7 @@ public class ModuleManager {
      * <K> module
      * <V> values
      */
-    private final LinkedHashMultimap<Object, ValueBean> modules = LinkedHashMultimap.create();
+    private final LinkedHashMap<Object, LinkedHashSet<ValueBean>> modules = Maps.newLinkedHashMap();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -52,9 +52,11 @@ public class ModuleManager {
                 if (type.isAnnotationPresent(Module.class)) {
                     Object extendObject = extend != null ? extend.newInstance() : null;
                     Object moduleObject = type.newInstance();
+                    LinkedHashSet<ValueBean> valueBeans = Sets.newLinkedHashSet();
                     for (Map.Entry<String, Field> entry : findFields.entrySet()) {
-                        modules.put(moduleObject, new ValueBean(entry.getKey(), entry.getValue(), extendObject));
+                        valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), extendObject));
                     }
+                    modules.put(moduleObject, valueBeans);
                 }
             }
         } catch (Exception e) {
