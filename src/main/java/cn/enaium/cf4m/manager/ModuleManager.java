@@ -192,7 +192,7 @@ public class ModuleManager {
     }
 
     public ArrayList<Object> getModules(Category category) {
-        return getModules().stream().filter(module -> !getCategory(module).equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
+        return getModules().stream().filter(module -> getCategory(module).equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
     }
 
     public Object getModule(String name) {
