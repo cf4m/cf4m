@@ -68,7 +68,7 @@ public enum CF4M {
         this.dir = new File(".", mainClass.getSimpleName()).toString();
         this.configuration = new IConfiguration() {
         };
-        type = new ClassManager();
+        type = new ClassManager(mainClass.getClassLoader());
         event = new EventManager();
         module = new ModuleManager();
         setting = new SettingManager();
