@@ -23,7 +23,6 @@ public class ClassManager {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(CF4M.INSTANCE.packName)) {
                     Class<?> type = classLoader.loadClass(info.getName());
-                    System.out.println(type.getClassLoader());
                     if (type.isAnnotationPresent(Configuration.class)) {
                         CF4M.INSTANCE.configuration = (IConfiguration) type.newInstance();
                     }
