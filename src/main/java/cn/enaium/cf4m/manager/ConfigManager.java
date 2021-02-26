@@ -23,6 +23,9 @@ public class ConfigManager {
     public HashMap<Object, String> configs = Maps.newHashMap();
 
     public ConfigManager() {
+        if (!CF4M.INSTANCE.configuration.config())
+            return;
+
         new File(CF4M.INSTANCE.dir).mkdir();
         new File(CF4M.INSTANCE.dir, "configs").mkdir();
         try {
@@ -55,6 +58,8 @@ public class ConfigManager {
     }
 
     public void load() {
+        if (!CF4M.INSTANCE.configuration.config())
+            return;
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
                 if (new File(getPath(entry.getKey())).exists()) {
@@ -72,6 +77,8 @@ public class ConfigManager {
     }
 
     public void save() {
+        if (!CF4M.INSTANCE.configuration.config())
+            return;
         try {
             for (Map.Entry<Object, String> entry : configs.entrySet()) {
                 new File(getPath(entry.getKey())).createNewFile();
