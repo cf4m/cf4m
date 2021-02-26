@@ -18,11 +18,12 @@ import java.util.ArrayList;
 public class ClassManager {
     private final ArrayList<Class<?>> classes = Lists.newArrayList();
 
-    public ClassManager() {
+    public ClassManager(ClassLoader classLoader) {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(CF4M.INSTANCE.packName)) {
-                    Class<?> type = Class.forName(info.getName());
+                    Class<?> type = classLoader.loadClass(info.getName());
+                    System.out.println(type.getClassLoader());
                     if (type.isAnnotationPresent(Configuration.class)) {
                         CF4M.INSTANCE.configuration = (IConfiguration) type.newInstance();
                     }
