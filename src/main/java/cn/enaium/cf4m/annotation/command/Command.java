@@ -16,4 +16,6 @@ import java.util.List;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
     String[] value();
+
+    String description() default "";
 }

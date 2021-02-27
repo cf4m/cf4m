@@ -14,4 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
     String value();
+
+    String description() default "";
 }
