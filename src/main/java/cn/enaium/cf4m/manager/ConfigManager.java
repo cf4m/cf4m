@@ -26,7 +26,7 @@ public class ConfigManager {
      * <K> config
      * <V> name
      */
-    private HashMap<String, Object> configs;
+    private HashMap<Object, String> configs;
 
     public ConfigManager() {
         if (!CF4M.INSTANCE.configuration.config())
@@ -39,7 +39,7 @@ public class ConfigManager {
         try {
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Config.class)) {
-                    configs.put(type.getAnnotation(Config.class).value(), type.newInstance());
+                    configs.put(type.newInstance(), type.getAnnotation(Config.class).value());
                 }
             }
         } catch (Exception e) {
@@ -48,26 +48,16 @@ public class ConfigManager {
     }
 
     public Object getConfig(String name) {
-        if (configs.containsKey(name)) {
-            return configs.get(name);
-        }
-        return null;
+        return configs.get(name);
     }
 
     public String getName(Object object) {
-        for (Map.Entry<String, Object> entry : configs.entrySet()) {
-            if (entry.getValue().equals(object)) {
-                return entry.getKey();
-            }
-        }
-        return null;
+        return configs.get(object);
     }
 
     public String getPath(Object object) {
-        for (Map.Entry<String, Object> entry : configs.entrySet()) {
-            if (entry.getValue().equals(object)) {
-                return CF4M.INSTANCE.dir + File.separator + "configs" + File.separator + entry.getKey() + ".json";
-            }
+        if (configs.containsKey(object)) {
+            return CF4M.INSTANCE.dir + File.separator + "configs" + File.separator + configs.get(object) + ".json";
         }
         return null;
     }
@@ -79,39 +69,41 @@ public class ConfigManager {
     public void load() {
         if (!CF4M.INSTANCE.configuration.config())
             return;
-        try {
-            for (Map.Entry<String, Object> entry : configs.entrySet()) {
-                if (new File(getPath(entry.getValue())).exists()) {
-                    for (Method method : entry.getValue().getClass().getMethods()) {
-                        method.setAccessible(true);
-                        if (method.isAnnotationPresent(Load.class)) {
-                            method.invoke(entry.getValue());
+
+        configs.keySet().forEach(config -> {
+            for (Method method : config.getClass().getMethods()) {
+                method.setAccessible(true);
+                if (method.isAnnotationPresent(Load.class)) {
+                    try {
+                        if (new File(getPath(config)).exists()) {
+                            method.invoke(config);
                         }
+                    } catch (Exception e) {
+                        e.getCause().printStackTrace();
                     }
                 }
             }
-        } catch (Exception e) {
-            e.getCause().printStackTrace();
-        }
+        });
     }
 
     public void save() {
         if (!CF4M.INSTANCE.configuration.config())
             return;
-        try {
-            for (Map.Entry<String, Object> entry : configs.entrySet()) {
-                new File(getPath(entry.getValue())).createNewFile();
-                if (new File(getPath(entry.getValue())).exists()) {
-                    for (Method method : entry.getValue().getClass().getMethods()) {
-                        method.setAccessible(true);
-                        if (method.isAnnotationPresent(Save.class)) {
-                            method.invoke(entry.getValue());
+
+        configs.keySet().forEach(config -> {
+            for (Method method : config.getClass().getMethods()) {
+                method.setAccessible(true);
+                if (method.isAnnotationPresent(Save.class)) {
+                    try {
+                        new File(getPath(config)).createNewFile();
+                        if (new File(getPath(config)).exists()) {
+                            method.invoke(config);
                         }
+                    } catch (Exception e) {
+                        e.getCause().printStackTrace();
                     }
                 }
             }
-        } catch (Exception e) {
-            e.getCause().printStackTrace();
-        }
+        });
     }
 }
