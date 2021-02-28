@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -22,10 +23,10 @@ public class EventManager {
      * <K> listener
      * <V> event
      */
-    private final HashMap<Class<? extends Listener>, CopyOnWriteArrayList<EventBean>> events;
+    private final LinkedHashMap<Class<? extends Listener>, CopyOnWriteArrayList<EventBean>> events;
 
     public EventManager() {
-        events = Maps.newHashMap();
+        events = Maps.newLinkedHashMap();
     }
 
     /**
