@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.annotation.config;
+package cn.enaium.cf4m.annotation.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,10 +10,8 @@ import java.lang.annotation.Target;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Config {
+public @interface Param {
     String value();
-
-    String description() default "";
 }

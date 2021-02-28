@@ -4,12 +4,14 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,11 +22,17 @@ import java.util.Map;
  */
 public class ConfigManager {
 
-    public HashMap<Object, String> configs = Maps.newHashMap();
+    /**
+     * <K> config
+     * <V> name
+     */
+    private HashMap<Object, String> configs;
 
     public ConfigManager() {
         if (!CF4M.INSTANCE.configuration.config())
             return;
+
+        configs = Maps.newHashMap();
 
         new File(CF4M.INSTANCE.dir).mkdir();
         new File(CF4M.INSTANCE.dir, "configs").mkdir();
@@ -39,60 +47,63 @@ public class ConfigManager {
         }
     }
 
+    public Object getConfig(String name) {
+        return configs.get(name);
+    }
+
     public String getName(Object object) {
-        for (Map.Entry<Object, String> entry : configs.entrySet()) {
-            if (entry.getKey().equals(object)) {
-                return entry.getValue();
-            }
+        return configs.get(object);
+    }
+
+    public String getPath(Object object) {
+        if (configs.containsKey(object)) {
+            return CF4M.INSTANCE.dir + File.separator + "configs" + File.separator + configs.get(object) + ".json";
         }
         return null;
     }
 
-    public String getPath(Object object) {
-        for (Map.Entry<Object, String> entry : configs.entrySet()) {
-            if (entry.getKey().equals(object)) {
-                return CF4M.INSTANCE.dir + File.separator + "configs" + File.separator + entry.getValue() + ".json";
-            }
-        }
-        return null;
+    public ArrayList<Object> getConfigs() {
+        return Lists.newArrayList(configs.values());
     }
 
     public void load() {
         if (!CF4M.INSTANCE.configuration.config())
             return;
-        try {
-            for (Map.Entry<Object, String> entry : configs.entrySet()) {
-                if (new File(getPath(entry.getKey())).exists()) {
-                    for (Method method : entry.getKey().getClass().getMethods()) {
-                        method.setAccessible(true);
-                        if (method.isAnnotationPresent(Load.class)) {
-                            method.invoke(entry.getKey());
+
+        configs.keySet().forEach(config -> {
+            for (Method method : config.getClass().getMethods()) {
+                method.setAccessible(true);
+                if (method.isAnnotationPresent(Load.class)) {
+                    try {
+                        if (new File(getPath(config)).exists()) {
+                            method.invoke(config);
                         }
+                    } catch (Exception e) {
+                        e.getCause().printStackTrace();
                     }
                 }
             }
-        } catch (Exception e) {
-            e.getCause().printStackTrace();
-        }
+        });
     }
 
     public void save() {
         if (!CF4M.INSTANCE.configuration.config())
             return;
-        try {
-            for (Map.Entry<Object, String> entry : configs.entrySet()) {
-                new File(getPath(entry.getKey())).createNewFile();
-                if (new File(getPath(entry.getKey())).exists()) {
-                    for (Method method : entry.getKey().getClass().getMethods()) {
-                        method.setAccessible(true);
-                        if (method.isAnnotationPresent(Save.class)) {
-                            method.invoke(entry.getKey());
+
+        configs.keySet().forEach(config -> {
+            for (Method method : config.getClass().getMethods()) {
+                method.setAccessible(true);
+                if (method.isAnnotationPresent(Save.class)) {
+                    try {
+                        new File(getPath(config)).createNewFile();
+                        if (new File(getPath(config)).exists()) {
+                            method.invoke(config);
                         }
+                    } catch (Exception e) {
+                        e.getCause().printStackTrace();
                     }
                 }
             }
-        } catch (Exception e) {
-            e.getCause().printStackTrace();
-        }
+        });
     }
 }

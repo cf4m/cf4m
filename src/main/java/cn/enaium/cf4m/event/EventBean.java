@@ -7,12 +7,12 @@ import java.lang.reflect.Method;
  * -----------------------------------------------------------
  * Copyright © 2020-2021 | Enaium | All rights reserved.
  */
-public class MethodBean {
+public class EventBean {
     private final Object object;
     private final Method method;
     private final int priority;
 
-    public MethodBean(Object object, Method method, int priority) {
+    public EventBean(Object object, Method method, int priority) {
         this.object = object;
         this.method = method;
         this.priority = priority;

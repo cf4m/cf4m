@@ -1,13 +1,15 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Command;
-import cn.enaium.cf4m.command.ICommand;
+import cn.enaium.cf4m.annotation.command.Command;
+import cn.enaium.cf4m.annotation.command.Exec;
+import cn.enaium.cf4m.annotation.command.Param;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.*;
 
 /**
  * Project: cf4m
@@ -16,20 +18,24 @@ import java.util.Map;
  */
 public class CommandManager {
     /**
-     * Command list.
+     * <K> command
+     * <V> keys
      */
-    private final HashMap<String[], ICommand> commands = Maps.newHashMap();
+    private final HashMap<Object, String[]> commands;
 
     /**
      * Prefix.
      */
-    private final String prefix = CF4M.INSTANCE.configuration.prefix();
+    private final String prefix;
 
     public CommandManager() {
+        prefix = CF4M.INSTANCE.configuration.prefix();
+        commands = Maps.newHashMap();
+
         try {
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Command.class)) {
-                    commands.put(type.getAnnotation(Command.class).value(), (ICommand) type.newInstance());
+                    commands.put(type.newInstance(), type.getAnnotation(Command.class).value());
                 }
             }
         } catch (Exception e) {
@@ -50,32 +56,102 @@ public class CommandManager {
 
         if (safe) {
             String beheaded = rawMessage.split(prefix)[1];
-            String[] args = beheaded.split(" ");
+            List<String> args = Lists.newArrayList(beheaded.split(" "));
+            String key = args.get(0);
+            args.remove(key);
 
-            for (Map.Entry<String[], ICommand> entry : commands.entrySet()) {
-                String[] key = entry.getKey();
+            Object command = getCommand(key);
 
-                for (String s : key) {
-                    if (s.equalsIgnoreCase(args[0])) {
-                        ICommand command = entry.getValue();
-                        if (!command.run(args)) {
-                            String[] usages = command.usage().split("\n");
-                            for (String usage : usages) {
-                                CF4M.INSTANCE.configuration.message(Arrays.toString(entry.getKey()) + " " + usage);
+            if (command != null) {
+                if (!execCommand(command, args)) {
+                    for (Method method : command.getClass().getDeclaredMethods()) {
+                        if (method.isAnnotationPresent(Exec.class)) {
+                            Parameter[] parameters = method.getParameters();
+                            List<String> params = Lists.newArrayList();
+                            for (Parameter parameter : parameters) {
+                                params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
                             }
+                            CF4M.INSTANCE.configuration.message(key + " " + params);
                         }
                     }
                 }
+            } else {
+                help();
             }
         } else {
-            CF4M.INSTANCE.configuration.message("Try " + prefix + "help");
+            help();
         }
-
-
         return true;
     }
 
-    public HashMap<String[], ICommand> getCommands() {
-        return commands;
+    private boolean execCommand(Object command, List<String> args) {
+        for (Method method : command.getClass().getDeclaredMethods()) {
+            method.setAccessible(true);
+
+            if (method.getParameterTypes().length == args.size() && method.isAnnotationPresent(Exec.class)) {
+                List<Object> params = Lists.newArrayList();
+                for (int i = 0; i < method.getParameterTypes().length; i++) {
+                    String arg = args.get(i);
+                    Class<?> paramType = method.getParameterTypes()[i];
+
+                    if (paramType.equals(Boolean.class)) {
+                        params.add(Boolean.parseBoolean(arg));
+                    } else if (paramType.equals(Integer.class)) {
+                        params.add(Integer.parseInt(arg));
+                    } else if (paramType.equals(Float.class)) {
+                        params.add(Float.parseFloat(arg));
+                    } else if (paramType.equals(Double.class)) {
+                        params.add(Double.parseDouble(arg));
+                    } else if (paramType.equals(Long.class)) {
+                        params.add(Long.parseLong(arg));
+                    } else if (paramType.equals(Short.class)) {
+                        params.add(Short.parseShort(arg));
+                    } else if (paramType.equals(String.class)) {
+                        params.add(String.valueOf(arg));
+                    }
+                }
+
+
+                try {
+                    if (params.size() == 0) {
+                        method.invoke(command);
+                    } else {
+                        method.invoke(command, params.toArray());
+                    }
+                    return true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+
+    private void help() {
+        for (Map.Entry<Object, String[]> entry : commands.entrySet()) {
+            CF4M.INSTANCE.configuration.message(prefix + Arrays.toString(entry.getValue()) + getDescription(entry.getKey()));
+        }
+    }
+
+    public String getDescription(Object object) {
+        if (commands.containsKey(object)) {
+            return object.getClass().getAnnotation(Command.class).description();
+        }
+        return null;
+    }
+
+    public String[] getKey(Object object) {
+        return commands.get(object);
+    }
+
+    private Object getCommand(String key) {
+        for (Map.Entry<Object, String[]> entry : commands.entrySet()) {
+            for (String s : entry.getValue()) {
+                if (s.equalsIgnoreCase(key)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        return null;
     }
 }
