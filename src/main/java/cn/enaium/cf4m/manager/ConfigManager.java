@@ -48,7 +48,12 @@ public class ConfigManager {
     }
 
     public Object getConfig(String name) {
-        return configs.get(name);
+        for (String s : configs.values()) {
+            if (s.equals(name)) {
+                return s;
+            }
+        }
+        return null;
     }
 
     public String getName(Object object) {
