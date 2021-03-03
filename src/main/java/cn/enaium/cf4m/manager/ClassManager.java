@@ -29,7 +29,7 @@ public class ClassManager {
                     classes.add(type);
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | IOException e) {
             e.getCause().printStackTrace();
         }
     }

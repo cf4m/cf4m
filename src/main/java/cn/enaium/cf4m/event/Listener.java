@@ -2,6 +2,7 @@ package cn.enaium.cf4m.event;
 
 import cn.enaium.cf4m.CF4M;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -34,7 +35,7 @@ public class Listener {
         eventBeans.forEach(event -> {
             try {
                 event.getMethod().invoke(event.getObject(), this);
-            } catch (Exception e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 e.getCause().printStackTrace();
             }
         });

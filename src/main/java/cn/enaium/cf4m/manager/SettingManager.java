@@ -22,17 +22,13 @@ public class SettingManager {
     private final LinkedHashMultimap<Object, Field> settings = LinkedHashMultimap.create();
 
     public SettingManager() {
-        try {
-            for (Object module : CF4M.INSTANCE.module.getModules()) {
-                for (Field field : module.getClass().getDeclaredFields()) {
-                    field.setAccessible(true);
-                    if (field.isAnnotationPresent(Setting.class)) {
-                        settings.put(module, field);
-                    }
+        for (Object module : CF4M.INSTANCE.module.getModules()) {
+            for (Field field : module.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(Setting.class)) {
+                    settings.put(module, field);
                 }
             }
-        } catch (Exception e) {
-            e.getCause().printStackTrace();
         }
     }
 
@@ -43,7 +39,7 @@ public class SettingManager {
                     if (field.get(module).equals(setting)) {
                         return field.getAnnotation(Setting.class).value();
                     }
-                } catch (Exception e) {
+                } catch (IllegalAccessException e) {
                     e.getCause().printStackTrace();
                 }
             }
@@ -58,7 +54,7 @@ public class SettingManager {
                     if (field.get(module).equals(setting)) {
                         return field.getAnnotation(Setting.class).description();
                     }
-                } catch (Exception e) {
+                } catch (IllegalAccessException e) {
                     e.getCause().printStackTrace();
                 }
             }
@@ -81,7 +77,7 @@ public class SettingManager {
             settings.get(module).forEach(field -> {
                 try {
                     setting.add(field.get(module));
-                } catch (Exception e) {
+                } catch (IllegalAccessException e) {
                     e.getCause().printStackTrace();
                 }
             });
