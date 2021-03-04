@@ -155,11 +155,11 @@ public class ModuleManager {
             setEnable(module, !getEnable(module));
 
             if (getEnable(module)) {
-                CF4M.INSTANCE.event.register(module);
                 CF4M.INSTANCE.configuration.enable(module);
+                CF4M.INSTANCE.event.register(module);
             } else {
-                CF4M.INSTANCE.event.unregister(module);
                 CF4M.INSTANCE.configuration.disable(module);
+                CF4M.INSTANCE.event.unregister(module);
             }
 
             for (Method method : type.getDeclaredMethods()) {
