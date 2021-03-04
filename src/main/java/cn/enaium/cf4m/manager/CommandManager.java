@@ -7,6 +7,7 @@ import cn.enaium.cf4m.annotation.command.Param;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
@@ -38,7 +39,7 @@ public class CommandManager {
                     commands.put(type.newInstance(), type.getAnnotation(Command.class).value());
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.getCause().printStackTrace();
         }
     }
@@ -94,20 +95,27 @@ public class CommandManager {
                     String arg = args.get(i);
                     Class<?> paramType = method.getParameterTypes()[i];
 
-                    if (paramType.equals(Boolean.class)) {
-                        params.add(Boolean.parseBoolean(arg));
-                    } else if (paramType.equals(Integer.class)) {
-                        params.add(Integer.parseInt(arg));
-                    } else if (paramType.equals(Float.class)) {
-                        params.add(Float.parseFloat(arg));
-                    } else if (paramType.equals(Double.class)) {
-                        params.add(Double.parseDouble(arg));
-                    } else if (paramType.equals(Long.class)) {
-                        params.add(Long.parseLong(arg));
-                    } else if (paramType.equals(Short.class)) {
-                        params.add(Short.parseShort(arg));
-                    } else if (paramType.equals(String.class)) {
-                        params.add(String.valueOf(arg));
+                    try {
+                        if (paramType.equals(Boolean.class)) {
+                            params.add(Boolean.parseBoolean(arg));
+                        } else if (paramType.equals(Integer.class)) {
+                            params.add(Integer.parseInt(arg));
+                        } else if (paramType.equals(Float.class)) {
+                            params.add(Float.parseFloat(arg));
+                        } else if (paramType.equals(Double.class)) {
+                            params.add(Double.parseDouble(arg));
+                        } else if (paramType.equals(Long.class)) {
+                            params.add(Long.parseLong(arg));
+                        } else if (paramType.equals(Short.class)) {
+                            params.add(Short.parseShort(arg));
+                        } else if (paramType.equals(Byte.class)) {
+                            params.add(Byte.parseByte(arg));
+                        } else if (paramType.equals(String.class)) {
+                            params.add(String.valueOf(arg));
+                        }
+                    } catch (Exception e) {
+                        CF4M.INSTANCE.configuration.message(e.getLocalizedMessage());
+                        return true;
                     }
                 }
 
@@ -119,8 +127,8 @@ public class CommandManager {
                         method.invoke(command, params.toArray());
                     }
                     return true;
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    e.getCause().printStackTrace();
                 }
             }
         }

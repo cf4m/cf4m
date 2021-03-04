@@ -59,7 +59,7 @@ public class ModuleManager {
                     modules.put(moduleObject, valueBeans);
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.getCause().printStackTrace();
         }
     }
@@ -78,11 +78,11 @@ public class ModuleManager {
         return false;
     }
 
-    public void setEnable(Object module, boolean value) {
+    private void setEnable(Object module, boolean value) {
         if (modules.containsKey(module)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "enable", value);
-            } catch (Exception e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.getCause().printStackTrace();
             }
         }
@@ -99,7 +99,7 @@ public class ModuleManager {
         if (modules.containsKey(module)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "key", value);
-            } catch (Exception e) {
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.getCause().printStackTrace();
             }
         }
@@ -128,7 +128,7 @@ public class ModuleManager {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             e.getCause().printStackTrace();
         }
         return null;
@@ -143,7 +143,7 @@ public class ModuleManager {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             e.getCause().printStackTrace();
         }
     }
@@ -156,8 +156,10 @@ public class ModuleManager {
 
             if (getEnable(module)) {
                 CF4M.INSTANCE.event.register(module);
+                CF4M.INSTANCE.configuration.enable(module);
             } else {
                 CF4M.INSTANCE.event.unregister(module);
+                CF4M.INSTANCE.configuration.disable(module);
             }
 
             for (Method method : type.getDeclaredMethods()) {
@@ -172,7 +174,7 @@ public class ModuleManager {
                             method.invoke(module);
                         }
                     }
-                } catch (Exception e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     e.getCause().printStackTrace();
                 }
             }

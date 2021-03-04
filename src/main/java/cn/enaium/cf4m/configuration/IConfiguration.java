@@ -14,6 +14,10 @@ public interface IConfiguration {
         System.out.println(message);
     }
 
+    default void enable(Object module) {}
+
+    default void disable(Object module) {}
+
     /**
      * @return Command prefix
      */

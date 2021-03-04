@@ -42,7 +42,7 @@ public class ConfigManager {
                     configs.put(type.newInstance(), type.getAnnotation(Config.class).value());
                 }
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.getCause().printStackTrace();
         }
     }
@@ -83,7 +83,7 @@ public class ConfigManager {
                         if (new File(getPath(config)).exists()) {
                             method.invoke(config);
                         }
-                    } catch (Exception e) {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         e.getCause().printStackTrace();
                     }
                 }
@@ -104,7 +104,7 @@ public class ConfigManager {
                         if (new File(getPath(config)).exists()) {
                             method.invoke(config);
                         }
-                    } catch (Exception e) {
+                    } catch (IllegalAccessException | InvocationTargetException | IOException e) {
                         e.getCause().printStackTrace();
                     }
                 }
