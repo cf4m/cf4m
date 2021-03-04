@@ -78,7 +78,7 @@ public class ModuleManager {
         return false;
     }
 
-    public void setEnable(Object module, boolean value) {
+    private void setEnable(Object module, boolean value) {
         if (modules.containsKey(module)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "enable", value);
@@ -156,8 +156,10 @@ public class ModuleManager {
 
             if (getEnable(module)) {
                 CF4M.INSTANCE.event.register(module);
+                CF4M.INSTANCE.configuration.enable(module);
             } else {
                 CF4M.INSTANCE.event.unregister(module);
+                CF4M.INSTANCE.configuration.disable(module);
             }
 
             for (Method method : type.getDeclaredMethods()) {
