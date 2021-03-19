@@ -4,8 +4,7 @@ import java.lang.reflect.Field;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class ValueBean {
 

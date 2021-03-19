@@ -12,8 +12,7 @@ import java.util.ArrayList;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class ClassManager {
     private final ArrayList<Class<?>> classes = Lists.newArrayList();
@@ -30,7 +29,7 @@ public class ClassManager {
                 }
             }
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | IOException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
     }
 

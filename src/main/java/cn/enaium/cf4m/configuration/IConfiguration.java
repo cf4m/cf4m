@@ -2,8 +2,7 @@ package cn.enaium.cf4m.configuration;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public interface IConfiguration {
 
@@ -15,7 +14,7 @@ public interface IConfiguration {
     }
 
     /**
-     * Before the module is enabled.
+     * Before the module is enable.
      *
      * @param module module.
      */

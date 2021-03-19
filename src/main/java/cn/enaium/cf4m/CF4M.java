@@ -4,12 +4,10 @@ import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public enum CF4M {
 
@@ -74,8 +72,10 @@ public enum CF4M {
         setting = new SettingManager();
         command = new CommandManager();
         config = new ConfigManager();
-        config.load();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
+        if (configuration.config()) {
+            config.load();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
+        }
     }
 
     /**

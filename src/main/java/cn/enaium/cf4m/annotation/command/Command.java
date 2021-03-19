@@ -9,8 +9,7 @@ import java.util.List;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

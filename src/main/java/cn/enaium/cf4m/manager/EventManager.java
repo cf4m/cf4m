@@ -8,14 +8,12 @@ import com.google.common.collect.Maps;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class EventManager {
 

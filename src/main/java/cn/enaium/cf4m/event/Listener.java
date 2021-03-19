@@ -7,8 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class Listener {
 
@@ -32,13 +31,13 @@ public class Listener {
             return;
         }
 
-        eventBeans.forEach(event -> {
+        for (EventBean event : eventBeans) {
             try {
                 event.getMethod().invoke(event.getObject(), this);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                e.getCause().printStackTrace();
+                e.printStackTrace();
             }
-        });
+        }
     }
 
     public boolean getCancel() {

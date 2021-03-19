@@ -17,8 +17,7 @@ import java.util.Map;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class ConfigManager {
 
@@ -29,9 +28,6 @@ public class ConfigManager {
     private HashMap<Object, String> configs;
 
     public ConfigManager() {
-        if (!CF4M.INSTANCE.configuration.config())
-            return;
-
         configs = Maps.newHashMap();
 
         new File(CF4M.INSTANCE.dir).mkdir();
@@ -43,7 +39,7 @@ public class ConfigManager {
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -72,9 +68,6 @@ public class ConfigManager {
     }
 
     public void load() {
-        if (!CF4M.INSTANCE.configuration.config())
-            return;
-
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
                 method.setAccessible(true);
@@ -84,7 +77,7 @@ public class ConfigManager {
                             method.invoke(config);
                         }
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.getCause().printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }
@@ -92,9 +85,6 @@ public class ConfigManager {
     }
 
     public void save() {
-        if (!CF4M.INSTANCE.configuration.config())
-            return;
-
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
                 method.setAccessible(true);
@@ -105,7 +95,7 @@ public class ConfigManager {
                             method.invoke(config);
                         }
                     } catch (IllegalAccessException | InvocationTargetException | IOException e) {
-                        e.getCause().printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }
