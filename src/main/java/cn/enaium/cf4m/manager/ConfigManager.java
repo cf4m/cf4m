@@ -28,9 +28,6 @@ public class ConfigManager {
     private HashMap<Object, String> configs;
 
     public ConfigManager() {
-        if (!CF4M.INSTANCE.configuration.config())
-            return;
-
         configs = Maps.newHashMap();
 
         new File(CF4M.INSTANCE.dir).mkdir();
@@ -71,9 +68,6 @@ public class ConfigManager {
     }
 
     public void load() {
-        if (!CF4M.INSTANCE.configuration.config())
-            return;
-
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
                 method.setAccessible(true);
@@ -91,9 +85,6 @@ public class ConfigManager {
     }
 
     public void save() {
-        if (!CF4M.INSTANCE.configuration.config())
-            return;
-
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
                 method.setAccessible(true);
