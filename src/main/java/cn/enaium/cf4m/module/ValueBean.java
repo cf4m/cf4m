@@ -10,17 +10,17 @@ public class ValueBean {
 
     private final String name;
     private final Field field;
-    private final Object object;
+    private final Object instance;
 
     /**
      * @param name   value name
      * @param field  value field
-     * @param object for extend
+     * @param instance for extend
      */
-    public ValueBean(String name, Field field, Object object) {
+    public ValueBean(String name, Field field, Object instance) {
         this.name = name;
         this.field = field;
-        this.object = object;
+        this.instance = instance;
     }
 
     public String getName() {
@@ -31,7 +31,7 @@ public class ValueBean {
         return field;
     }
 
-    public Object getObject() {
-        return object;
+    public Object getInstance() {
+        return instance;
     }
 }

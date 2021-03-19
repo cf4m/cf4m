@@ -72,7 +72,7 @@ public enum CF4M {
         setting = new SettingManager();
         command = new CommandManager();
         config = new ConfigManager();
-        if (configuration.config()) {
+        if (configuration.config().enable()) {
             config.load();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
         }
