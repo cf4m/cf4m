@@ -10,8 +10,7 @@ import java.util.Set;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class SettingManager {
 
@@ -40,7 +39,7 @@ public class SettingManager {
                         return field.getAnnotation(Setting.class).value();
                     }
                 } catch (IllegalAccessException e) {
-                    e.getCause().printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }
@@ -55,7 +54,7 @@ public class SettingManager {
                         return field.getAnnotation(Setting.class).description();
                     }
                 } catch (IllegalAccessException e) {
-                    e.getCause().printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }
@@ -78,7 +77,7 @@ public class SettingManager {
                 try {
                     setting.add(field.get(module));
                 } catch (IllegalAccessException e) {
-                    e.getCause().printStackTrace();
+                    e.printStackTrace();
                 }
             });
             return setting;

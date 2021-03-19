@@ -17,8 +17,7 @@ import java.util.Map;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class ConfigManager {
 
@@ -43,7 +42,7 @@ public class ConfigManager {
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -84,7 +83,7 @@ public class ConfigManager {
                             method.invoke(config);
                         }
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.getCause().printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }
@@ -105,7 +104,7 @@ public class ConfigManager {
                             method.invoke(config);
                         }
                     } catch (IllegalAccessException | InvocationTargetException | IOException e) {
-                        e.getCause().printStackTrace();
+                        e.printStackTrace();
                     }
                 }
             }

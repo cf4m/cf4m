@@ -2,8 +2,7 @@ package cn.enaium.cf4m.module;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public enum Category {
     COMBAT, RENDER, MOVEMENT, PLAYER, WORLD, OTHER, NONE

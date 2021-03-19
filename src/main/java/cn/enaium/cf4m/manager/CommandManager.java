@@ -14,8 +14,7 @@ import java.util.*;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class CommandManager {
     /**
@@ -40,7 +39,7 @@ public class CommandManager {
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -114,11 +113,10 @@ public class CommandManager {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        CF4M.INSTANCE.configuration.message(e.getLocalizedMessage());
-                        return true;
+                        CF4M.INSTANCE.configuration.message(e.getMessage());
+                        e.printStackTrace();
                     }
                 }
-
 
                 try {
                     if (params.size() == 0) {
@@ -128,7 +126,8 @@ public class CommandManager {
                     }
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.getCause().printStackTrace();
+                    CF4M.INSTANCE.configuration.message(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }

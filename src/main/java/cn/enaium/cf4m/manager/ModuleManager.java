@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 @SuppressWarnings({"unchecked", "unused"})
 public class ModuleManager {
@@ -60,7 +59,7 @@ public class ModuleManager {
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -83,7 +82,7 @@ public class ModuleManager {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "enable", value);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.getCause().printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -100,7 +99,7 @@ public class ModuleManager {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "key", value);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.getCause().printStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -129,7 +128,7 @@ public class ModuleManager {
                 }
             }
         } catch (IllegalAccessException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
         return null;
     }
@@ -144,7 +143,7 @@ public class ModuleManager {
                 }
             }
         } catch (IllegalAccessException e) {
-            e.getCause().printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -175,7 +174,7 @@ public class ModuleManager {
                         }
                     }
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    e.getCause().printStackTrace();
+                    e.printStackTrace();
                 }
             }
         }

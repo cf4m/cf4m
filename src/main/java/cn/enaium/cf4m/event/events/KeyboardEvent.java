@@ -4,8 +4,7 @@ import cn.enaium.cf4m.event.Listener;
 
 /**
  * Project: cf4m
- * -----------------------------------------------------------
- * Copyright © 2020-2021 | Enaium | All rights reserved.
+ * Author: Enaium
  */
 public class KeyboardEvent extends Listener {
 
