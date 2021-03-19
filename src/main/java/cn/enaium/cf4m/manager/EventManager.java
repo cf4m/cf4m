@@ -7,8 +7,7 @@ import com.google.common.collect.Maps;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -21,10 +20,10 @@ public class EventManager {
      * <K> listener
      * <V> event
      */
-    private final LinkedHashMap<Class<? extends Listener>, CopyOnWriteArrayList<EventBean>> events;
+    private final HashMap<Class<? extends Listener>, CopyOnWriteArrayList<EventBean>> events;
 
     public EventManager() {
-        events = Maps.newLinkedHashMap();
+        events = Maps.newHashMap();
     }
 
     /**
@@ -49,10 +48,10 @@ public class EventManager {
                 } else {
                     events.put(listener, new CopyOnWriteArrayList<>(Collections.singletonList(eventBean)));
                 }
-
-                events.values().forEach(methodBeans -> methodBeans.sort((Comparator.comparingInt(EventBean::getPriority))));
             }
         }
+
+        events.values().forEach(eventBeans -> eventBeans.sort(((o1, o2) -> (o2.getPriority() - o1.getPriority()))));
     }
 
     /**
@@ -61,7 +60,7 @@ public class EventManager {
      * @param o Object
      */
     public void unregister(Object o) {
-        events.values().forEach(methodBeans -> methodBeans.removeIf(methodEventBean -> methodEventBean.getObject().equals(o)));
+        events.values().forEach(methodBeans -> methodBeans.removeIf(methodEventBean -> methodEventBean.getInstance().equals(o)));
         events.entrySet().removeIf(event -> event.getValue().isEmpty());
     }
 
