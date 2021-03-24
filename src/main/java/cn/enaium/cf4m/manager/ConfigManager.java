@@ -30,8 +30,6 @@ public class ConfigManager {
     public ConfigManager() {
         configs = Maps.newHashMap();
 
-        new File(CF4M.INSTANCE.dir).mkdir();
-        new File(CF4M.INSTANCE.dir, "configs").mkdir();
         try {
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Config.class)) {
@@ -85,6 +83,8 @@ public class ConfigManager {
     }
 
     public void save() {
+        new File(CF4M.INSTANCE.dir).mkdir();
+        new File(CF4M.INSTANCE.dir, "configs").mkdir();
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
                 method.setAccessible(true);

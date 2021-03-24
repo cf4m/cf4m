@@ -29,7 +29,7 @@ public class CommandManager {
     private final String prefix;
 
     public CommandManager() {
-        prefix = CF4M.INSTANCE.configuration.prefix();
+        prefix = CF4M.INSTANCE.configuration.command().prefix();
         commands = Maps.newHashMap();
 
         try {
@@ -71,7 +71,7 @@ public class CommandManager {
                             for (Parameter parameter : parameters) {
                                 params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
                             }
-                            CF4M.INSTANCE.configuration.message(key + " " + params);
+                            CF4M.INSTANCE.configuration.command().message(key + " " + params);
                         }
                     }
                 }
@@ -113,7 +113,7 @@ public class CommandManager {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        CF4M.INSTANCE.configuration.message(e.getMessage());
+                        CF4M.INSTANCE.configuration.command().message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -126,7 +126,7 @@ public class CommandManager {
                     }
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    CF4M.INSTANCE.configuration.message(e.getMessage());
+                    CF4M.INSTANCE.configuration.command().message(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -136,7 +136,7 @@ public class CommandManager {
 
     private void help() {
         for (Map.Entry<Object, String[]> entry : commands.entrySet()) {
-            CF4M.INSTANCE.configuration.message(prefix + Arrays.toString(entry.getValue()) + getDescription(entry.getKey()));
+            CF4M.INSTANCE.configuration.command().message(prefix + Arrays.toString(entry.getValue()) + getDescription(entry.getKey()));
         }
     }
 

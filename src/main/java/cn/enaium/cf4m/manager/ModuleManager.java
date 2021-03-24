@@ -123,7 +123,7 @@ public class ModuleManager {
             if (modules.containsKey(module)) {
                 for (ValueBean valueBean : modules.get(module)) {
                     if (valueBean.getName().equals(name)) {
-                        return (T) valueBean.getField().get(valueBean.getObject());
+                        return (T) valueBean.getField().get(valueBean.getInstance());
                     }
                 }
             }
@@ -138,7 +138,7 @@ public class ModuleManager {
             if (modules.containsKey(module)) {
                 for (ValueBean valueBean : modules.get(module)) {
                     if (valueBean.getName().equals(name)) {
-                        valueBean.getField().set(valueBean.getObject(), value);
+                        valueBean.getField().set(valueBean.getInstance(), value);
                     }
                 }
             }
@@ -154,10 +154,10 @@ public class ModuleManager {
             setEnable(module, !getEnable(module));
 
             if (getEnable(module)) {
-                CF4M.INSTANCE.configuration.enable(module);
+                CF4M.INSTANCE.configuration.module().enable(module);
                 CF4M.INSTANCE.event.register(module);
             } else {
-                CF4M.INSTANCE.configuration.disable(module);
+                CF4M.INSTANCE.configuration.module().disable(module);
                 CF4M.INSTANCE.event.unregister(module);
             }
 

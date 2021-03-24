@@ -7,22 +7,22 @@ import java.lang.reflect.Method;
  * Author: Enaium
  */
 public class EventBean {
-    private final Object object;
-    private final Method method;
+    private final Object instance;
+    private final Method target;
     private final int priority;
 
     public EventBean(Object object, Method method, int priority) {
-        this.object = object;
-        this.method = method;
+        this.instance = object;
+        this.target = method;
         this.priority = priority;
     }
 
-    public Object getObject() {
-        return object;
+    public Object getInstance() {
+        return instance;
     }
 
-    public Method getMethod() {
-        return method;
+    public Method getTarget() {
+        return target;
     }
 
     public int getPriority() {
