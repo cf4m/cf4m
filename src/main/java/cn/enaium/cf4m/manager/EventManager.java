@@ -29,17 +29,17 @@ public class EventManager {
     /**
      * Register all event
      *
-     * @param o Object
+     * @param instance Class instance
      */
-    public void register(Object o) {
-        Class<?> type = o.getClass();
+    public void register(Object instance) {
+        Class<?> type = instance.getClass();
 
         for (Method method : type.getDeclaredMethods()) {
             if (method.getParameterTypes().length == 1 && method.isAnnotationPresent(Event.class)) {
                 method.setAccessible(true);
                 @SuppressWarnings("unchecked")
                 Class<? extends Listener> listener = (Class<? extends Listener>) method.getParameterTypes()[0];
-                EventBean eventBean = new EventBean(o, method, method.getAnnotation(Event.class).priority());
+                EventBean eventBean = new EventBean(instance, method, method.getAnnotation(Event.class).priority());
 
                 if (events.containsKey(listener)) {
                     if (!events.get(listener).contains(eventBean)) {
@@ -57,10 +57,10 @@ public class EventManager {
     /**
      * Unregister all event
      *
-     * @param o Object
+     * @param instance Class instance
      */
-    public void unregister(Object o) {
-        events.values().forEach(methodBeans -> methodBeans.removeIf(methodEventBean -> methodEventBean.getInstance().equals(o)));
+    public void unregister(Object instance) {
+        events.values().forEach(methodBeans -> methodBeans.removeIf(methodEventBean -> methodEventBean.getInstance().equals(instance)));
         events.entrySet().removeIf(event -> event.getValue().isEmpty());
     }
 

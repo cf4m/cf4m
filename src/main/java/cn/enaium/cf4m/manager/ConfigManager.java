@@ -28,9 +28,6 @@ public class ConfigManager {
     private HashMap<Object, String> configs;
 
     public ConfigManager() {
-        if (!CF4M.INSTANCE.configuration.config().enable())
-            return;
-
         configs = Maps.newHashMap();
 
         new File(CF4M.INSTANCE.dir).mkdir();
