@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.test.event.events;
+package cn.enaium.cf4m.test.event.event;
 
 import cn.enaium.cf4m.event.Listener;
 
@@ -7,7 +7,4 @@ import cn.enaium.cf4m.event.Listener;
  * Author: Enaium
  */
 public class EventOrderEventTest extends Listener {
-    public EventOrderEventTest() {
-        super(At.NONE);
-    }
 }

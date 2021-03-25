@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.event.events;
+package cn.enaium.cf4m.event;
 
 import cn.enaium.cf4m.event.Listener;
 
@@ -11,7 +11,6 @@ public class KeyboardEvent extends Listener {
     private final int key;
 
     public KeyboardEvent(int key) {
-        super(At.NONE);
         this.key = key;
     }
 

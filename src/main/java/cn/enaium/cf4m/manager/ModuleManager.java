@@ -2,12 +2,10 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.*;
-import cn.enaium.cf4m.annotation.module.extend.Extend;
-import cn.enaium.cf4m.annotation.module.extend.Value;
+import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
-import cn.enaium.cf4m.event.events.KeyboardEvent;
+import cn.enaium.cf4m.event.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
-import cn.enaium.cf4m.module.ValueBean;
 import com.google.common.collect.*;
 
 import java.lang.reflect.*;
@@ -25,7 +23,7 @@ public class ModuleManager {
      * <K> module
      * <V> values
      */
-    private final LinkedHashMap<Object, LinkedHashSet<ValueBean>> modules = Maps.newLinkedHashMap();
+    private final LinkedHashMap<Object, Object> modules = Maps.newLinkedHashMap();
 
     public ModuleManager() {
         CF4M.INSTANCE.event.register(this);
@@ -36,26 +34,15 @@ public class ModuleManager {
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Extend.class)) {
                     extend = type;
-                    for (Field field : type.getDeclaredFields()) {
-                        field.setAccessible(true);
-                        if (field.isAnnotationPresent(Value.class)) {
-                            Value value = field.getAnnotation(Value.class);
-                            findFields.put(value.value(), field);//Add value
-                        }
-                    }
                 }
             }
 
             //Add Modules
             for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
                 if (type.isAnnotationPresent(Module.class)) {
-                    Object extendObject = extend != null ? extend.newInstance() : null;
-                    Object moduleObject = type.newInstance();
-                    LinkedHashSet<ValueBean> valueBeans = Sets.newLinkedHashSet();
-                    for (Map.Entry<String, Field> entry : findFields.entrySet()) {
-                        valueBeans.add(new ValueBean(entry.getKey(), entry.getValue(), extendObject));
-                    }
-                    modules.put(moduleObject, valueBeans);
+                    Object extendInstance = extend != null ? extend.newInstance() : null;
+                    Object moduleInstance = type.newInstance();
+                    modules.put(moduleInstance, extendInstance);
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
@@ -118,33 +105,11 @@ public class ModuleManager {
         return null;
     }
 
-    public <T> T getValue(Object module, String name) {
-        try {
-            if (modules.containsKey(module)) {
-                for (ValueBean valueBean : modules.get(module)) {
-                    if (valueBean.getName().equals(name)) {
-                        return (T) valueBean.getField().get(valueBean.getInstance());
-                    }
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+    public <T> T getExtend(Object module) {
+        if (modules.containsKey(module)) {
+            return (T) modules.get(module);
         }
         return null;
-    }
-
-    public <T> void setValue(Object module, String name, T value) {
-        try {
-            if (modules.containsKey(module)) {
-                for (ValueBean valueBean : modules.get(module)) {
-                    if (valueBean.getName().equals(name)) {
-                        valueBean.getField().set(valueBean.getInstance(), value);
-                    }
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     public void enable(Object module) {
