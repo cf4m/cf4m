@@ -4,6 +4,7 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.module.Category;
+import cn.enaium.cf4m.module.ModuleBean;
 import com.google.common.collect.*;
 
 import java.lang.reflect.*;
@@ -19,9 +20,9 @@ public class ModuleManager {
 
     /**
      * <K> module
-     * <V> bean
+     * <V> extend
      */
-    private final LinkedHashMap<Object, ModuleBean> modules = Maps.newLinkedHashMap();
+    private final LinkedHashMap<Object, Object> modules = Maps.newLinkedHashMap();
 
     public ModuleManager() {
         try {
@@ -39,7 +40,7 @@ public class ModuleManager {
                 if (klass.isAnnotationPresent(Module.class)) {
                     Object extendInstance = extend != null ? extend.newInstance() : null;
                     Object moduleInstance = klass.newInstance();
-                    modules.put(moduleInstance, new ModuleBean(moduleInstance, extendInstance));
+                    modules.put(moduleInstance, extendInstance);
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
@@ -47,14 +48,14 @@ public class ModuleManager {
         }
     }
 
-    private String getName(Object module) {
+    public String getName(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).value();
         }
         return null;
     }
 
-    private boolean getEnable(Object module) {
+    public boolean getEnable(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).enable();
         }
@@ -71,14 +72,14 @@ public class ModuleManager {
         }
     }
 
-    private int getKey(Object module) {
+    public int getKey(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).key();
         }
         return 0;
     }
 
-    private void setKey(Object module, int value) {
+    public void setKey(Object module, int value) {
         if (modules.containsKey(module)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "key", value);
@@ -88,21 +89,21 @@ public class ModuleManager {
         }
     }
 
-    private Category getCategory(Object module) {
+    public Category getCategory(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).category();
         }
         return Category.NONE;
     }
 
-    private String getDescription(Object module) {
+    public String getDescription(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).description();
         }
         return null;
     }
 
-    private void enable(Object module) {
+    public void enable(Object module) {
         if (modules.containsKey(module)) {
             Class<?> klass = module.getClass();
 
@@ -135,6 +136,13 @@ public class ModuleManager {
         }
     }
 
+    public <T> T getExtend(Object module) {
+        if (modules.containsKey(module)) {
+            return (T) modules.get(module);
+        }
+        return null;
+    }
+
     public void onKey(int key) {
         for (ModuleBean module : getModules()) {
             if (module.getKey() == key) {
@@ -151,11 +159,13 @@ public class ModuleManager {
     }
 
     public ModuleBean getModule(Object instance) {
-        return modules.get(instance);
+        return new ModuleBean(instance);
     }
 
     public ArrayList<ModuleBean> getModules() {
-        return Lists.newArrayList(modules.values());
+        ArrayList<ModuleBean> moduleBeans = new ArrayList<>();
+        modules.keySet().forEach(module -> moduleBeans.add(new ModuleBean(module)));
+        return moduleBeans;
     }
 
     public ArrayList<ModuleBean> getModules(Category category) {
@@ -171,45 +181,5 @@ public class ModuleManager {
         return null;
     }
 
-    public class ModuleBean {
-        private final Object instance;
-        private final Object extend;
 
-        public ModuleBean(Object instance, Object extend) {
-            this.instance = instance;
-            this.extend = extend;
-        }
-
-        public String getName() {
-            return ModuleManager.this.getName(instance);
-        }
-
-        public boolean getEnable() {
-            return ModuleManager.this.getEnable(instance);
-        }
-
-        public void enable() {
-            ModuleManager.this.enable(instance);
-        }
-
-        public int getKey() {
-            return ModuleManager.this.getKey(instance);
-        }
-
-        public void setKey(int key) {
-            ModuleManager.this.setKey(instance, key);
-        }
-
-        public Category getCategory() {
-            return ModuleManager.this.getCategory(instance);
-        }
-
-        public String getDescription() {
-            return ModuleManager.this.getDescription(instance);
-        }
-
-        public <T> T getExtend() {
-            return (T) extend;
-        }
-    }
 }

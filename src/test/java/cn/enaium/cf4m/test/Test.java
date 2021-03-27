@@ -2,8 +2,9 @@ package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.test.event.EventCancelTest;
-import cn.enaium.cf4m.test.event.EventOrderTest;
+import cn.enaium.cf4m.test.event.EventPriorityTest;
 import cn.enaium.cf4m.test.event.EventRegisterUnregisterTest;
+import cn.enaium.cf4m.test.module.ModuleBeanTest;
 
 /**
  * Project: cf4m
@@ -12,13 +13,17 @@ import cn.enaium.cf4m.test.event.EventRegisterUnregisterTest;
 public class Test {
     public static void main(String[] args) {
         CF4M.run(Test.class);
+        System.out.println("Check ModuleBeanTest Start");
+        new ModuleBeanTest();
+        System.out.println("Check ModuleBeanTest End");
+        System.out.println();
         System.out.println("Check EventRegisterUnregister Start");
         new EventRegisterUnregisterTest();
         System.out.println("Check EventRegisterUnregister End");
         System.out.println();
-        System.out.println("Check EventOrderTest Start");
-        new EventOrderTest();
-        System.out.println("Check EventOrderTest End");
+        System.out.println("Check EventPriorityTest Start");
+        new EventPriorityTest();
+        System.out.println("Check EventPriorityTest End");
         System.out.println();
         System.out.println("Check EventCancelTest Start");
         new EventCancelTest();

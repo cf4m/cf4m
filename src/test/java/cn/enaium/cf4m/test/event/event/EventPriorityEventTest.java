@@ -6,5 +6,5 @@ import cn.enaium.cf4m.event.Listener;
  * Project: cf4m
  * Author: Enaium
  */
-public class EventOrderEventTest extends Listener {
+public class EventPriorityEventTest extends Listener {
 }
