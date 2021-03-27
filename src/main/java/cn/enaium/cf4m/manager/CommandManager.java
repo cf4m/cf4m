@@ -29,13 +29,13 @@ public class CommandManager {
     private final String prefix;
 
     public CommandManager() {
-        prefix = CF4M.INSTANCE.configuration.command().prefix();
+        prefix = CF4M.configuration.command().prefix();
         commands = Maps.newHashMap();
 
         try {
-            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
-                if (type.isAnnotationPresent(Command.class)) {
-                    commands.put(type.newInstance(), type.getAnnotation(Command.class).value());
+            for (Class<?> klass : CF4M.klass.getClasses()) {
+                if (klass.isAnnotationPresent(Command.class)) {
+                    commands.put(klass.newInstance(), klass.getAnnotation(Command.class).value());
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
@@ -71,7 +71,7 @@ public class CommandManager {
                             for (Parameter parameter : parameters) {
                                 params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
                             }
-                            CF4M.INSTANCE.configuration.command().message(key + " " + params);
+                            CF4M.configuration.command().message(key + " " + params);
                         }
                     }
                 }
@@ -113,7 +113,7 @@ public class CommandManager {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        CF4M.INSTANCE.configuration.command().message(e.getMessage());
+                        CF4M.configuration.command().message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -126,7 +126,7 @@ public class CommandManager {
                     }
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    CF4M.INSTANCE.configuration.command().message(e.getMessage());
+                    CF4M.configuration.command().message(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -136,10 +136,14 @@ public class CommandManager {
 
     private void help() {
         for (Map.Entry<Object, String[]> entry : commands.entrySet()) {
-            CF4M.INSTANCE.configuration.command().message(prefix + Arrays.toString(entry.getValue()) + getDescription(entry.getKey()));
+            CF4M.configuration.command().message(prefix + Arrays.toString(entry.getValue()) + getDescription(entry.getKey()));
         }
     }
 
+    /**
+     * @param object command instance
+     * @return description
+     */
     public String getDescription(Object object) {
         if (commands.containsKey(object)) {
             return object.getClass().getAnnotation(Command.class).description();
@@ -147,6 +151,10 @@ public class CommandManager {
         return null;
     }
 
+    /**
+     * @param object instance
+     * @return command keys
+     */
     public String[] getKey(Object object) {
         return commands.get(object);
     }

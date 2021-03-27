@@ -17,15 +17,16 @@ import java.util.ArrayList;
 public class ClassManager {
     private final ArrayList<Class<?>> classes = Lists.newArrayList();
 
+    @SuppressWarnings("UnstableApiUsage")
     public ClassManager(ClassLoader classLoader) {
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
-                if (info.getName().startsWith(CF4M.INSTANCE.packName)) {
-                    Class<?> type = classLoader.loadClass(info.getName());
-                    if (type.isAnnotationPresent(Configuration.class)) {
-                        CF4M.INSTANCE.configuration = (IConfiguration) type.newInstance();
+                if (info.getName().startsWith(CF4M.packName)) {
+                    Class<?> klass = classLoader.loadClass(info.getName());
+                    if (klass.isAnnotationPresent(Configuration.class)) {
+                        CF4M.configuration = (IConfiguration) klass.newInstance();
                     }
-                    classes.add(type);
+                    classes.add(klass);
                 }
             }
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | IOException e) {

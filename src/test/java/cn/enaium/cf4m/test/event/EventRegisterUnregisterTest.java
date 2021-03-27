@@ -10,9 +10,9 @@ import cn.enaium.cf4m.test.event.event.EventRegisterUnregisterEventTest;
  */
 public class EventRegisterUnregisterTest {
     public EventRegisterUnregisterTest() {
-        CF4M.INSTANCE.event.register(this);
+        CF4M.event.register(this);
         new EventRegisterUnregisterEventTest().call();
-        CF4M.INSTANCE.event.unregister(this);
+        CF4M.event.unregister(this);
         new EventRegisterUnregisterEventTest().call();
     }
 

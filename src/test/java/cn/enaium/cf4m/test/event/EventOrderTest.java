@@ -10,7 +10,7 @@ import cn.enaium.cf4m.test.event.event.EventOrderEventTest;
  */
 public class EventOrderTest {
     public EventOrderTest() {
-        CF4M.INSTANCE.event.register(this);
+        CF4M.event.register(this);
         new EventOrderEventTest().call();
     }
 

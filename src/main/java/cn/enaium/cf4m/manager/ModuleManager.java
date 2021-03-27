@@ -1,10 +1,8 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.*;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
-import cn.enaium.cf4m.event.KeyboardEvent;
 import cn.enaium.cf4m.module.Category;
 import com.google.common.collect.*;
 
@@ -26,22 +24,21 @@ public class ModuleManager {
     private final LinkedHashMap<Object, Object> modules = Maps.newLinkedHashMap();
 
     public ModuleManager() {
-        CF4M.INSTANCE.event.register(this);
         try {
             //Find Value
             Class<?> extend = null;//Extend class
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
-                if (type.isAnnotationPresent(Extend.class)) {
-                    extend = type;
+            for (Class<?> klass : CF4M.klass.getClasses()) {
+                if (klass.isAnnotationPresent(Extend.class)) {
+                    extend = klass;
                 }
             }
 
             //Add Modules
-            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
-                if (type.isAnnotationPresent(Module.class)) {
+            for (Class<?> klass : CF4M.klass.getClasses()) {
+                if (klass.isAnnotationPresent(Module.class)) {
                     Object extendInstance = extend != null ? extend.newInstance() : null;
-                    Object moduleInstance = type.newInstance();
+                    Object moduleInstance = klass.newInstance();
                     modules.put(moduleInstance, extendInstance);
                 }
             }
@@ -114,19 +111,19 @@ public class ModuleManager {
 
     public void enable(Object module) {
         if (modules.containsKey(module)) {
-            Class<?> type = module.getClass();
+            Class<?> klass = module.getClass();
 
             setEnable(module, !getEnable(module));
 
             if (getEnable(module)) {
-                CF4M.INSTANCE.configuration.module().enable(module);
-                CF4M.INSTANCE.event.register(module);
+                CF4M.configuration.module().enable(module);
+                CF4M.event.register(module);
             } else {
-                CF4M.INSTANCE.configuration.module().disable(module);
-                CF4M.INSTANCE.event.unregister(module);
+                CF4M.configuration.module().disable(module);
+                CF4M.event.unregister(module);
             }
 
-            for (Method method : type.getDeclaredMethods()) {
+            for (Method method : klass.getDeclaredMethods()) {
                 method.setAccessible(true);
                 try {
                     if (getEnable(module)) {
@@ -145,10 +142,9 @@ public class ModuleManager {
         }
     }
 
-    @Event
-    private void onKey(KeyboardEvent e) {
+    public void onKey(int key) {
         for (Object module : getModules()) {
-            if (getKey(module) == e.getKey()) {
+            if (getKey(module) == key) {
                 enable(module);
             }
         }

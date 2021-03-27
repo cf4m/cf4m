@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Project: cf4m
@@ -25,15 +24,15 @@ public class ConfigManager {
      * <K> config
      * <V> name
      */
-    private HashMap<Object, String> configs;
+    private final HashMap<Object, String> configs;
 
     public ConfigManager() {
         configs = Maps.newHashMap();
 
         try {
-            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
-                if (type.isAnnotationPresent(Config.class)) {
-                    configs.put(type.newInstance(), type.getAnnotation(Config.class).value());
+            for (Class<?> klass : CF4M.klass.getClasses()) {
+                if (klass.isAnnotationPresent(Config.class)) {
+                    configs.put(klass.newInstance(), klass.getAnnotation(Config.class).value());
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
@@ -56,7 +55,7 @@ public class ConfigManager {
 
     public String getPath(Object object) {
         if (configs.containsKey(object)) {
-            return CF4M.INSTANCE.dir + File.separator + "configs" + File.separator + configs.get(object) + ".json";
+            return CF4M.dir + File.separator + "configs" + File.separator + configs.get(object) + ".json";
         }
         return null;
     }
@@ -65,6 +64,9 @@ public class ConfigManager {
         return Lists.newArrayList(configs.values());
     }
 
+    /**
+     * Load config
+     */
     public void load() {
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
@@ -82,9 +84,12 @@ public class ConfigManager {
         });
     }
 
+    /**
+     * Save config
+     */
     public void save() {
-        new File(CF4M.INSTANCE.dir).mkdir();
-        new File(CF4M.INSTANCE.dir, "configs").mkdir();
+        new File(CF4M.dir).mkdir();
+        new File(CF4M.dir, "configs").mkdir();
         configs.keySet().forEach(config -> {
             for (Method method : config.getClass().getMethods()) {
                 method.setAccessible(true);

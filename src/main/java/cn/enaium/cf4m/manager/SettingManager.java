@@ -21,7 +21,7 @@ public class SettingManager {
     private final LinkedHashMultimap<Object, Field> settings = LinkedHashMultimap.create();
 
     public SettingManager() {
-        for (Object module : CF4M.INSTANCE.module.getModules()) {
+        for (Object module : CF4M.module.getModules()) {
             for (Field field : module.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
                 if (field.isAnnotationPresent(Setting.class)) {
@@ -31,6 +31,11 @@ public class SettingManager {
         }
     }
 
+    /**
+     * @param module  module instance
+     * @param setting setting instance
+     * @return setting name
+     */
     public String getName(Object module, Object setting) {
         if (settings.containsKey(module)) {
             for (Field field : settings.get(module)) {
@@ -46,6 +51,11 @@ public class SettingManager {
         return null;
     }
 
+    /**
+     * @param module  module instance
+     * @param setting setting instance
+     * @return description
+     */
     public String getDescription(Object module, Object setting) {
         if (settings.containsKey(module)) {
             for (Field field : settings.get(module)) {
@@ -61,6 +71,11 @@ public class SettingManager {
         return null;
     }
 
+    /**
+     * @param module module instance
+     * @param name   setting name
+     * @return setting instance
+     */
     public Object getSetting(Object module, String name) {
         for (Object setting : getSettings(module)) {
             if (getName(module, setting).equalsIgnoreCase(name)) {
@@ -70,6 +85,10 @@ public class SettingManager {
         return null;
     }
 
+    /**
+     * @param module module instance
+     * @return settings
+     */
     public ArrayList<Object> getSettings(Object module) {
         if (settings.containsKey(module)) {
             ArrayList<Object> setting = new ArrayList<>();

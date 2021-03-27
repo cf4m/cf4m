@@ -9,64 +9,61 @@ import java.io.File;
  * Project: cf4m
  * Author: Enaium
  */
-public enum CF4M {
-
-    INSTANCE;
-
+public class CF4M {
     /**
      * Client package.
      */
-    public String packName;
+    public static String packName;
 
     /**
      * .minecraft/{clientName} path.
      */
-    public String dir;
+    public static String dir;
 
     /**
      * CF4M configuration
      */
-    public IConfiguration configuration;
+    public static IConfiguration configuration;
 
     /**
      * ClassManager.
      */
-    public ClassManager type;
+    public static ClassManager klass;
 
     /**
      * EventManager.
      */
-    public EventManager event;
+    public static EventManager event;
 
     /**
      * ModuleManager.
      */
-    public ModuleManager module;
+    public static ModuleManager module;
 
     /**
      * SettingManager
      */
-    public SettingManager setting;
+    public static SettingManager setting;
 
     /**
      * CommandManager.
      */
-    public CommandManager command;
+    public static CommandManager command;
 
     /**
      * ConfigManager.
      */
-    public ConfigManager config;
+    public static ConfigManager config;
 
     /**
      * @param mainClass MainClass.
      */
-    public void run(Class<?> mainClass) {
-        this.packName = mainClass.getPackage().getName();
-        this.dir = new File(".", mainClass.getSimpleName()).toString();
-        this.configuration = new IConfiguration() {
+    public static void run(Class<?> mainClass) {
+        packName = mainClass.getPackage().getName();
+        dir = new File(".", mainClass.getSimpleName()).toString();
+        configuration = new IConfiguration() {
         };
-        type = new ClassManager(mainClass.getClassLoader());
+        klass = new ClassManager(mainClass.getClassLoader());
         event = new EventManager();
         module = new ModuleManager();
         setting = new SettingManager();
@@ -79,27 +76,27 @@ public enum CF4M {
     }
 
     /**
-     * @param o MainObject.
+     * @param o MainClass instance.
      */
-    public void run(Object o) {
+    public static void run(Object o) {
         run(o.getClass());
     }
 
     /**
      * @param mainClass MainClass.
-     * @param dir       .minecraft/{clientName} path.
+     * @param path      .minecraft/{clientName} path.
      */
-    public void run(Class<?> mainClass, String dir) {
-        this.dir = dir;
+    public static void run(Class<?> mainClass, String path) {
         run(mainClass);
+        dir = path;
     }
 
     /**
-     * @param o   MainObject.
-     * @param dir .minecraft/{clientName} path.
+     * @param o    MainClass instance.
+     * @param path .minecraft/{clientName} path.
      */
-    public void run(Object o, String dir) {
-        this.dir = dir;
+    public static void run(Object o, String path) {
         run(o);
+        dir = path;
     }
 }
