@@ -19,9 +19,9 @@ public class ModuleManager {
 
     /**
      * <K> module
-     * <V> values
+     * <V> bean
      */
-    private final LinkedHashMap<Object, Object> modules = Maps.newLinkedHashMap();
+    private final LinkedHashMap<Object, ModuleBean> modules = Maps.newLinkedHashMap();
 
     public ModuleManager() {
         try {
@@ -39,7 +39,7 @@ public class ModuleManager {
                 if (klass.isAnnotationPresent(Module.class)) {
                     Object extendInstance = extend != null ? extend.newInstance() : null;
                     Object moduleInstance = klass.newInstance();
-                    modules.put(moduleInstance, extendInstance);
+                    modules.put(moduleInstance, new ModuleBean(moduleInstance, extendInstance));
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
@@ -47,14 +47,14 @@ public class ModuleManager {
         }
     }
 
-    public String getName(Object module) {
+    private String getName(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).value();
         }
         return null;
     }
 
-    public boolean getEnable(Object module) {
+    private boolean getEnable(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).enable();
         }
@@ -71,14 +71,14 @@ public class ModuleManager {
         }
     }
 
-    public int getKey(Object module) {
+    private int getKey(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).key();
         }
         return 0;
     }
 
-    public void setKey(Object module, int value) {
+    private void setKey(Object module, int value) {
         if (modules.containsKey(module)) {
             try {
                 TypeAnnotation(Proxy.getInvocationHandler(module.getClass().getAnnotation(Module.class)), "key", value);
@@ -88,28 +88,21 @@ public class ModuleManager {
         }
     }
 
-    public Category getCategory(Object module) {
+    private Category getCategory(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).category();
         }
         return Category.NONE;
     }
 
-    public String getDescription(Object module) {
+    private String getDescription(Object module) {
         if (modules.containsKey(module)) {
             return module.getClass().getAnnotation(Module.class).description();
         }
         return null;
     }
 
-    public <T> T getExtend(Object module) {
-        if (modules.containsKey(module)) {
-            return (T) modules.get(module);
-        }
-        return null;
-    }
-
-    public void enable(Object module) {
+    private void enable(Object module) {
         if (modules.containsKey(module)) {
             Class<?> klass = module.getClass();
 
@@ -143,9 +136,9 @@ public class ModuleManager {
     }
 
     public void onKey(int key) {
-        for (Object module : getModules()) {
-            if (getKey(module) == key) {
-                enable(module);
+        for (ModuleBean module : getModules()) {
+            if (module.getKey() == key) {
+                module.enable();
             }
         }
     }
@@ -157,20 +150,66 @@ public class ModuleManager {
         map.put(name, value);
     }
 
-    public ArrayList<Object> getModules() {
-        return Lists.newArrayList(modules.keySet());
+    public ModuleBean getModule(Object instance) {
+        return modules.get(instance);
     }
 
-    public ArrayList<Object> getModules(Category category) {
-        return getModules().stream().filter(module -> getCategory(module).equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
+    public ArrayList<ModuleBean> getModules() {
+        return Lists.newArrayList(modules.values());
     }
 
-    public Object getModule(String name) {
-        for (Object module : getModules()) {
-            if (getName(module).equalsIgnoreCase(name)) {
+    public ArrayList<ModuleBean> getModules(Category category) {
+        return getModules().stream().filter(module -> module.getCategory().equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
+    }
+
+    public ModuleBean getModule(String name) {
+        for (ModuleBean module : getModules()) {
+            if (module.getName().equalsIgnoreCase(name)) {
                 return module;
             }
         }
         return null;
+    }
+
+    public class ModuleBean {
+        private final Object instance;
+        private final Object extend;
+
+        public ModuleBean(Object instance, Object extend) {
+            this.instance = instance;
+            this.extend = extend;
+        }
+
+        public String getName() {
+            return ModuleManager.this.getName(instance);
+        }
+
+        public boolean getEnable() {
+            return ModuleManager.this.getEnable(instance);
+        }
+
+        public void enable() {
+            ModuleManager.this.enable(instance);
+        }
+
+        public int getKey() {
+            return ModuleManager.this.getKey(instance);
+        }
+
+        public void setKey(int key) {
+            ModuleManager.this.setKey(instance, key);
+        }
+
+        public Category getCategory() {
+            return ModuleManager.this.getCategory(instance);
+        }
+
+        public String getDescription() {
+            return ModuleManager.this.getDescription(instance);
+        }
+
+        public <T> T getExtend() {
+            return (T) extend;
+        }
     }
 }
