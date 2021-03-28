@@ -41,11 +41,6 @@ public class CF4M {
     public static ModuleManager module;
 
     /**
-     * SettingManager
-     */
-    public static SettingManager setting;
-
-    /**
      * CommandManager.
      */
     public static CommandManager command;
@@ -66,7 +61,6 @@ public class CF4M {
         klass = new ClassManager(mainClass.getClassLoader());
         event = new EventManager();
         module = new ModuleManager();
-        setting = new SettingManager();
         command = new CommandManager();
         config = new ConfigManager();
         if (configuration.config().enable()) {

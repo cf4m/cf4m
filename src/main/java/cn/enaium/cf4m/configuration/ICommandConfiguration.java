@@ -16,6 +16,6 @@ public interface ICommandConfiguration {
      * @param message print chat message.
      */
     default void message(String message) {
-        System.out.println(message);
+        System.err.println(message);
     }
 }

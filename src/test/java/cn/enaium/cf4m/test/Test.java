@@ -43,6 +43,10 @@ public class Test {
         CF4M.module.onKey(3);
         System.out.println("Check ModuleExtendTest1 End");
         System.out.println();
+        System.out.println("Check ModuleSettingTest Start");
+        CF4M.module.onKey(4);
+        System.out.println("Check ModuleSettingTest End");
+        System.out.println();
         System.out.println("Check CommandTest Start");
         System.out.println(CF4M.command.isCommand("`t var11111"));
         System.out.println("Check CommandTest End");
