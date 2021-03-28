@@ -6,7 +6,7 @@ import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.provider.ModuleProvider;
-import cn.enaium.cf4m.provider.SettingContainer;
+import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
 import com.google.common.collect.*;
 
@@ -75,6 +75,11 @@ public class ModuleManager {
                     }
 
                     SettingContainer settingContainer = new SettingContainer() {
+                        @Override
+                        public ArrayList<SettingProvider> getAll() {
+                            return settingProviders;
+                        }
+
                         @Override
                         public <T> T getByName(String name) {
                             for (SettingProvider settingProvider : settingProviders) {

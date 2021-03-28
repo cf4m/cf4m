@@ -4,6 +4,7 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Setting;
 import cn.enaium.cf4m.annotation.module.Enable;
 import cn.enaium.cf4m.annotation.module.Module;
+import cn.enaium.cf4m.provider.SettingProvider;
 import cn.enaium.cf4m.test.setting.EnableSettingTest;
 
 /**

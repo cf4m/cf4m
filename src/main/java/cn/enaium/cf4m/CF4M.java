@@ -1,6 +1,7 @@
 package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.io.File;
  * Author: Enaium
  */
 public class CF4M {
+
     /**
      * Client package.
      */

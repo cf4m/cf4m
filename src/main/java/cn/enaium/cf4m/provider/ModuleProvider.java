@@ -1,8 +1,7 @@
 package cn.enaium.cf4m.provider;
 
+import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.module.Category;
-
-import java.util.ArrayList;
 
 /**
  * Project: cf4m
@@ -40,5 +39,5 @@ public interface ModuleProvider extends Provider {
      */
     <T> T getExtend();
 
-    <T> SettingContainer getSetting();
+    SettingContainer getSetting();
 }
