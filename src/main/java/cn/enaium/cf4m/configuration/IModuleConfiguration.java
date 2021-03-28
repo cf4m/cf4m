@@ -1,6 +1,8 @@
 package cn.enaium.cf4m.configuration;
 
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.event.Listener;
+import cn.enaium.cf4m.provider.ModuleProvider;
 
 /**
  * Project: cf4m

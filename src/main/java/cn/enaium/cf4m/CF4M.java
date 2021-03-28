@@ -1,6 +1,8 @@
 package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.CommandContainer;
+import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.manager.*;
 
@@ -10,7 +12,7 @@ import java.io.File;
  * Project: cf4m
  * Author: Enaium
  */
-public class CF4M {
+public final class CF4M {
 
     /**
      * Client package.
@@ -38,44 +40,51 @@ public class CF4M {
     public static EventManager event;
 
     /**
-     * ModuleManager.
+     * ModuleContainer.
      */
-    public static ModuleManager module;
+    public static ModuleContainer module;
 
     /**
-     * CommandManager.
+     * CommandContainer.
      */
-    public static CommandManager command;
+    public static CommandContainer command;
 
     /**
-     * ConfigManager.
+     * ConfigContainer.
      */
-    public static ConfigManager config;
+    public static ConfigContainer config;
+
+    private static boolean run = false;
 
     /**
      * @param mainClass MainClass.
      */
     public static void run(Class<?> mainClass) {
+        if (run) {
+            throw new ExceptionInInitializerError();
+        }
+
         packName = mainClass.getPackage().getName();
         dir = new File(".", mainClass.getSimpleName()).toString();
         configuration = new IConfiguration() {
         };
         klass = new ClassManager(mainClass.getClassLoader());
         event = new EventManager();
-        module = new ModuleManager();
-        command = new CommandManager();
-        config = new ConfigManager();
+        module = new ModuleManager().moduleContainer;
+        command = new CommandManager().commandContainer;
+        config = new ConfigManager().configContainer;
         if (configuration.config().enable()) {
             config.load();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
         }
+        run = true;
     }
 
     /**
-     * @param o MainClass instance.
+     * @param instance MainClass instance.
      */
-    public static void run(Object o) {
-        run(o.getClass());
+    public static void run(Object instance) {
+        run(instance.getClass());
     }
 
     /**
@@ -88,11 +97,11 @@ public class CF4M {
     }
 
     /**
-     * @param o    MainClass instance.
-     * @param path .minecraft/{clientName} path.
+     * @param instance MainClass instance.
+     * @param path     .minecraft/{clientName} path.
      */
-    public static void run(Object o, String path) {
-        run(o);
+    public static void run(Object instance, String path) {
+        run(instance);
         dir = path;
     }
 }

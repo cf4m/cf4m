@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Project: cf4m
  * Author: Enaium
  */
-public class EventManager {
+public final class EventManager {
 
     /**
      * <K> listener

@@ -12,13 +12,5 @@ import cn.enaium.cf4m.configuration.IModuleConfiguration;
  */
 @Configuration
 public class ConfigurationTest implements IConfiguration {
-    @Override
-    public IConfigConfiguration config() {
-        return new IConfigConfiguration() {
-            @Override
-            public boolean enable() {
-                return false;
-            }
-        };
-    }
+
 }

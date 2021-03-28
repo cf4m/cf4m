@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Project: cf4m
  * Author: Enaium
  */
-public class ClassManager {
+public final class ClassManager {
     private final ArrayList<Class<?>> classes = Lists.newArrayList();
 
     @SuppressWarnings("UnstableApiUsage")

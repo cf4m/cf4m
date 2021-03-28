@@ -1,18 +1,21 @@
 package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
+import cn.enaium.cf4m.test.config.ConfigTest;
 import cn.enaium.cf4m.test.event.EventCancelTest;
 import cn.enaium.cf4m.test.event.EventPriorityTest;
 import cn.enaium.cf4m.test.event.EventRegisterUnregisterTest;
 import cn.enaium.cf4m.test.module.ModuleBeanTest;
+import org.junit.jupiter.api.Test;
 
 /**
  * Project: cf4m
  * Author: Enaium
  */
-public class Test {
-    public static void main(String[] args) {
-        CF4M.run(Test.class);
+public class T {
+    @Test
+    public void test() {
+        CF4M.run(T.class, System.getProperty("user.dir") + "/build/configTest");
         System.out.println("Check ModuleBeanTest Start");
         new ModuleBeanTest();
         System.out.println("Check ModuleBeanTest End");
@@ -48,8 +51,13 @@ public class Test {
         System.out.println("Check ModuleSettingTest End");
         System.out.println();
         System.out.println("Check CommandTest Start");
-        System.out.println(CF4M.command.isCommand("`t var11111"));
+        System.out.println(CF4M.command.execCommand("`t"));
+        System.out.println(CF4M.command.execCommand("`t var1"));
+        System.out.println(CF4M.command.execCommand("`t var1 1"));
         System.out.println("Check CommandTest End");
         System.out.println();
+        System.out.println("Check ConfigTest Start");
+        new ConfigTest();
+        System.out.println("Check ConfigTest End");
     }
 }
