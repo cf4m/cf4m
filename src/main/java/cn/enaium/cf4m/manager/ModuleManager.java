@@ -117,10 +117,10 @@ public final class ModuleManager {
                         }
 
                         @Override
-                        public <T> T getByName(String name) {
+                        public SettingProvider getByName(String name) {
                             for (SettingProvider settingProvider : getAll()) {
                                 if (settingProvider.getName().equalsIgnoreCase(name)) {
-                                    return settingProvider.getSetting();
+                                    return settingProvider;
                                 }
                             }
                             return null;
