@@ -11,5 +11,5 @@ import java.util.ArrayList;
 public interface SettingContainer {
     ArrayList<SettingProvider> getAll();
 
-    <T> T getByName(String name);
+    SettingProvider getByName(String name);
 }
