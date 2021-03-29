@@ -1,6 +1,9 @@
 package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.CommandContainer;
+import cn.enaium.cf4m.container.ConfigContainer;
+import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
@@ -9,97 +12,96 @@ import java.io.File;
  * Project: cf4m
  * Author: Enaium
  */
-public enum CF4M {
-
-    INSTANCE;
+public final class CF4M {
 
     /**
      * Client package.
      */
-    public String packName;
+    public static String packName;
 
     /**
      * .minecraft/{clientName} path.
      */
-    public String dir;
+    public static String dir;
 
     /**
      * CF4M configuration
      */
-    public IConfiguration configuration;
+    public static IConfiguration configuration;
 
     /**
      * ClassManager.
      */
-    public ClassManager type;
+    public static ClassManager klass;
 
     /**
      * EventManager.
      */
-    public EventManager event;
+    public static EventManager event;
 
     /**
-     * ModuleManager.
+     * ModuleContainer.
      */
-    public ModuleManager module;
+    public static ModuleContainer module;
 
     /**
-     * SettingManager
+     * CommandContainer.
      */
-    public SettingManager setting;
+    public static CommandContainer command;
 
     /**
-     * CommandManager.
+     * ConfigContainer.
      */
-    public CommandManager command;
+    public static ConfigContainer config;
 
-    /**
-     * ConfigManager.
-     */
-    public ConfigManager config;
+    private static boolean run = false;
 
     /**
      * @param mainClass MainClass.
      */
-    public void run(Class<?> mainClass) {
-        this.packName = mainClass.getPackage().getName();
-        this.dir = new File(".", mainClass.getSimpleName()).toString();
-        this.configuration = new IConfiguration() {
+    public static void run(Class<?> mainClass) {
+        if (run) {
+            throw new ExceptionInInitializerError();
+        }
+
+        packName = mainClass.getPackage().getName();
+        dir = new File(".", mainClass.getSimpleName()).toString();
+        configuration = new IConfiguration() {
         };
-        type = new ClassManager(mainClass.getClassLoader());
+        klass = new ClassManager(mainClass.getClassLoader());
         event = new EventManager();
-        module = new ModuleManager();
-        setting = new SettingManager();
-        command = new CommandManager();
-        config = new ConfigManager();
+        module = new ModuleManager().moduleContainer;
+        command = new CommandManager().commandContainer;
+        config = new ConfigManager().configContainer;
         if (configuration.config().enable()) {
             config.load();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
         }
+        run = true;
     }
 
     /**
-     * @param o MainObject.
+     * @param instance MainClass instance.
      */
-    public void run(Object o) {
-        run(o.getClass());
+    public static void run(Object instance) {
+        run(instance.getClass());
     }
 
     /**
      * @param mainClass MainClass.
-     * @param dir       .minecraft/{clientName} path.
+     * @param path      .minecraft/{clientName} path.
      */
-    public void run(Class<?> mainClass, String dir) {
-        this.dir = dir;
+    public static void run(Class<?> mainClass, String path) {
         run(mainClass);
+        dir = path;
     }
 
     /**
-     * @param o   MainObject.
-     * @param dir .minecraft/{clientName} path.
+     * @param instance MainClass instance.
+     * @param path     .minecraft/{clientName} path.
      */
-    public void run(Object o, String dir) {
-        this.dir = dir;
-        run(o);
+    public static void run(Object instance, String path) {
+        run(instance);
+        dir = path;
     }
 }

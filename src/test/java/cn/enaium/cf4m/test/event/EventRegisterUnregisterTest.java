@@ -2,7 +2,7 @@ package cn.enaium.cf4m.test.event;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Event;
-import cn.enaium.cf4m.test.event.events.EventRegisterUnregisterEventTest;
+import cn.enaium.cf4m.test.event.event.EventRegisterUnregisterEventTest;
 
 /**
  * Project: cf4m
@@ -10,9 +10,9 @@ import cn.enaium.cf4m.test.event.events.EventRegisterUnregisterEventTest;
  */
 public class EventRegisterUnregisterTest {
     public EventRegisterUnregisterTest() {
-        CF4M.INSTANCE.event.register(this);
+        CF4M.event.register(this);
         new EventRegisterUnregisterEventTest().call();
-        CF4M.INSTANCE.event.unregister(this);
+        CF4M.event.unregister(this);
         new EventRegisterUnregisterEventTest().call();
     }
 

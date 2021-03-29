@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Project: cf4m
  * Author: Enaium
  */
-public class EventManager {
+public final class EventManager {
 
     /**
      * <K> listener
@@ -32,9 +32,9 @@ public class EventManager {
      * @param instance Class instance
      */
     public void register(Object instance) {
-        Class<?> type = instance.getClass();
+        Class<?> klass = instance.getClass();
 
-        for (Method method : type.getDeclaredMethods()) {
+        for (Method method : klass.getDeclaredMethods()) {
             if (method.getParameterTypes().length == 1 && method.isAnnotationPresent(Event.class)) {
                 method.setAccessible(true);
                 @SuppressWarnings("unchecked")

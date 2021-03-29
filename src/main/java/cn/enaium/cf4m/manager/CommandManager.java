@@ -4,6 +4,8 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.command.Command;
 import cn.enaium.cf4m.annotation.command.Exec;
 import cn.enaium.cf4m.annotation.command.Param;
+import cn.enaium.cf4m.container.CommandContainer;
+import cn.enaium.cf4m.provider.CommandProvider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -11,17 +13,81 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Project: cf4m
  * Author: Enaium
  */
-public class CommandManager {
+public final class CommandManager {
     /**
      * <K> command
      * <V> keys
      */
-    private final HashMap<Object, String[]> commands;
+    private final HashMap<Object, CommandProvider> commands;
+
+    public final CommandContainer commandContainer = new CommandContainer() {
+        @Override
+        public ArrayList<CommandProvider> getAll() {
+            return Lists.newArrayList(commands.values());
+        }
+
+
+        @Override
+        public CommandProvider getByInstance(Object instance) {
+            return commands.get(instance);
+        }
+
+        @Override
+        public CommandProvider getByKey(String key) {
+            for (CommandProvider commandProvider : getAll()) {
+                for (String s : commandProvider.getKey()) {
+                    if (s.equalsIgnoreCase(key)) {
+                        return commandProvider;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public boolean execCommand(String rawMessage) {
+            if (!rawMessage.startsWith(prefix)) {
+                return false;
+            }
+
+            boolean safe = rawMessage.split(prefix).length > 1;
+
+            if (safe) {
+                String beheaded = rawMessage.split(prefix)[1];
+                List<String> args = Lists.newArrayList(beheaded.split(" "));
+                String key = args.get(0);
+                args.remove(key);
+
+                Object command = getCommand(key);
+
+                if (command != null) {
+                    if (!CommandManager.this.execCommand(command, args)) {
+                        for (Method method : command.getClass().getDeclaredMethods()) {
+                            if (method.isAnnotationPresent(Exec.class)) {
+                                Parameter[] parameters = method.getParameters();
+                                List<String> params = Lists.newArrayList();
+                                for (Parameter parameter : parameters) {
+                                    params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
+                                }
+                                CF4M.configuration.command().message(key + " " + params);
+                            }
+                        }
+                    }
+                } else {
+                    help();
+                }
+            } else {
+                help();
+            }
+            return true;
+        }
+    };
 
     /**
      * Prefix.
@@ -29,59 +95,33 @@ public class CommandManager {
     private final String prefix;
 
     public CommandManager() {
-        prefix = CF4M.INSTANCE.configuration.command().prefix();
+        prefix = CF4M.configuration.command().prefix();
         commands = Maps.newHashMap();
 
         try {
-            for (Class<?> type : CF4M.INSTANCE.type.getClasses()) {
-                if (type.isAnnotationPresent(Command.class)) {
-                    commands.put(type.newInstance(), type.getAnnotation(Command.class).value());
+            for (Class<?> klass : CF4M.klass.getClasses()) {
+                if (klass.isAnnotationPresent(Command.class)) {
+                    commands.put(klass.newInstance(), new CommandProvider() {
+                        @Override
+                        public String getName() {
+                            return null;
+                        }
+
+                        @Override
+                        public String getDescription() {
+                            return klass.getAnnotation(Command.class).description();
+                        }
+
+                        @Override
+                        public String[] getKey() {
+                            return klass.getAnnotation(Command.class).value();
+                        }
+                    });
                 }
             }
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @param rawMessage SendChatMessage
-     * @return Is it a command
-     */
-    public boolean isCommand(String rawMessage) {
-        if (!rawMessage.startsWith(prefix)) {
-            return false;
-        }
-
-        boolean safe = rawMessage.split(prefix).length > 1;
-
-        if (safe) {
-            String beheaded = rawMessage.split(prefix)[1];
-            List<String> args = Lists.newArrayList(beheaded.split(" "));
-            String key = args.get(0);
-            args.remove(key);
-
-            Object command = getCommand(key);
-
-            if (command != null) {
-                if (!execCommand(command, args)) {
-                    for (Method method : command.getClass().getDeclaredMethods()) {
-                        if (method.isAnnotationPresent(Exec.class)) {
-                            Parameter[] parameters = method.getParameters();
-                            List<String> params = Lists.newArrayList();
-                            for (Parameter parameter : parameters) {
-                                params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
-                            }
-                            CF4M.INSTANCE.configuration.command().message(key + " " + params);
-                        }
-                    }
-                }
-            } else {
-                help();
-            }
-        } else {
-            help();
-        }
-        return true;
     }
 
     private boolean execCommand(Object command, List<String> args) {
@@ -93,27 +133,26 @@ public class CommandManager {
                 for (int i = 0; i < method.getParameterTypes().length; i++) {
                     String arg = args.get(i);
                     Class<?> paramType = method.getParameterTypes()[i];
-
                     try {
-                        if (paramType.equals(Boolean.class)) {
+                        if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
                             params.add(Boolean.parseBoolean(arg));
-                        } else if (paramType.equals(Integer.class)) {
+                        } else if (paramType.equals(Integer.class) || paramType.equals(int.class)) {
                             params.add(Integer.parseInt(arg));
-                        } else if (paramType.equals(Float.class)) {
+                        } else if (paramType.equals(Float.class) || paramType.equals(float.class)) {
                             params.add(Float.parseFloat(arg));
-                        } else if (paramType.equals(Double.class)) {
+                        } else if (paramType.equals(Double.class) || paramType.equals(double.class)) {
                             params.add(Double.parseDouble(arg));
-                        } else if (paramType.equals(Long.class)) {
+                        } else if (paramType.equals(Long.class) || paramType.equals(long.class)) {
                             params.add(Long.parseLong(arg));
-                        } else if (paramType.equals(Short.class)) {
+                        } else if (paramType.equals(Short.class) || paramType.equals(short.class)) {
                             params.add(Short.parseShort(arg));
-                        } else if (paramType.equals(Byte.class)) {
+                        } else if (paramType.equals(Byte.class) || paramType.equals(byte.class)) {
                             params.add(Byte.parseByte(arg));
                         } else if (paramType.equals(String.class)) {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        CF4M.INSTANCE.configuration.command().message(e.getMessage());
+                        CF4M.configuration.command().message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -126,7 +165,7 @@ public class CommandManager {
                     }
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    CF4M.INSTANCE.configuration.command().message(e.getMessage());
+                    CF4M.configuration.command().message(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -135,25 +174,14 @@ public class CommandManager {
     }
 
     private void help() {
-        for (Map.Entry<Object, String[]> entry : commands.entrySet()) {
-            CF4M.INSTANCE.configuration.command().message(prefix + Arrays.toString(entry.getValue()) + getDescription(entry.getKey()));
+        for (CommandProvider commandProvider : commandContainer.getAll()) {
+            CF4M.configuration.command().message(prefix + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
-    }
-
-    public String getDescription(Object object) {
-        if (commands.containsKey(object)) {
-            return object.getClass().getAnnotation(Command.class).description();
-        }
-        return null;
-    }
-
-    public String[] getKey(Object object) {
-        return commands.get(object);
     }
 
     private Object getCommand(String key) {
-        for (Map.Entry<Object, String[]> entry : commands.entrySet()) {
-            for (String s : entry.getValue()) {
+        for (Map.Entry<Object, CommandProvider> entry : commands.entrySet()) {
+            for (String s : entry.getValue().getKey()) {
                 if (s.equalsIgnoreCase(key)) {
                     return entry.getKey();
                 }

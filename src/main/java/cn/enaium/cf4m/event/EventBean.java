@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
  * Project: cf4m
  * Author: Enaium
  */
-public class EventBean {
+public final class EventBean {
     private final Object instance;
     private final Method target;
     private final int priority;

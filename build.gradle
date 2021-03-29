@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'cn.enaium.cf4m'
-version '1.5.4'
+version '1.6.0'
 
 repositories {
     mavenCentral()
@@ -12,6 +12,11 @@ repositories {
 
 dependencies {
     implementation('com.google.guava:guava:17.0')
+    testImplementation('org.junit.jupiter:junit-jupiter:5.7.0')
+}
+
+test {
+    useJUnitPlatform()
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -22,9 +27,10 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 uploadArchives {
     repositories.mavenDeployer {
         def MAVEN_URL = System.getenv('MAVEN_URL')
-        if(MAVEN_URL != null) {
+        if (MAVEN_URL != null) {
             repository(url: "file://${new File(MAVEN_URL)}")
         }
     }
 }
+
 artifacts { archives sourcesJar }
