@@ -32,6 +32,24 @@ public final class CommandManager {
             return Lists.newArrayList(commands.values());
         }
 
+
+        @Override
+        public CommandProvider getByInstance(Object instance) {
+            return commands.get(instance);
+        }
+
+        @Override
+        public CommandProvider getByKey(String key) {
+            for (CommandProvider commandProvider : getAll()) {
+                for (String s : commandProvider.getKey()) {
+                    if (s.equalsIgnoreCase(key)) {
+                        return commandProvider;
+                    }
+                }
+            }
+            return null;
+        }
+
         @Override
         public boolean execCommand(String rawMessage) {
             if (!rawMessage.startsWith(prefix)) {
@@ -46,7 +64,7 @@ public final class CommandManager {
                 String key = args.get(0);
                 args.remove(key);
 
-                Object command = commandContainer.getByKey(key);
+                Object command = getCommand(key);
 
                 if (command != null) {
                     if (!CommandManager.this.execCommand(command, args)) {
@@ -69,23 +87,6 @@ public final class CommandManager {
             }
             return true;
         }
-
-        @Override
-        public CommandProvider getByInstance(Object instance) {
-            return commands.get(instance);
-        }
-
-        @Override
-        public CommandProvider getByKey(String key) {
-            for (CommandProvider commandProvider : getAll()) {
-                for (String s : commandProvider.getKey()) {
-                    if (s.equalsIgnoreCase(key)) {
-                        return commandProvider;
-                    }
-                }
-            }
-            return null;
-        }
     };
 
     /**
@@ -100,7 +101,6 @@ public final class CommandManager {
         try {
             for (Class<?> klass : CF4M.klass.getClasses()) {
                 if (klass.isAnnotationPresent(Command.class)) {
-                    Object commandObject = klass.newInstance();
                     commands.put(klass.newInstance(), new CommandProvider() {
                         @Override
                         public String getName() {
@@ -149,7 +149,6 @@ public final class CommandManager {
                         } else if (paramType.equals(Byte.class) || paramType.equals(byte.class)) {
                             params.add(Byte.parseByte(arg));
                         } else if (paramType.equals(String.class)) {
-                            System.out.println(paramType.getSuperclass());
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
@@ -180,13 +179,13 @@ public final class CommandManager {
         }
     }
 
-    /**
-     * @param object command instance
-     * @return description
-     */
-    public String getDescription(Object object) {
-        if (commands.containsKey(object)) {
-            return object.getClass().getAnnotation(Command.class).description();
+    private Object getCommand(String key) {
+        for (Map.Entry<Object, CommandProvider> entry : commands.entrySet()) {
+            for (String s : entry.getValue().getKey()) {
+                if (s.equalsIgnoreCase(key)) {
+                    return entry.getKey();
+                }
+            }
         }
         return null;
     }

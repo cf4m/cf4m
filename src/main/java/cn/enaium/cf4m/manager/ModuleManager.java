@@ -11,6 +11,7 @@ import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
 import com.google.common.collect.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,7 +39,7 @@ public final class ModuleManager {
         @Override
         public ModuleProvider getByName(String name) {
             for (ModuleProvider moduleProvider : getAll()) {
-                if (moduleProvider.getName().equals(name)) {
+                if (moduleProvider.getName().equalsIgnoreCase(name)) {
                     return moduleProvider;
                 }
             }
@@ -118,7 +119,7 @@ public final class ModuleManager {
                         @Override
                         public <T> T getByName(String name) {
                             for (SettingProvider settingProvider : getAll()) {
-                                if (settingProvider.getName().equals(name)) {
+                                if (settingProvider.getName().equalsIgnoreCase(name)) {
                                     return settingProvider.getSetting();
                                 }
                             }
@@ -176,7 +177,7 @@ public final class ModuleManager {
 
                         @Override
                         public void setKey(int key) {
-                            TypeAnnotation(Module.class, "key", key);
+                            TypeAnnotation(moduleInstance.getClass().getAnnotation(Module.class), "key", key);
                         }
 
                         @Override
@@ -206,7 +207,7 @@ public final class ModuleManager {
         }
     }
 
-    private void TypeAnnotation(Object annotation, String name, Object value) {
+    private void TypeAnnotation(Annotation annotation, String name, Object value) {
         try {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
             Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");

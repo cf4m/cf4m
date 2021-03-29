@@ -37,7 +37,7 @@ public final class ConfigManager {
         @Override
         public ConfigProvider getByName(String name) {
             for (ConfigProvider configProvider : getAll()) {
-                if (configProvider.getName().equals(name)) {
+                if (configProvider.getName().equalsIgnoreCase(name)) {
                     return configProvider;
                 }
             }
