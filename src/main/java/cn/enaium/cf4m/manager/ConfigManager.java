@@ -97,7 +97,7 @@ public final class ConfigManager {
         configs = Maps.newHashMap();
 
         try {
-            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.klass.getClasses()) {
                 if (klass.isAnnotationPresent(Config.class)) {
                     configs.put(klass.newInstance(), new ConfigProvider() {
                         @Override

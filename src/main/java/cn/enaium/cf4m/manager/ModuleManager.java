@@ -63,18 +63,19 @@ public final class ModuleManager {
 
 
     public ModuleManager() {
+        System.out.println(CF4M.klass);
         try {
             //Find Extend
             Class<?> extend = null;//Extend class
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.klass.getClasses()) {
                 if (klass.isAnnotationPresent(Extend.class)) {
                     extend = klass;
                 }
             }
 
             //Add Modules
-            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.klass.getClasses()) {
                 if (klass.isAnnotationPresent(Module.class)) {
                     Module module = klass.getAnnotation(Module.class);
                     Object extendInstance = extend != null ? extend.newInstance() : null;

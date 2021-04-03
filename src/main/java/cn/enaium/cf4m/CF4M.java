@@ -14,20 +14,23 @@ import java.io.File;
  */
 public final class CF4M {
 
+
+    /**
+     * ClassManager
+     * Nullable
+     * Only read
+     */
+    public static ClassManager klass;
+
     public static I instance;
 
     public CF4M(Class<?> mainClass, String dir) {
-        ClassManager classManager = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName());
+        klass = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName());
         EventManager eventManager = new EventManager();
         ModuleContainer moduleContainer = new ModuleManager().moduleContainer;
         CommandContainer commandContainer = new CommandManager().commandContainer;
         ConfigContainer configContainer = new ConfigManager(dir).configContainer;
         instance = new I() {
-            @Override
-            public ClassManager getKlass() {
-                return classManager;
-            }
-
             @Override
             public EventManager getEvent() {
                 return eventManager;
@@ -51,14 +54,6 @@ public final class CF4M {
     }
 
     public interface I {
-
-        /**
-         * ClassManager
-         * Nullable
-         * Only read
-         */
-        ClassManager getKlass();
-
         /**
          * EventManager
          * Nullable
