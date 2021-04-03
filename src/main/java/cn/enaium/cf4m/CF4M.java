@@ -14,100 +14,110 @@ import java.io.File;
  */
 public final class CF4M {
 
-    /**
-     * Client package
-     */
-    public static String packName;
+    public static I instance;
 
-    /**
-     * .minecraft/{clientName} path
-     */
-    public static String dir;
+    public CF4M(Class<?> mainClass, String dir) {
+        ClassManager classManager = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName());
+        EventManager eventManager = new EventManager();
+        ModuleContainer moduleContainer = new ModuleManager().moduleContainer;
+        CommandContainer commandContainer = new CommandManager().commandContainer;
+        ConfigContainer configContainer = new ConfigManager(dir).configContainer;
+        instance = new I() {
+            @Override
+            public ClassManager getKlass() {
+                return classManager;
+            }
+
+            @Override
+            public EventManager getEvent() {
+                return eventManager;
+            }
+
+            @Override
+            public ModuleContainer getModule() {
+                return moduleContainer;
+            }
+
+            @Override
+            public CommandContainer getCommand() {
+                return commandContainer;
+            }
+
+            @Override
+            public ConfigContainer getConfig() {
+                return configContainer;
+            }
+        };
+    }
+
+    public interface I {
+
+        /**
+         * ClassManager
+         * Nullable
+         * Only read
+         */
+        ClassManager getKlass();
+
+        /**
+         * EventManager
+         * Nullable
+         * Only read
+         */
+        EventManager getEvent();
+
+        /**
+         * ModuleContainer
+         * Nullable
+         * Only read
+         */
+        ModuleContainer getModule();
+
+        /**
+         * CommandContainer
+         * Nullable
+         * Only read
+         */
+        CommandContainer getCommand();
+
+        /**
+         * ConfigContainer
+         * Nullable
+         * Only read
+         */
+        ConfigContainer getConfig();
+    }
 
     /**
      * CF4M configuration
      */
     public static IConfiguration configuration;
 
-    private static ClassManager klass;
-
-    private static EventManager event;
-
-    private static ModuleContainer module;
-
-    private static CommandContainer command;
-
-    private static ConfigContainer config;
-
-    /**
-     * ClassManager
-     * Nullable
-     * Only read
-     */
-    public static ClassManager getKlass() {
-        return klass;
-    }
-
-    /**
-     * EventManager
-     * Nullable
-     * Only read
-     */
-    public static EventManager getEvent() {
-        return event;
-    }
-
-    /**
-     * ConfigContainer
-     * Nullable
-     * Only read
-     */
-    public static ModuleContainer getModule() {
-        return module;
-    }
-
-    /**
-     * CommandContainer
-     * Nullable
-     * Only read
-     */
-    public static CommandContainer getCommand() {
-        return command;
-    }
-
-    /**
-     * ModuleContainer
-     * Nullable
-     * Only read
-     */
-    public static ConfigContainer getConfig() {
-        return config;
-    }
-
     private static boolean run = false;
+
+    /**
+     * @param mainClass MainClass.
+     * @param path      .minecraft/{clientName} path.
+     */
+    public static void run(Class<?> mainClass, String path) {
+        if (run) {
+            throw new ExceptionInInitializerError();
+        }
+        new CF4M(mainClass, path);
+        configuration = new IConfiguration() {
+        };
+        if (configuration.config().enable()) {
+            instance.getConfig().load();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> instance.getConfig().save()));
+        }
+        run = true;
+    }
 
     /**
      * @param mainClass MainClass.
      */
     public static void run(Class<?> mainClass) {
-        if (run) {
-            throw new ExceptionInInitializerError();
-        }
-
-        packName = mainClass.getPackage().getName();
-        dir = new File(".", mainClass.getSimpleName()).toString();
-        configuration = new IConfiguration() {
-        };
-        klass = new ClassManager(mainClass.getClassLoader());
-        event = new EventManager();
-        module = new ModuleManager().moduleContainer;
-        command = new CommandManager().commandContainer;
-        config = new ConfigManager().configContainer;
-        if (configuration.config().enable()) {
-            config.load();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
-        }
-        run = true;
+        run(mainClass, new File(".", mainClass.getSimpleName()).toString());
     }
 
     /**
@@ -118,20 +128,10 @@ public final class CF4M {
     }
 
     /**
-     * @param mainClass MainClass.
-     * @param path      .minecraft/{clientName} path.
-     */
-    public static void run(Class<?> mainClass, String path) {
-        run(mainClass);
-        dir = path;
-    }
-
-    /**
      * @param instance MainClass instance.
      * @param path     .minecraft/{clientName} path.
      */
     public static void run(Object instance, String path) {
-        run(instance);
-        dir = path;
+        run(instance.getClass(), path);
     }
 }

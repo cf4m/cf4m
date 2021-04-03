@@ -98,7 +98,7 @@ public final class CommandManager {
         commands = Maps.newHashMap();
 
         try {
-            for (Class<?> klass : CF4M.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
                 if (klass.isAnnotationPresent(Command.class)) {
                     commands.put(klass.newInstance(), new CommandProvider() {
                         @Override

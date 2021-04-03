@@ -53,7 +53,7 @@ public final class ModuleManager {
 
         @Override
         public void onKey(int key) {
-            for (ModuleProvider module : CF4M.getModule().getAll()) {
+            for (ModuleProvider module : getAll()) {
                 if (module.getKey() == key) {
                     module.enable();
                 }
@@ -67,14 +67,14 @@ public final class ModuleManager {
             //Find Extend
             Class<?> extend = null;//Extend class
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> klass : CF4M.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
                 if (klass.isAnnotationPresent(Extend.class)) {
                     extend = klass;
                 }
             }
 
             //Add Modules
-            for (Class<?> klass : CF4M.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
                 if (klass.isAnnotationPresent(Module.class)) {
                     Module module = klass.getAnnotation(Module.class);
                     Object extendInstance = extend != null ? extend.newInstance() : null;
@@ -126,7 +126,6 @@ public final class ModuleManager {
                             return null;
                         }
                     };
-
                     modules.put(moduleInstance, new ModuleProvider() {
                         @Override
                         public String getName() {
@@ -146,10 +145,10 @@ public final class ModuleManager {
 
                             if (module.enable()) {
                                 CF4M.configuration.module().enable(moduleInstance);
-                                CF4M.getEvent().register(moduleInstance);
+                                CF4M.instance.getEvent().register(moduleInstance);
                             } else {
                                 CF4M.configuration.module().disable(moduleInstance);
-                                CF4M.getEvent().unregister(moduleInstance);
+                                CF4M.instance.getEvent().unregister(moduleInstance);
                             }
 
                             for (Method method : klass.getDeclaredMethods()) {

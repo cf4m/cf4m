@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
 }
 
 group 'cn.enaium.cf4m'
@@ -13,6 +14,7 @@ repositories {
 dependencies {
     implementation('com.google.guava:guava:17.0')
     testImplementation('org.junit.jupiter:junit-jupiter:5.7.0')
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
@@ -34,3 +36,9 @@ uploadArchives {
 }
 
 artifacts { archives sourcesJar }
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

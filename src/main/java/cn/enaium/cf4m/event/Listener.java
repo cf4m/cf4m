@@ -14,7 +14,7 @@ public class Listener {
      * Call all event
      */
     public void call() {
-        CopyOnWriteArrayList<EventBean> eventBeans = CF4M.getEvent().getEvent(this.getClass());
+        CopyOnWriteArrayList<EventBean> eventBeans = CF4M.instance.getEvent().getEvent(this.getClass());
 
         if (eventBeans == null) {
             return;

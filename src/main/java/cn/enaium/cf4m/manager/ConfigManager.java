@@ -70,8 +70,8 @@ public final class ConfigManager {
         @SuppressWarnings("ResultOfMethodCallIgnored")
         @Override
         public void save() {
-            new File(CF4M.dir).mkdir();
-            new File(CF4M.dir, "configs").mkdir();
+            new File(path).mkdir();
+            new File(path, "configs").mkdir();
             configs.keySet().forEach(config -> {
                 for (Method method : config.getClass().getMethods()) {
                     method.setAccessible(true);
@@ -90,11 +90,14 @@ public final class ConfigManager {
         }
     };
 
-    public ConfigManager() {
+    private final String path;
+
+    public ConfigManager(String path) {
+        this.path = path;
         configs = Maps.newHashMap();
 
         try {
-            for (Class<?> klass : CF4M.getKlass().getClasses()) {
+            for (Class<?> klass : CF4M.instance.getKlass().getClasses()) {
                 if (klass.isAnnotationPresent(Config.class)) {
                     configs.put(klass.newInstance(), new ConfigProvider() {
                         @Override
@@ -109,7 +112,7 @@ public final class ConfigManager {
 
                         @Override
                         public String getPath() {
-                            return CF4M.dir + File.separator + "configs" + File.separator + getName() + ".json";
+                            return path + File.separator + "configs" + File.separator + getName() + ".json";
                         }
                     });
                 }
