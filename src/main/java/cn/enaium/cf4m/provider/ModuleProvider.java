@@ -9,6 +9,8 @@ import cn.enaium.cf4m.module.Category;
  */
 public interface ModuleProvider extends Provider {
     /**
+     * NotNull
+     *
      * @return module enable
      */
     boolean getEnable();
@@ -19,25 +21,36 @@ public interface ModuleProvider extends Provider {
     void enable();
 
     /**
+     * NotNull
+     *
      * @return module keyboard
      */
     int getKey();
 
     /**
-     * @param key module keyboard
+     * @param key keyboard
      */
     void setKey(int key);
 
     /**
+     * NotNull
+     *
      * @return module category
      */
     Category getCategory();
 
     /**
-     * @param <T> extend
-     * @return module extend
+     * Nullable
+     *
+     * @param <T> extend class
+     * @return extend instance
      */
     <T> T getExtend();
 
+    /**
+     * NotNull
+     *
+     * @return module setting
+     */
     SettingContainer getSetting();
 }

@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public class ModuleBeanTest {
     public ModuleBeanTest() {
-        for (ModuleProvider module : CF4M.module.getAll()) {
+        for (ModuleProvider module : CF4M.getModule().getAll()) {
             System.out.println(module.getName());
         }
-        assertNotNull(CF4M.module.getAll());
+        assertNotNull(CF4M.getModule().getAll());
     }
 }

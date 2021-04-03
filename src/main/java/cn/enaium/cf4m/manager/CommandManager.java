@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Project: cf4m
@@ -99,12 +98,12 @@ public final class CommandManager {
         commands = Maps.newHashMap();
 
         try {
-            for (Class<?> klass : CF4M.klass.getClasses()) {
+            for (Class<?> klass : CF4M.getKlass().getClasses()) {
                 if (klass.isAnnotationPresent(Command.class)) {
                     commands.put(klass.newInstance(), new CommandProvider() {
                         @Override
                         public String getName() {
-                            return null;
+                            return "";
                         }
 
                         @Override

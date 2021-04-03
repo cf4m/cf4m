@@ -6,11 +6,15 @@ package cn.enaium.cf4m.provider;
  */
 public interface Provider {
     /**
+     * NotNull
+     *
      * @return name
      */
     String getName();
 
     /**
+     * NotNull
+     *
      * @return description
      */
     String getDescription();

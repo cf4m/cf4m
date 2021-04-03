@@ -10,7 +10,7 @@ import cn.enaium.cf4m.test.event.event.EventPriorityEventTest;
  */
 public class EventPriorityTest {
     public EventPriorityTest() {
-        CF4M.event.register(this);
+        CF4M.getEvent().register(this);
         new EventPriorityEventTest().call();
     }
 

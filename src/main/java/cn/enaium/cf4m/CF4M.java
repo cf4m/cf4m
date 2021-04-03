@@ -15,12 +15,12 @@ import java.io.File;
 public final class CF4M {
 
     /**
-     * Client package.
+     * Client package
      */
     public static String packName;
 
     /**
-     * .minecraft/{clientName} path.
+     * .minecraft/{clientName} path
      */
     public static String dir;
 
@@ -29,30 +29,60 @@ public final class CF4M {
      */
     public static IConfiguration configuration;
 
-    /**
-     * ClassManager.
-     */
-    public static ClassManager klass;
+    private static ClassManager klass;
+
+    private static EventManager event;
+
+    private static ModuleContainer module;
+
+    private static CommandContainer command;
+
+    private static ConfigContainer config;
 
     /**
-     * EventManager.
+     * ClassManager
+     * Nullable
+     * Only read
      */
-    public static EventManager event;
+    public static ClassManager getKlass() {
+        return klass;
+    }
 
     /**
-     * ModuleContainer.
+     * EventManager
+     * Nullable
+     * Only read
      */
-    public static ModuleContainer module;
+    public static EventManager getEvent() {
+        return event;
+    }
 
     /**
-     * CommandContainer.
+     * ConfigContainer
+     * Nullable
+     * Only read
      */
-    public static CommandContainer command;
+    public static ModuleContainer getModule() {
+        return module;
+    }
 
     /**
-     * ConfigContainer.
+     * CommandContainer
+     * Nullable
+     * Only read
      */
-    public static ConfigContainer config;
+    public static CommandContainer getCommand() {
+        return command;
+    }
+
+    /**
+     * ModuleContainer
+     * Nullable
+     * Only read
+     */
+    public static ConfigContainer getConfig() {
+        return config;
+    }
 
     private static boolean run = false;
 

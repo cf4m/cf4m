@@ -11,7 +11,7 @@ import cn.enaium.cf4m.test.event.event.EventCancelEventTest;
 public class EventCancelTest {
 
     public EventCancelTest() {
-        CF4M.event.register(this);
+        CF4M.getEvent().register(this);
         EventCancelEventTest eventCancelEventTest = new EventCancelEventTest();
         if (!eventCancelEventTest.getCancel()) {
             eventCancelEventTest.call();

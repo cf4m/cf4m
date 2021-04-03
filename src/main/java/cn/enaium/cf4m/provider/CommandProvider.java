@@ -5,5 +5,10 @@ package cn.enaium.cf4m.provider;
  * Author: Enaium
  */
 public interface CommandProvider extends Provider {
+    /**
+     * NotNull
+     *
+     * @return command key
+     */
     String[] getKey();
 }

@@ -9,7 +9,19 @@ import java.util.ArrayList;
  * Author: Enaium
  */
 public interface SettingContainer {
+
+    /**
+     * NotNull
+     *
+     * @return setting list
+     */
     ArrayList<SettingProvider> getAll();
 
+    /**
+     * Nullable
+     *
+     * @param name setting name
+     * @return setting
+     */
     SettingProvider getByName(String name);
 }
