@@ -4,6 +4,7 @@ import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
+import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.provider.ModuleProvider;
@@ -23,59 +24,23 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unchecked", "unused"})
 public final class ModuleManager {
 
-    private final HashMap<Object, ModuleProvider> modules = new HashMap<>();
 
-    public final ModuleContainer moduleContainer = new ModuleContainer() {
-        @Override
-        public ArrayList<ModuleProvider> getAll() {
-            return Lists.newArrayList(modules.values());
-        }
+    public final ModuleContainer moduleContainer;
 
-        @Override
-        public ArrayList<ModuleProvider> getAllByCategory(Category category) {
-            return modules.values().stream().filter(moduleProvider -> moduleProvider.getCategory().equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
-        }
-
-        @Override
-        public ModuleProvider getByName(String name) {
-            for (ModuleProvider moduleProvider : getAll()) {
-                if (moduleProvider.getName().equalsIgnoreCase(name)) {
-                    return moduleProvider;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public ModuleProvider getByInstance(Object instance) {
-            return modules.get(instance);
-        }
-
-        @Override
-        public void onKey(int key) {
-            for (ModuleProvider module : getAll()) {
-                if (module.getKey() == key) {
-                    module.enable();
-                }
-            }
-        }
-    };
-
-
-    public ModuleManager() {
-        System.out.println(CF4M.klass);
+    public ModuleManager(List<Class<?>> classes, IConfiguration configuration) {
+        final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         try {
             //Find Extend
             Class<?> extend = null;//Extend class
             HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> klass : CF4M.klass.getClasses()) {
+            for (Class<?> klass : classes) {
                 if (klass.isAnnotationPresent(Extend.class)) {
                     extend = klass;
                 }
             }
 
             //Add Modules
-            for (Class<?> klass : CF4M.klass.getClasses()) {
+            for (Class<?> klass : classes) {
                 if (klass.isAnnotationPresent(Module.class)) {
                     Module module = klass.getAnnotation(Module.class);
                     Object extendInstance = extend != null ? extend.newInstance() : null;
@@ -145,11 +110,11 @@ public final class ModuleManager {
                             TypeAnnotation(moduleInstance.getClass().getAnnotation(Module.class), "enable", !module.enable());
 
                             if (module.enable()) {
-                                CF4M.configuration.module().enable(moduleInstance);
-                                CF4M.instance.getEvent().register(moduleInstance);
+                                configuration.module().enable(moduleInstance);
+                                CF4M.CF4M.getEvent().register(moduleInstance);
                             } else {
-                                CF4M.configuration.module().disable(moduleInstance);
-                                CF4M.instance.getEvent().unregister(moduleInstance);
+                                configuration.module().disable(moduleInstance);
+                                CF4M.CF4M.getEvent().unregister(moduleInstance);
                             }
 
                             for (Method method : klass.getDeclaredMethods()) {
@@ -205,6 +170,42 @@ public final class ModuleManager {
         } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
+
+        moduleContainer = new ModuleContainer() {
+            @Override
+            public ArrayList<ModuleProvider> getAll() {
+                return Lists.newArrayList(modules.values());
+            }
+
+            @Override
+            public ArrayList<ModuleProvider> getAllByCategory(Category category) {
+                return modules.values().stream().filter(moduleProvider -> moduleProvider.getCategory().equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
+            }
+
+            @Override
+            public ModuleProvider getByName(String name) {
+                for (ModuleProvider moduleProvider : getAll()) {
+                    if (moduleProvider.getName().equalsIgnoreCase(name)) {
+                        return moduleProvider;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public ModuleProvider getByInstance(Object instance) {
+                return modules.get(instance);
+            }
+
+            @Override
+            public void onKey(int key) {
+                for (ModuleProvider module : getAll()) {
+                    if (module.getKey() == key) {
+                        module.enable();
+                    }
+                }
+            }
+        };
     }
 
     private void TypeAnnotation(Annotation annotation, String name, Object value) {

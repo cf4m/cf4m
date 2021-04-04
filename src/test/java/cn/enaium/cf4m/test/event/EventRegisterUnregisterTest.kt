@@ -1,6 +1,6 @@
 package cn.enaium.cf4m.test.event
 
-import cn.enaium.cf4m.CF4M
+import cn.enaium.cf4m.CF4M.CF4M
 import cn.enaium.cf4m.annotation.Event
 import cn.enaium.cf4m.test.event.event.EventRegisterUnregisterEventTest
 
@@ -15,9 +15,9 @@ class EventRegisterUnregisterTest {
     }
 
     init {
-        CF4M.instance.event.register(this)
-        EventRegisterUnregisterEventTest().call()
-        CF4M.instance.event.unregister(this)
-        EventRegisterUnregisterEventTest().call()
+        CF4M.event.register(this)
+        CF4M.event.call(EventRegisterUnregisterEventTest())
+        CF4M.event.unregister(this)
+        CF4M.event.call(EventRegisterUnregisterEventTest())
     }
 }

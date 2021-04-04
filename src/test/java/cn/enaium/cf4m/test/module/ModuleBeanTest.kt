@@ -1,7 +1,6 @@
 package cn.enaium.cf4m.test.module
 
-import cn.enaium.cf4m.provider.ModuleProvider
-import cn.enaium.cf4m.CF4M
+import cn.enaium.cf4m.CF4M.CF4M
 import org.junit.jupiter.api.Assertions
 
 /**
@@ -10,9 +9,9 @@ import org.junit.jupiter.api.Assertions
  */
 class ModuleBeanTest {
     init {
-        for (module in CF4M.instance.module.all) {
+        for (module in CF4M.module.all) {
             println(module.name)
         }
-        Assertions.assertNotNull(CF4M.instance.module.all)
+        Assertions.assertNotNull(CF4M.module.all)
     }
 }

@@ -3,6 +3,7 @@ package cn.enaium.cf4m;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.CommandContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
+import cn.enaium.cf4m.container.EventContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.manager.*;
 
@@ -14,26 +15,19 @@ import java.io.File;
  */
 public final class CF4M {
 
-
-    /**
-     * ClassManager
-     * Nullable
-     * Only read
-     */
-    public static ClassManager klass;
-
-    public static I instance;
+    public static ICF4M CF4M;
 
     public CF4M(Class<?> mainClass, String dir) {
-        klass = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName());
-        EventManager eventManager = new EventManager();
-        ModuleContainer moduleContainer = new ModuleManager().moduleContainer;
-        CommandContainer commandContainer = new CommandManager().commandContainer;
-        ConfigContainer configContainer = new ConfigManager(dir).configContainer;
-        instance = new I() {
+        ClassManager classManager = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName());
+        IConfiguration configuration = new ConfigurationManager(classManager.getClasses()).configuration;
+        EventContainer eventContainer = new EventManager().eventContainer;
+        ModuleContainer moduleContainer = new ModuleManager(classManager.getClasses(), configuration).moduleContainer;
+        CommandContainer commandContainer = new CommandManager(classManager.getClasses(), configuration).commandContainer;
+        ConfigContainer configContainer = new ConfigManager(classManager.getClasses(), dir, configuration).configContainer;
+        CF4M = new ICF4M() {
             @Override
-            public EventManager getEvent() {
-                return eventManager;
+            public EventContainer getEvent() {
+                return eventContainer;
             }
 
             @Override
@@ -50,43 +44,13 @@ public final class CF4M {
             public ConfigContainer getConfig() {
                 return configContainer;
             }
+
+            @Override
+            public IConfiguration getConfiguration() {
+                return configuration;
+            }
         };
     }
-
-    public interface I {
-        /**
-         * EventManager
-         * Nullable
-         * Only read
-         */
-        EventManager getEvent();
-
-        /**
-         * ModuleContainer
-         * Nullable
-         * Only read
-         */
-        ModuleContainer getModule();
-
-        /**
-         * CommandContainer
-         * Nullable
-         * Only read
-         */
-        CommandContainer getCommand();
-
-        /**
-         * ConfigContainer
-         * Nullable
-         * Only read
-         */
-        ConfigContainer getConfig();
-    }
-
-    /**
-     * CF4M configuration
-     */
-    public static IConfiguration configuration;
 
     private static boolean run = false;
 
@@ -99,12 +63,8 @@ public final class CF4M {
             throw new ExceptionInInitializerError();
         }
         new CF4M(mainClass, path);
-        configuration = new IConfiguration() {
-        };
-        if (configuration.config().enable()) {
-            instance.getConfig().load();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> instance.getConfig().save()));
-        }
+        CF4M.getConfig().load();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> CF4M.getConfig().save()));
         run = true;
     }
 

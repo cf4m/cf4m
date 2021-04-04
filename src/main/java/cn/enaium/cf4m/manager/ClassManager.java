@@ -22,13 +22,10 @@ public final class ClassManager {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
                 if (info.getName().startsWith(packName)) {
                     Class<?> klass = classLoader.loadClass(info.getName());
-                    if (klass.isAnnotationPresent(Configuration.class)) {
-                        CF4M.configuration = (IConfiguration) klass.newInstance();
-                    }
                     classes.add(klass);
                 }
             }
-        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }

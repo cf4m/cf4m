@@ -2,7 +2,7 @@ package cn.enaium.cf4m.test.module.module
 
 import cn.enaium.cf4m.test.module.ModuleExtend
 import cn.enaium.cf4m.annotation.module.Enable
-import cn.enaium.cf4m.CF4M
+import cn.enaium.cf4m.CF4M.CF4M
 import cn.enaium.cf4m.annotation.module.Disable
 import cn.enaium.cf4m.annotation.module.Module
 
@@ -16,7 +16,7 @@ class ModuleExtendTest1 {
 
     @Enable
     fun enable() {
-        moduleExtend = CF4M.instance.module.getByInstance(this).getExtend()
+        moduleExtend = CF4M.module.getByInstance(this).getExtend()
         moduleExtend!!.tag = "tag2"
         moduleExtend!!.age = 2
         moduleExtend!!.func = object : ModuleExtend.Action {
