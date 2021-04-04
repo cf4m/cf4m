@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unchecked", "unused"})
 public final class ModuleManager {
 
-
     public final ModuleContainer moduleContainer;
 
     public ModuleManager(List<Class<?>> classes, IConfiguration configuration) {

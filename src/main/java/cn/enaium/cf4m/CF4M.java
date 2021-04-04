@@ -1,10 +1,7 @@
 package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
-import cn.enaium.cf4m.container.CommandContainer;
-import cn.enaium.cf4m.container.ConfigContainer;
-import cn.enaium.cf4m.container.EventContainer;
-import cn.enaium.cf4m.container.ModuleContainer;
+import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
@@ -18,16 +15,26 @@ public final class CF4M {
     public static ICF4M CF4M;
 
     public CF4M(Class<?> mainClass, String dir) {
-        ClassManager classManager = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName());
-        IConfiguration configuration = new ConfigurationManager(classManager.getClasses()).configuration;
-        EventContainer eventContainer = new EventManager().eventContainer;
-        ModuleContainer moduleContainer = new ModuleManager(classManager.getClasses(), configuration).moduleContainer;
-        CommandContainer commandContainer = new CommandManager(classManager.getClasses(), configuration).commandContainer;
-        ConfigContainer configContainer = new ConfigManager(classManager.getClasses(), dir, configuration).configContainer;
+        final ClassContainer classContainer = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName()).classContainer;
+        final EventContainer eventContainer = new EventManager().eventContainer;
+        final IConfiguration configuration = new ConfigurationManager(classContainer.getClasses()).configuration;
+        final ModuleContainer moduleContainer = new ModuleManager(classContainer.getClasses(), configuration).moduleContainer;
+        final CommandContainer commandContainer = new CommandManager(classContainer.getClasses(), configuration).commandContainer;
+        final ConfigContainer configContainer = new ConfigManager(classContainer.getClasses(), dir, configuration).configContainer;
         CF4M = new ICF4M() {
+            @Override
+            public ClassContainer getClassContainer() {
+                return classContainer;
+            }
+
             @Override
             public EventContainer getEvent() {
                 return eventContainer;
+            }
+
+            @Override
+            public IConfiguration getConfiguration() {
+                return configuration;
             }
 
             @Override
@@ -43,11 +50,6 @@ public final class CF4M {
             @Override
             public ConfigContainer getConfig() {
                 return configContainer;
-            }
-
-            @Override
-            public IConfiguration getConfiguration() {
-                return configuration;
             }
         };
     }

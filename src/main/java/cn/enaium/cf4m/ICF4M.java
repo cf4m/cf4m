@@ -7,12 +7,27 @@ import cn.enaium.cf4m.manager.EventManager;
 import java.io.File;
 
 public interface ICF4M {
+
+    /**
+     * ClassContainer
+     * Nullable
+     * Only read
+     */
+    ClassContainer getClassContainer();
+    
     /**
      * EventContainer
      * Nullable
      * Only read
      */
     EventContainer getEvent();
+
+    /**
+     * Configuration
+     * NotNull
+     * Only read
+     */
+    IConfiguration getConfiguration();
 
     /**
      * ModuleContainer
@@ -34,12 +49,4 @@ public interface ICF4M {
      * Only read
      */
     ConfigContainer getConfig();
-
-
-    /**
-     * Configuration
-     * NotNull
-     * Only read
-     */
-    IConfiguration getConfiguration();
 }

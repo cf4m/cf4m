@@ -20,5 +20,9 @@ public interface EventContainer {
      */
     void unregister(Object instance);
 
+    /**
+     *
+     * @param instance event
+     */
     void call(Object instance);
 }
