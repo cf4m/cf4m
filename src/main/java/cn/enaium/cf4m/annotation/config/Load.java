@@ -6,7 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
+ * Attached to {@link Config}
+ * <p>
+ * Add this annotation to the method to that this method will be invoke at load
  *
  * @author Enaium
  */

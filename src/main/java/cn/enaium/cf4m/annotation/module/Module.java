@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
+ * Add this annotation to the class to that this class is a module
  *
  * @author Enaium
  */

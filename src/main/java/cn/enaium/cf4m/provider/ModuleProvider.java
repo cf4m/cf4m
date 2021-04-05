@@ -3,8 +3,6 @@ package cn.enaium.cf4m.provider;
 import cn.enaium.cf4m.container.SettingContainer;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public interface ModuleProvider extends Provider {

@@ -3,8 +3,6 @@ package cn.enaium.cf4m.event;
 import java.lang.reflect.Method;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public final class EventBean {

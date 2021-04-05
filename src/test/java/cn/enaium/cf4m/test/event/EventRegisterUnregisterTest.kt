@@ -5,8 +5,6 @@ import cn.enaium.cf4m.annotation.Event
 import cn.enaium.cf4m.test.event.event.EventRegisterUnregisterEventTest
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 class EventRegisterUnregisterTest {

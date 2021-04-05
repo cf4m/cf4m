@@ -5,8 +5,6 @@ import cn.enaium.cf4m.CF4M.INSTANCE
 import cn.enaium.cf4m.annotation.Event
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 class EventCancelTest {

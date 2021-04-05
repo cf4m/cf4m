@@ -1,8 +1,6 @@
 package cn.enaium.cf4m.configuration;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public interface IConfiguration {

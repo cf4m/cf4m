@@ -5,8 +5,6 @@ import cn.enaium.cf4m.provider.ConfigProvider;
 import java.util.ArrayList;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public interface ConfigContainer {

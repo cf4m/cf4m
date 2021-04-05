@@ -7,8 +7,6 @@ import cn.enaium.cf4m.annotation.module.Disable
 import cn.enaium.cf4m.annotation.module.Module
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 @Module(value = "ModuleExtendTest1", key = 3)

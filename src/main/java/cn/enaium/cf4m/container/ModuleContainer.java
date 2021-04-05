@@ -5,8 +5,6 @@ import cn.enaium.cf4m.provider.ModuleProvider;
 import java.util.ArrayList;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public interface ModuleContainer {

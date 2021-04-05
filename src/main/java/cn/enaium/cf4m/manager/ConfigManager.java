@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public final class ConfigManager {
@@ -28,7 +26,7 @@ public final class ConfigManager {
 
     public final ConfigContainer configContainer;
 
-    public ConfigManager(ClassContainer classContainer, String path, IConfiguration configuration) {
+    public ConfigManager(ClassContainer classContainer, IConfiguration configuration, String path) {
         final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
 
         try {

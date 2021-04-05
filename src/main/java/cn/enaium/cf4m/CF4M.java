@@ -7,8 +7,6 @@ import cn.enaium.cf4m.manager.*;
 import java.io.File;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public final class CF4M {
@@ -21,7 +19,7 @@ public final class CF4M {
         final IConfiguration configuration = new ConfigurationManager(classContainer).configuration;
         final ModuleContainer moduleContainer = new ModuleManager(classContainer, configuration).moduleContainer;
         final CommandContainer commandContainer = new CommandManager(classContainer, configuration).commandContainer;
-        final ConfigContainer configContainer = new ConfigManager(classContainer, dir, configuration).configContainer;
+        final ConfigContainer configContainer = new ConfigManager(classContainer, configuration, dir).configContainer;
         INSTANCE = new ICF4M() {
             @Override
             public ClassContainer getClassContainer() {
@@ -53,6 +51,7 @@ public final class CF4M {
                 return configContainer;
             }
         };
+        classContainer.accept();
     }
 
     private static boolean run = false;

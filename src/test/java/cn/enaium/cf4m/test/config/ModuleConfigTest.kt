@@ -6,8 +6,6 @@ import cn.enaium.cf4m.annotation.config.Config
 import cn.enaium.cf4m.annotation.config.Save
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 @Config("Module")

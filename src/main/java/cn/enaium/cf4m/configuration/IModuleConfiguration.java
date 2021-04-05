@@ -1,8 +1,8 @@
 package cn.enaium.cf4m.configuration;
 
+import cn.enaium.cf4m.provider.ModuleProvider;
+
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public interface IModuleConfiguration {
@@ -11,7 +11,7 @@ public interface IModuleConfiguration {
      *
      * @param module module.
      */
-    default void enable(Object module) {
+    default void enable(ModuleProvider module) {
     }
 
     /**
@@ -19,6 +19,6 @@ public interface IModuleConfiguration {
      *
      * @param module module.
      */
-    default void disable(Object module) {
+    default void disable(ModuleProvider module) {
     }
 }

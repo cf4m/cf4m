@@ -7,8 +7,6 @@ import cn.enaium.cf4m.container.ClassContainer;
 import java.util.List;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public class ConfigurationManager {

@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.annotation;
+package cn.enaium.cf4m.annotation.module;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
+ * Attach to {@link Module}
+ * <p>
+ * Add this annotation to the field to that this field is module setting
  *
  * @author Enaium
  */

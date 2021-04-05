@@ -6,7 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
+ * Attached {@link Module}
+ * <p>
+ * Add this annotation to the method to that this class will be invoke at module disable
  *
  * @author Enaium
  */

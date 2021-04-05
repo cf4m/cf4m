@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public final class EventManager {

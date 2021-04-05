@@ -4,8 +4,6 @@ import cn.enaium.cf4m.CF4M.INSTANCE
 import org.junit.jupiter.api.Assertions
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 class ModuleBeanTest {

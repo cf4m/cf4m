@@ -10,8 +10,6 @@ import cn.enaium.cf4m.test.event.EventCancelTest
 import cn.enaium.cf4m.test.config.ConfigTest
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 class T {
@@ -56,9 +54,9 @@ class T {
         INSTANCE.module.onKey(5)
         println("Check ModuleType End")
         println()
-        println("Check ModuleContainerTest Start")
+        println("Check ModuleAutoTest Start")
         INSTANCE.module.onKey(6)
-        println("Check ModuleContainerTest End")
+        println("Check ModuleAutoTest End")
         println()
         println("Check CommandTest Start")
         println(INSTANCE.command.execCommand("`t"))

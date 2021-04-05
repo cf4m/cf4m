@@ -5,8 +5,6 @@ import cn.enaium.cf4m.annotation.module.Enable
 import cn.enaium.cf4m.annotation.module.Module
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 @Module("ModuleTypeTest", key = 5)

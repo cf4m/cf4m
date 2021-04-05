@@ -5,8 +5,6 @@ import cn.enaium.cf4m.annotation.Event
 import cn.enaium.cf4m.test.event.event.EventPriorityEventTest
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 class EventPriorityTest {

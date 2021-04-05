@@ -18,8 +18,6 @@ import java.util.*;
 import static cn.enaium.cf4m.CF4M.INSTANCE;
 
 /**
- * Project: cf4m
- *
  * @author Enaium
  */
 public final class CommandManager {

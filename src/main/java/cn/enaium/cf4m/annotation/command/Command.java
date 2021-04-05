@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Project: cf4m
+ * Add this annotation to the class to that this class is a command
  *
  * @author Enaium
  */
