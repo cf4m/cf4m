@@ -2,7 +2,8 @@ package cn.enaium.cf4m.provider;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public interface CommandProvider extends Provider {
     /**

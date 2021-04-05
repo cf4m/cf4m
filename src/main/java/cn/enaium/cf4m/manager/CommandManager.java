@@ -14,11 +14,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import static cn.enaium.cf4m.CF4M.CF4M;
+import static cn.enaium.cf4m.CF4M.INSTANCE;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public final class CommandManager {
     /**
@@ -75,7 +76,7 @@ public final class CommandManager {
                                 for (Parameter parameter : parameters) {
                                     params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
                                 }
-                                CF4M.getConfiguration().command().message(key + " " + params);
+                                INSTANCE.getConfiguration().command().message(key + " " + params);
                             }
                         }
                     }
@@ -152,7 +153,7 @@ public final class CommandManager {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        CF4M.getConfiguration().command().message(e.getMessage());
+                        INSTANCE.getConfiguration().command().message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -165,7 +166,7 @@ public final class CommandManager {
                     }
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    CF4M.getConfiguration().command().message(e.getMessage());
+                    INSTANCE.getConfiguration().command().message(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -175,7 +176,7 @@ public final class CommandManager {
 
     private void help() {
         for (CommandProvider commandProvider : commandContainer.getAll()) {
-            CF4M.getConfiguration().command().message(configuration.command().prefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
+            INSTANCE.getConfiguration().command().message(configuration.command().prefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }
 

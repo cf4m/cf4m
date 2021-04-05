@@ -6,11 +6,9 @@ import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ModuleContainer;
-import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
-import com.google.common.collect.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -19,7 +17,8 @@ import java.util.stream.Collectors;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 @SuppressWarnings({"unchecked", "unused"})
 public final class ModuleManager {
@@ -31,7 +30,7 @@ public final class ModuleManager {
         try {
             //Find Extend
             Class<?> extend = null;//Extend class
-            HashMap<String, Field> findFields = Maps.newHashMap();
+            HashMap<String, Field> findFields = new HashMap<>();
             for (Class<?> klass : classes) {
                 if (klass.isAnnotationPresent(Extend.class)) {
                     extend = klass;
@@ -110,10 +109,10 @@ public final class ModuleManager {
 
                             if (module.enable()) {
                                 configuration.module().enable(moduleInstance);
-                                CF4M.CF4M.getEvent().register(moduleInstance);
+                                CF4M.INSTANCE.getEvent().register(moduleInstance);
                             } else {
                                 configuration.module().disable(moduleInstance);
-                                CF4M.CF4M.getEvent().unregister(moduleInstance);
+                                CF4M.INSTANCE.getEvent().unregister(moduleInstance);
                             }
 
                             for (Method method : klass.getDeclaredMethods()) {
@@ -145,8 +144,8 @@ public final class ModuleManager {
                         }
 
                         @Override
-                        public Category getCategory() {
-                            return module.category();
+                        public String getType() {
+                            return module.type();
                         }
 
                         @Override
@@ -173,12 +172,17 @@ public final class ModuleManager {
         moduleContainer = new ModuleContainer() {
             @Override
             public ArrayList<ModuleProvider> getAll() {
-                return Lists.newArrayList(modules.values());
+                return new ArrayList<>(modules.values());
             }
 
             @Override
-            public ArrayList<ModuleProvider> getAllByCategory(Category category) {
-                return modules.values().stream().filter(moduleProvider -> moduleProvider.getCategory().equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
+            public ArrayList<ModuleProvider> getAllByType(String type) {
+                return modules.values().stream().filter(moduleProvider -> moduleProvider.getType().equals(type)).collect(Collectors.toCollection(ArrayList::new));
+            }
+
+            @Override
+            public ArrayList<String> getAllType() {
+                return getAll().stream().map(ModuleProvider::getType).distinct().collect(Collectors.toCollection(ArrayList::new));
             }
 
             @Override

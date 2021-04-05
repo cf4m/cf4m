@@ -13,7 +13,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public final class EventManager {
     /**

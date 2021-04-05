@@ -5,7 +5,8 @@ import cn.enaium.cf4m.annotation.command.Exec
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 @Command("t", "test")
 class CommandTest {

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public interface ClassContainer {
     ArrayList<Class<?>> getClasses();

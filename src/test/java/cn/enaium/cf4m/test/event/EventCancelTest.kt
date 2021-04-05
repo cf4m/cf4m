@@ -1,12 +1,13 @@
 package cn.enaium.cf4m.test.event
 
 import cn.enaium.cf4m.test.event.event.EventCancelEventTest
-import cn.enaium.cf4m.CF4M.CF4M
+import cn.enaium.cf4m.CF4M.INSTANCE
 import cn.enaium.cf4m.annotation.Event
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 class EventCancelTest {
     @Event
@@ -16,13 +17,13 @@ class EventCancelTest {
     }
 
     init {
-        CF4M.event.register(this)
+        INSTANCE.event.register(this)
         val eventCancelEventTest = EventCancelEventTest()
         if (!eventCancelEventTest.cancel) {
-            CF4M.event.call(eventCancelEventTest);
+            INSTANCE.event.call(eventCancelEventTest);
         }
         if (!eventCancelEventTest.cancel) {
-            CF4M.event.call(eventCancelEventTest);
+            INSTANCE.event.call(eventCancelEventTest);
         }
     }
 }

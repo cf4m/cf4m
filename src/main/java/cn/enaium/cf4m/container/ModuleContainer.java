@@ -1,13 +1,13 @@
 package cn.enaium.cf4m.container;
 
-import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.provider.ModuleProvider;
 
 import java.util.ArrayList;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public interface ModuleContainer {
     /**
@@ -20,10 +20,17 @@ public interface ModuleContainer {
     /**
      * NotNull
      *
-     * @param category module category
+     * @param type module type
      * @return module
      */
-    ArrayList<ModuleProvider> getAllByCategory(Category category);
+    ArrayList<ModuleProvider> getAllByType(String type);
+
+    /**
+     * NotNull
+     *
+     * @return module type list
+     */
+    ArrayList<String> getAllType();
 
     /**
      * Nullable

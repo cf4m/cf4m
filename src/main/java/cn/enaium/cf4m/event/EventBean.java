@@ -4,7 +4,8 @@ import java.lang.reflect.Method;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public final class EventBean {
     private final Object instance;

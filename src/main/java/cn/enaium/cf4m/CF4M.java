@@ -8,11 +8,12 @@ import java.io.File;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public final class CF4M {
 
-    public static ICF4M CF4M;
+    public static ICF4M INSTANCE;
 
     public CF4M(Class<?> mainClass, String dir) {
         final ClassContainer classContainer = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName()).classContainer;
@@ -21,7 +22,7 @@ public final class CF4M {
         final ModuleContainer moduleContainer = new ModuleManager(classContainer.getClasses(), configuration).moduleContainer;
         final CommandContainer commandContainer = new CommandManager(classContainer.getClasses(), configuration).commandContainer;
         final ConfigContainer configContainer = new ConfigManager(classContainer.getClasses(), dir, configuration).configContainer;
-        CF4M = new ICF4M() {
+        INSTANCE = new ICF4M() {
             @Override
             public ClassContainer getClassContainer() {
                 return classContainer;
@@ -65,8 +66,8 @@ public final class CF4M {
             throw new ExceptionInInitializerError();
         }
         new CF4M(mainClass, path);
-        CF4M.getConfig().load();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> CF4M.getConfig().save()));
+        INSTANCE.getConfig().load();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
         run = true;
     }
 

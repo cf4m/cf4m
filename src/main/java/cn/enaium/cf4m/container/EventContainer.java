@@ -2,7 +2,8 @@ package cn.enaium.cf4m.container;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public interface EventContainer {
     

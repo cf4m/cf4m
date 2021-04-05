@@ -6,7 +6,8 @@ import cn.enaium.cf4m.annotation.module.Module
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 @Module(value = "ModuleEnableDisableTest", key = 1)
 class ModuleEnableDisableTest {

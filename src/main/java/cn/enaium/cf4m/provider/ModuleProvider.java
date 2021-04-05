@@ -1,11 +1,11 @@
 package cn.enaium.cf4m.provider;
 
 import cn.enaium.cf4m.container.SettingContainer;
-import cn.enaium.cf4m.module.Category;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public interface ModuleProvider extends Provider {
     /**
@@ -35,9 +35,9 @@ public interface ModuleProvider extends Provider {
     /**
      * NotNull
      *
-     * @return module category
+     * @return module type
      */
-    Category getCategory();
+    String getType();
 
     /**
      * Nullable

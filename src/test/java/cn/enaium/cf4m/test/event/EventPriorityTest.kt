@@ -1,12 +1,13 @@
 package cn.enaium.cf4m.test.event
 
-import cn.enaium.cf4m.CF4M.CF4M
+import cn.enaium.cf4m.CF4M.INSTANCE
 import cn.enaium.cf4m.annotation.Event
 import cn.enaium.cf4m.test.event.event.EventPriorityEventTest
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 class EventPriorityTest {
     @Event(priority = 0)
@@ -45,7 +46,7 @@ class EventPriorityTest {
     }
 
     init {
-        CF4M.event.register(this)
-        CF4M.event.call(EventPriorityEventTest())
+        INSTANCE.event.register(this)
+        INSTANCE.event.call(EventPriorityEventTest())
     }
 }

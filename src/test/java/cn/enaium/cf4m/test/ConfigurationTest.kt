@@ -5,7 +5,8 @@ import cn.enaium.cf4m.configuration.IConfiguration
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 @Configuration
 class ConfigurationTest : IConfiguration

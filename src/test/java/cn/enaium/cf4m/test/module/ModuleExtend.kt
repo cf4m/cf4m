@@ -4,7 +4,8 @@ import cn.enaium.cf4m.annotation.module.Extend
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 @Extend
 class ModuleExtend {

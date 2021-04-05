@@ -7,7 +7,8 @@ import java.util.List;
 
 /**
  * Project: cf4m
- * Author: Enaium
+ *
+ * @author Enaium
  */
 public class ConfigurationManager {
 
