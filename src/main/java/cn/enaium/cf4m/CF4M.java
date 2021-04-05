@@ -18,10 +18,10 @@ public final class CF4M {
     public CF4M(Class<?> mainClass, String dir) {
         final ClassContainer classContainer = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName()).classContainer;
         final EventContainer eventContainer = new EventManager().eventContainer;
-        final IConfiguration configuration = new ConfigurationManager(classContainer.getClasses()).configuration;
-        final ModuleContainer moduleContainer = new ModuleManager(classContainer.getClasses(), configuration).moduleContainer;
-        final CommandContainer commandContainer = new CommandManager(classContainer.getClasses(), configuration).commandContainer;
-        final ConfigContainer configContainer = new ConfigManager(classContainer.getClasses(), dir, configuration).configContainer;
+        final IConfiguration configuration = new ConfigurationManager(classContainer).configuration;
+        final ModuleContainer moduleContainer = new ModuleManager(classContainer, configuration).moduleContainer;
+        final CommandContainer commandContainer = new CommandManager(classContainer, configuration).commandContainer;
+        final ConfigContainer configContainer = new ConfigManager(classContainer, dir, configuration).configContainer;
         INSTANCE = new ICF4M() {
             @Override
             public ClassContainer getClassContainer() {

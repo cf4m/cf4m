@@ -4,6 +4,7 @@ import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
 import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.provider.ConfigProvider;
 import com.google.common.collect.Lists;
@@ -27,11 +28,11 @@ public final class ConfigManager {
 
     public final ConfigContainer configContainer;
 
-    public ConfigManager(List<Class<?>> classes, String path, IConfiguration configuration) {
+    public ConfigManager(ClassContainer classContainer, String path, IConfiguration configuration) {
         final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
 
         try {
-            for (Class<?> klass : classes) {
+            for (Class<?> klass : classContainer.getClasses()) {
                 if (klass.isAnnotationPresent(Config.class)) {
                     configs.put(klass.newInstance(), new ConfigProvider() {
                         @Override

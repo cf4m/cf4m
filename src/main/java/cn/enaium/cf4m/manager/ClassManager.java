@@ -2,12 +2,16 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Configuration;
+import cn.enaium.cf4m.annotation.Container;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
+import cn.enaium.cf4m.container.EventContainer;
+import cn.enaium.cf4m.container.ModuleContainer;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**

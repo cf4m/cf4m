@@ -4,6 +4,7 @@ import cn.enaium.cf4m.annotation.command.Command;
 import cn.enaium.cf4m.annotation.command.Exec;
 import cn.enaium.cf4m.annotation.command.Param;
 import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.CommandContainer;
 import cn.enaium.cf4m.provider.CommandProvider;
 import com.google.common.collect.Lists;
@@ -95,12 +96,12 @@ public final class CommandManager {
      */
     private final IConfiguration configuration;
 
-    public CommandManager(List<Class<?>> classes, IConfiguration configuration) {
+    public CommandManager(ClassContainer classContainer, IConfiguration configuration) {
         this.configuration = configuration;
         commands = Maps.newHashMap();
 
         try {
-            for (Class<?> klass : classes) {
+            for (Class<?> klass : classContainer.getClasses()) {
                 if (klass.isAnnotationPresent(Command.class)) {
                     commands.put(klass.newInstance(), new CommandProvider() {
                         @Override

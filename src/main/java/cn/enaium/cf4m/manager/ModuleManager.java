@@ -1,10 +1,12 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
+import cn.enaium.cf4m.annotation.Container;
 import cn.enaium.cf4m.annotation.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
@@ -25,20 +27,20 @@ public final class ModuleManager {
 
     public final ModuleContainer moduleContainer;
 
-    public ModuleManager(List<Class<?>> classes, IConfiguration configuration) {
+    public ModuleManager(ClassContainer classContainer, IConfiguration configuration) {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         try {
             //Find Extend
             Class<?> extend = null;//Extend class
             HashMap<String, Field> findFields = new HashMap<>();
-            for (Class<?> klass : classes) {
+            for (Class<?> klass : classContainer.getClasses()) {
                 if (klass.isAnnotationPresent(Extend.class)) {
                     extend = klass;
                 }
             }
 
             //Add Modules
-            for (Class<?> klass : classes) {
+            for (Class<?> klass : classContainer.getClasses()) {
                 if (klass.isAnnotationPresent(Module.class)) {
                     Module module = klass.getAnnotation(Module.class);
                     Object extendInstance = extend != null ? extend.newInstance() : null;
@@ -209,6 +211,22 @@ public final class ModuleManager {
                 }
             }
         };
+
+        for (Object module : modules.keySet()) {
+            Class<?> klass = module.getClass();
+            if (klass.isAnnotationPresent(Container.class)) {
+                for (Field field : klass.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    try {
+                        if (field.getType().equals(ModuleContainer.class)) {
+                            field.set(module, moduleContainer);
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     private void TypeAnnotation(Annotation annotation, String name, Object value) {
