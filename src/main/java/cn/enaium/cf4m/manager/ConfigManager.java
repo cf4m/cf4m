@@ -16,7 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author Enaium
@@ -29,29 +28,25 @@ public final class ConfigManager {
     public ConfigManager(ClassContainer classContainer, IConfiguration configuration, String path) {
         final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
 
-        try {
-            for (Class<?> klass : classContainer.getClasses()) {
-                if (klass.isAnnotationPresent(Config.class)) {
-                    configs.put(klass.newInstance(), new ConfigProvider() {
-                        @Override
-                        public String getName() {
-                            return klass.getAnnotation(Config.class).value();
-                        }
+        for (Class<?> klass : classContainer.getAll()) {
+            if (klass.isAnnotationPresent(Config.class)) {
+                configs.put(classContainer.create(klass), new ConfigProvider() {
+                    @Override
+                    public String getName() {
+                        return klass.getAnnotation(Config.class).value();
+                    }
 
-                        @Override
-                        public String getDescription() {
-                            return klass.getAnnotation(Config.class).description();
-                        }
+                    @Override
+                    public String getDescription() {
+                        return klass.getAnnotation(Config.class).description();
+                    }
 
-                        @Override
-                        public String getPath() {
-                            return path + File.separator + "configs" + File.separator + getName() + ".json";
-                        }
-                    });
-                }
+                    @Override
+                    public String getPath() {
+                        return path + File.separator + "configs" + File.separator + getName() + ".json";
+                    }
+                });
             }
-        } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
         }
 
         configContainer = new ConfigContainer() {
@@ -77,7 +72,7 @@ public final class ConfigManager {
 
             @Override
             public void load() {
-                if (configuration.config().enable()) {
+                if (configuration.getConfig().getEnable()) {
                     configs.keySet().forEach(config -> {
                         for (Method method : config.getClass().getMethods()) {
                             method.setAccessible(true);
@@ -98,7 +93,7 @@ public final class ConfigManager {
             @SuppressWarnings("ResultOfMethodCallIgnored")
             @Override
             public void save() {
-                if (configuration.config().enable()) {
+                if (configuration.getConfig().getEnable()) {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
                     configs.keySet().forEach(config -> {

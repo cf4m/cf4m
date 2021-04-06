@@ -52,14 +52,14 @@ public final class CommandManager {
 
         @Override
         public boolean execCommand(String rawMessage) {
-            if (!rawMessage.startsWith(configuration.command().prefix())) {
+            if (!rawMessage.startsWith(configuration.getCommand().getPrefix())) {
                 return false;
             }
 
-            boolean safe = rawMessage.split(configuration.command().prefix()).length > 1;
+            boolean safe = rawMessage.split(configuration.getCommand().getPrefix()).length > 1;
 
             if (safe) {
-                String beheaded = rawMessage.split(configuration.command().prefix())[1];
+                String beheaded = rawMessage.split(configuration.getCommand().getPrefix())[1];
                 List<String> args = Lists.newArrayList(beheaded.split(" "));
                 String key = args.get(0);
                 args.remove(key);
@@ -75,7 +75,7 @@ public final class CommandManager {
                                 for (Parameter parameter : parameters) {
                                     params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
                                 }
-                                INSTANCE.getConfiguration().command().message(key + " " + params);
+                                INSTANCE.getConfiguration().getCommand().message(key + " " + params);
                             }
                         }
                     }
@@ -98,29 +98,25 @@ public final class CommandManager {
         this.configuration = configuration;
         commands = Maps.newHashMap();
 
-        try {
-            for (Class<?> klass : classContainer.getClasses()) {
-                if (klass.isAnnotationPresent(Command.class)) {
-                    commands.put(klass.newInstance(), new CommandProvider() {
-                        @Override
-                        public String getName() {
-                            return "";
-                        }
+        for (Class<?> klass : classContainer.getAll()) {
+            if (klass.isAnnotationPresent(Command.class)) {
+                commands.put(classContainer.create(klass), new CommandProvider() {
+                    @Override
+                    public String getName() {
+                        return "";
+                    }
 
-                        @Override
-                        public String getDescription() {
-                            return klass.getAnnotation(Command.class).description();
-                        }
+                    @Override
+                    public String getDescription() {
+                        return klass.getAnnotation(Command.class).description();
+                    }
 
-                        @Override
-                        public String[] getKey() {
-                            return klass.getAnnotation(Command.class).value();
-                        }
-                    });
-                }
+                    @Override
+                    public String[] getKey() {
+                        return klass.getAnnotation(Command.class).value();
+                    }
+                });
             }
-        } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
         }
     }
 
@@ -152,7 +148,7 @@ public final class CommandManager {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        INSTANCE.getConfiguration().command().message(e.getMessage());
+                        INSTANCE.getConfiguration().getCommand().message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -165,7 +161,7 @@ public final class CommandManager {
                     }
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    INSTANCE.getConfiguration().command().message(e.getMessage());
+                    INSTANCE.getConfiguration().getCommand().message(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -175,7 +171,7 @@ public final class CommandManager {
 
     private void help() {
         for (CommandProvider commandProvider : commandContainer.getAll()) {
-            INSTANCE.getConfiguration().command().message(configuration.command().prefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
+            INSTANCE.getConfiguration().getCommand().message(configuration.getCommand().getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }
 

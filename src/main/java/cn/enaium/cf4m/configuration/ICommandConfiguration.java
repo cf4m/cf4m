@@ -7,7 +7,7 @@ public interface ICommandConfiguration {
     /**
      * @return Command prefix.
      */
-    default String prefix() {
+    default String getPrefix() {
         return "`";
     }
 

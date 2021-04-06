@@ -11,7 +11,9 @@ import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -37,7 +39,7 @@ public final class ClassManager {
 
         classContainer = new ClassContainer() {
             @Override
-            public ArrayList<Class<?>> getClasses() {
+            public ArrayList<Class<?>> getAll() {
                 return new ArrayList<>(all.keySet());
             }
 
@@ -49,14 +51,7 @@ public final class ClassManager {
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                } else {
-                    throw new ExceptionInInitializerError();
                 }
-                return get(klass);
-            }
-
-            @Override
-            public <T> T get(Class<?> klass) {
                 return (T) all.get(klass);
             }
 
@@ -67,7 +62,9 @@ public final class ClassManager {
                         field.setAccessible(true);
                         if (klass.isAnnotationPresent(Auto.class) || field.isAnnotationPresent(Auto.class)) {
                             try {
-                                if (field.getType().equals(EventContainer.class)) {
+                                if (field.getType().equals(ClassContainer.class)) {
+                                    field.set(instance, this);
+                                } else if (field.getType().equals(EventContainer.class)) {
                                     field.set(instance, CF4M.INSTANCE.getEvent());
                                 } else if (field.getType().equals(ModuleContainer.class)) {
                                     field.set(instance, CF4M.INSTANCE.getModule());

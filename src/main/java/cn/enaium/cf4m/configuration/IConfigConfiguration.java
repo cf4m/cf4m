@@ -7,7 +7,7 @@ public interface IConfigConfiguration {
     /**
      * @return enable or disable config.
      */
-    default boolean enable() {
+    default boolean getEnable() {
         return true;
     }
 }

@@ -62,12 +62,13 @@ public final class CF4M {
      */
     public static void run(Class<?> mainClass, String path) {
         if (run) {
-            throw new ExceptionInInitializerError();
+            new Exception("CF4M already run").printStackTrace();
+        } else {
+            new CF4M(mainClass, path);
+            INSTANCE.getConfig().load();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
+            run = true;
         }
-        new CF4M(mainClass, path);
-        INSTANCE.getConfig().load();
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
-        run = true;
     }
 
     /**

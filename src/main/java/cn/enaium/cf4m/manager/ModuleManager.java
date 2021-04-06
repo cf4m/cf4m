@@ -30,14 +30,14 @@ public final class ModuleManager {
         //Find Extend
         Object extendInstance = null;
         HashMap<String, Field> findFields = new HashMap<>();
-        for (Class<?> klass : classContainer.getClasses()) {
+        for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Extend.class)) {
                 extendInstance = classContainer.create(klass);
             }
         }
 
         //Add Modules
-        for (Class<?> klass : classContainer.getClasses()) {
+        for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
                 Object moduleInstance = classContainer.create(klass);
@@ -107,10 +107,10 @@ public final class ModuleManager {
                         TypeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
 
                         if (module.enable()) {
-                            configuration.module().enable(this);
+                            configuration.getModule().enable(this);
                             CF4M.INSTANCE.getEvent().register(moduleInstance);
                         } else {
-                            configuration.module().disable(this);
+                            configuration.getModule().disable(this);
                             CF4M.INSTANCE.getEvent().unregister(moduleInstance);
                         }
 

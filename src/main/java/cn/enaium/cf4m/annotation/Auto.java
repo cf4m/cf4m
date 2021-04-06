@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
  * <p>
  * Support class {@link cn.enaium.cf4m.annotation.config.Config}
  * <p>
+ * Support field {@link cn.enaium.cf4m.container.ClassContainer}
+ * <p>
  * Support field {@link cn.enaium.cf4m.container.EventContainer}
  * <p>
  * Support field {@link cn.enaium.cf4m.container.ModuleContainer}
