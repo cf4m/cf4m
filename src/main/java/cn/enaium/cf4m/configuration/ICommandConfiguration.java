@@ -5,14 +5,14 @@ package cn.enaium.cf4m.configuration;
  */
 public interface ICommandConfiguration {
     /**
-     * @return Command prefix.
+     * @return Command prefix
      */
     default String getPrefix() {
         return "`";
     }
 
     /**
-     * @param message print chat message.
+     * @param message print chat message
      */
     default void message(String message) {
         System.err.println(message);

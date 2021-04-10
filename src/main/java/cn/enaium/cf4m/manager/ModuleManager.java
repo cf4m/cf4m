@@ -29,7 +29,6 @@ public final class ModuleManager {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
         Object extendInstance = null;
-        HashMap<String, Field> findFields = new HashMap<>();
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Extend.class)) {
                 extendInstance = classContainer.create(klass);

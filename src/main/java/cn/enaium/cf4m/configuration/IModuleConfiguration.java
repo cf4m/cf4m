@@ -7,7 +7,7 @@ import cn.enaium.cf4m.provider.ModuleProvider;
  */
 public interface IModuleConfiguration {
     /**
-     * Before the module is enable.
+     * Before the module is enable
      *
      * @param module module.
      */
@@ -15,7 +15,7 @@ public interface IModuleConfiguration {
     }
 
     /**
-     * Before the module is disable.
+     * Before the module is disable
      *
      * @param module module.
      */

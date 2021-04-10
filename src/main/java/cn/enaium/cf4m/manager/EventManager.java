@@ -2,7 +2,6 @@ package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.annotation.Event;
 import cn.enaium.cf4m.container.EventContainer;
-import cn.enaium.cf4m.event.EventBean;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,10 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author Enaium
  */
 public final class EventManager {
-    /**
-     * <K> listener
-     * <V> event
-     */
+
+
     private final HashMap<Class<?>, CopyOnWriteArrayList<EventBean>> events;
 
     public final EventContainer eventContainer = new EventContainer() {
@@ -38,7 +35,7 @@ public final class EventManager {
             if (events.get(instance.getClass()) != null) {
                 for (EventBean event : events.get(instance.getClass())) {
                     try {
-                        event.getTarget().invoke(event.getInstance(), instance);
+                        event.target.invoke(event.instance, instance);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
@@ -70,12 +67,24 @@ public final class EventManager {
             }
         }
 
-        events.values().forEach(eventBeans -> eventBeans.sort(((o1, o2) -> (o2.getPriority() - o1.getPriority()))));
+        events.values().forEach(eventBeans -> eventBeans.sort(((o1, o2) -> (o2.priority - o1.priority))));
     }
 
 
     private void unregister(Object instance) {
-        events.values().forEach(methodBeans -> methodBeans.removeIf(methodEventBean -> methodEventBean.getInstance().equals(instance)));
+        events.values().forEach(methodBeans -> methodBeans.removeIf(methodEventBean -> methodEventBean.instance.equals(instance)));
         events.entrySet().removeIf(event -> event.getValue().isEmpty());
+    }
+
+    private static final class EventBean {
+        private final Object instance;
+        private final Method target;
+        private final int priority;
+
+        public EventBean(Object object, Method method, int priority) {
+            this.instance = object;
+            this.target = method;
+            this.priority = priority;
+        }
     }
 }
