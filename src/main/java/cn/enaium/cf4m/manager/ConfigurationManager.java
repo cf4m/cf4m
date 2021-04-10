@@ -7,7 +7,7 @@ import cn.enaium.cf4m.container.ClassContainer;
 /**
  * @author Enaium
  */
-public class ConfigurationManager {
+public final class ConfigurationManager {
 
     public IConfiguration configuration = new IConfiguration() {
     };
