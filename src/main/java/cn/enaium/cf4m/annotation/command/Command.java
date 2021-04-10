@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * Add this annotation to the class to that this class is a command
+ *
+ * @author Enaium
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

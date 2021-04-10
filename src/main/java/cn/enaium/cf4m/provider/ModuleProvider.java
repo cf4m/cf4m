@@ -1,14 +1,14 @@
 package cn.enaium.cf4m.provider;
 
 import cn.enaium.cf4m.container.SettingContainer;
-import cn.enaium.cf4m.module.Category;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * @author Enaium
  */
 public interface ModuleProvider extends Provider {
     /**
+     * NotNull
+     *
      * @return module enable
      */
     boolean getEnable();
@@ -19,25 +19,36 @@ public interface ModuleProvider extends Provider {
     void enable();
 
     /**
+     * NotNull
+     *
      * @return module keyboard
      */
     int getKey();
 
     /**
-     * @param key module keyboard
+     * @param key keyboard
      */
     void setKey(int key);
 
     /**
-     * @return module category
+     * NotNull
+     *
+     * @return module type
      */
-    Category getCategory();
+    String getType();
 
     /**
-     * @param <T> extend
-     * @return module extend
+     * Nullable
+     *
+     * @param <T> extend class
+     * @return extend instance
      */
     <T> T getExtend();
 
+    /**
+     * NotNull
+     *
+     * @return module setting
+     */
     SettingContainer getSetting();
 }

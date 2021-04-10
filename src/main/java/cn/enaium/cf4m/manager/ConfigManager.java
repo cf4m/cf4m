@@ -1,9 +1,10 @@
 package cn.enaium.cf4m.manager;
 
-import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
+import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.provider.ConfigProvider;
 import com.google.common.collect.Lists;
@@ -17,105 +18,101 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * @author Enaium
  */
 public final class ConfigManager {
 
-    /**
-     * <K> config
-     * <V> name
-     */
-    private final HashMap<Object, ConfigProvider> configs;
 
-    public final ConfigContainer configContainer = new ConfigContainer() {
-        @Override
-        public ArrayList<ConfigProvider> getAll() {
-            return Lists.newArrayList(configs.values());
-        }
+    public final ConfigContainer configContainer;
 
-        @Override
-        public ConfigProvider getByName(String name) {
-            for (ConfigProvider configProvider : getAll()) {
-                if (configProvider.getName().equalsIgnoreCase(name)) {
-                    return configProvider;
-                }
+    public ConfigManager(ClassContainer classContainer, IConfiguration configuration, String path) {
+        final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
+
+        for (Class<?> klass : classContainer.getAll()) {
+            if (klass.isAnnotationPresent(Config.class)) {
+                configs.put(classContainer.create(klass), new ConfigProvider() {
+                    @Override
+                    public String getName() {
+                        return klass.getAnnotation(Config.class).value();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return klass.getAnnotation(Config.class).description();
+                    }
+
+                    @Override
+                    public String getPath() {
+                        return path + File.separator + "configs" + File.separator + getName() + ".json";
+                    }
+                });
             }
-            return null;
         }
 
-        @Override
-        public ConfigProvider getByInstance(Object instance) {
-            return configs.get(instance);
-        }
+        configContainer = new ConfigContainer() {
+            @Override
+            public ArrayList<ConfigProvider> getAll() {
+                return Lists.newArrayList(configs.values());
+            }
 
-        @Override
-        public void load() {
-            configs.keySet().forEach(config -> {
-                for (Method method : config.getClass().getMethods()) {
-                    method.setAccessible(true);
-                    if (method.isAnnotationPresent(Load.class)) {
-                        try {
-                            if (new File(getByInstance(config).getPath()).exists()) {
-                                method.invoke(config);
-                            }
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+            @Override
+            public ConfigProvider getByName(String name) {
+                for (ConfigProvider configProvider : getAll()) {
+                    if (configProvider.getName().equalsIgnoreCase(name)) {
+                        return configProvider;
                     }
                 }
-            });
-        }
+                return null;
+            }
 
-        @SuppressWarnings("ResultOfMethodCallIgnored")
-        @Override
-        public void save() {
-            new File(CF4M.dir).mkdir();
-            new File(CF4M.dir, "configs").mkdir();
-            configs.keySet().forEach(config -> {
-                for (Method method : config.getClass().getMethods()) {
-                    method.setAccessible(true);
-                    if (method.isAnnotationPresent(Save.class)) {
-                        try {
-                            new File(getByInstance(config).getPath()).createNewFile();
-                            if (new File(getByInstance(config).getPath()).exists()) {
-                                method.invoke(config);
+            @Override
+            public ConfigProvider getByInstance(Object instance) {
+                return configs.get(instance);
+            }
+
+            @Override
+            public void load() {
+                if (configuration.getConfig().getEnable()) {
+                    configs.keySet().forEach(config -> {
+                        for (Method method : config.getClass().getMethods()) {
+                            method.setAccessible(true);
+                            if (method.isAnnotationPresent(Load.class)) {
+                                try {
+                                    if (new File(getByInstance(config).getPath()).exists()) {
+                                        method.invoke(config);
+                                    }
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        } catch (IllegalAccessException | InvocationTargetException | IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-        }
-    };
-
-    public ConfigManager() {
-        configs = Maps.newHashMap();
-
-        try {
-            for (Class<?> klass : CF4M.klass.getClasses()) {
-                if (klass.isAnnotationPresent(Config.class)) {
-                    configs.put(klass.newInstance(), new ConfigProvider() {
-                        @Override
-                        public String getName() {
-                            return klass.getAnnotation(Config.class).value();
-                        }
-
-                        @Override
-                        public String getDescription() {
-                            return klass.getAnnotation(Config.class).description();
-                        }
-
-                        @Override
-                        public String getPath() {
-                            return CF4M.dir + File.separator + "configs" + File.separator + getName() + ".json";
                         }
                     });
                 }
             }
-        } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
-        }
+
+            @SuppressWarnings("ResultOfMethodCallIgnored")
+            @Override
+            public void save() {
+                if (configuration.getConfig().getEnable()) {
+                    new File(path).mkdir();
+                    new File(path, "configs").mkdir();
+                    configs.keySet().forEach(config -> {
+                        for (Method method : config.getClass().getMethods()) {
+                            method.setAccessible(true);
+                            if (method.isAnnotationPresent(Save.class)) {
+                                try {
+                                    new File(getByInstance(config).getPath()).createNewFile();
+                                    if (new File(getByInstance(config).getPath()).exists()) {
+                                        method.invoke(config);
+                                    }
+                                } catch (IllegalAccessException | InvocationTargetException | IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        };
     }
 }

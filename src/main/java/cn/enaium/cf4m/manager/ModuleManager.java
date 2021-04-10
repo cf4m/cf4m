@@ -1,15 +1,16 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Setting;
+import cn.enaium.cf4m.annotation.Auto;
+import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
+import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
-import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
-import com.google.common.collect.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -17,193 +18,207 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * @author Enaium
  */
 @SuppressWarnings({"unchecked", "unused"})
 public final class ModuleManager {
 
-    private final HashMap<Object, ModuleProvider> modules = new HashMap<>();
+    public final ModuleContainer moduleContainer;
 
-    public final ModuleContainer moduleContainer = new ModuleContainer() {
-        @Override
-        public ArrayList<ModuleProvider> getAll() {
-            return Lists.newArrayList(modules.values());
-        }
-
-        @Override
-        public ArrayList<ModuleProvider> getAllByCategory(Category category) {
-            return modules.values().stream().filter(moduleProvider -> moduleProvider.getCategory().equals(category)).collect(Collectors.toCollection(Lists::newArrayList));
-        }
-
-        @Override
-        public ModuleProvider getByName(String name) {
-            for (ModuleProvider moduleProvider : getAll()) {
-                if (moduleProvider.getName().equalsIgnoreCase(name)) {
-                    return moduleProvider;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public ModuleProvider getByInstance(Object instance) {
-            return modules.get(instance);
-        }
-
-        @Override
-        public void onKey(int key) {
-            for (ModuleProvider module : CF4M.module.getAll()) {
-                if (module.getKey() == key) {
-                    module.enable();
-                }
+    public ModuleManager(ClassContainer classContainer, IConfiguration configuration) {
+        final HashMap<Object, ModuleProvider> modules = new HashMap<>();
+        //Find Extend
+        Object extendInstance = null;
+        for (Class<?> klass : classContainer.getAll()) {
+            if (klass.isAnnotationPresent(Extend.class)) {
+                extendInstance = classContainer.create(klass);
             }
         }
-    };
 
+        //Add Modules
+        for (Class<?> klass : classContainer.getAll()) {
+            if (klass.isAnnotationPresent(Module.class)) {
+                Module module = klass.getAnnotation(Module.class);
+                Object moduleInstance = classContainer.create(klass);
 
-    public ModuleManager() {
-        try {
-            //Find Extend
-            Class<?> extend = null;//Extend class
-            HashMap<String, Field> findFields = Maps.newHashMap();
-            for (Class<?> klass : CF4M.klass.getClasses()) {
-                if (klass.isAnnotationPresent(Extend.class)) {
-                    extend = klass;
-                }
-            }
+                //Add Setting
+                ArrayList<SettingProvider> settingProviders = new ArrayList<>();
 
-            //Add Modules
-            for (Class<?> klass : CF4M.klass.getClasses()) {
-                if (klass.isAnnotationPresent(Module.class)) {
-                    Module module = klass.getAnnotation(Module.class);
-                    Object extendInstance = extend != null ? extend.newInstance() : null;
-                    Object moduleInstance = klass.newInstance();
+                for (Field field : klass.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    if (field.isAnnotationPresent(Setting.class)) {
+                        settingProviders.add(new SettingProvider() {
+                            @Override
+                            public String getName() {
+                                return field.getAnnotation(Setting.class).value();
+                            }
 
-                    //Add Setting
-                    ArrayList<SettingProvider> settingProviders = new ArrayList<>();
+                            @Override
+                            public String getDescription() {
+                                return field.getAnnotation(Setting.class).description();
+                            }
 
-                    for (Field field : klass.getDeclaredFields()) {
-                        field.setAccessible(true);
-                        if (field.isAnnotationPresent(Setting.class)) {
-                            settingProviders.add(new SettingProvider() {
-                                @Override
-                                public String getName() {
-                                    return field.getAnnotation(Setting.class).value();
+                            @Override
+                            public <T> T getSetting() {
+                                try {
+                                    return (T) field.get(moduleInstance);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
                                 }
+                                return null;
+                            }
+                        });
+                    }
+                }
 
-                                @Override
-                                public String getDescription() {
-                                    return field.getAnnotation(Setting.class).description();
-                                }
+                SettingContainer settingContainer = new SettingContainer() {
+                    @Override
+                    public ArrayList<SettingProvider> getAll() {
+                        return settingProviders;
+                    }
 
-                                @Override
-                                public <T> T getSetting() {
-                                    try {
-                                        return (T) field.get(moduleInstance);
-                                    } catch (IllegalAccessException e) {
-                                        e.printStackTrace();
+                    @Override
+                    public SettingProvider getByName(String name) {
+                        for (SettingProvider settingProvider : getAll()) {
+                            if (settingProvider.getName().equalsIgnoreCase(name)) {
+                                return settingProvider;
+                            }
+                        }
+                        return null;
+                    }
+                };
+                Object finalExtendInstance = extendInstance;
+                modules.put(moduleInstance, new ModuleProvider() {
+                    @Override
+                    public String getName() {
+                        return module.value();
+                    }
+
+                    @Override
+                    public boolean getEnable() {
+                        return module.enable();
+                    }
+
+                    @Override
+                    public void enable() {
+                        Class<?> klass = moduleInstance.getClass();
+                        Module module = klass.getAnnotation(Module.class);
+                        TypeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
+
+                        if (module.enable()) {
+                            configuration.getModule().enable(this);
+                            CF4M.INSTANCE.getEvent().register(moduleInstance);
+                        } else {
+                            configuration.getModule().disable(this);
+                            CF4M.INSTANCE.getEvent().unregister(moduleInstance);
+                        }
+
+                        for (Method method : klass.getDeclaredMethods()) {
+                            method.setAccessible(true);
+                            try {
+                                if (module.enable()) {
+                                    if (method.isAnnotationPresent(Enable.class)) {
+                                        method.invoke(moduleInstance);
                                     }
-                                    return null;
+                                } else {
+                                    if (method.isAnnotationPresent(Disable.class)) {
+                                        method.invoke(moduleInstance);
+                                    }
                                 }
-                            });
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
 
-                    SettingContainer settingContainer = new SettingContainer() {
-                        @Override
-                        public ArrayList<SettingProvider> getAll() {
-                            return settingProviders;
-                        }
+                    @Override
+                    public int getKey() {
+                        return module.key();
+                    }
 
-                        @Override
-                        public SettingProvider getByName(String name) {
-                            for (SettingProvider settingProvider : getAll()) {
-                                if (settingProvider.getName().equalsIgnoreCase(name)) {
-                                    return settingProvider;
-                                }
-                            }
-                            return null;
-                        }
-                    };
+                    @Override
+                    public void setKey(int key) {
+                        TypeAnnotation(klass.getAnnotation(Module.class), "key", key);
+                    }
 
-                    modules.put(moduleInstance, new ModuleProvider() {
-                        @Override
-                        public String getName() {
-                            return module.value();
-                        }
+                    @Override
+                    public String getType() {
+                        return module.type();
+                    }
 
-                        @Override
-                        public boolean getEnable() {
-                            return module.enable();
-                        }
+                    @Override
+                    public String getDescription() {
+                        return module.description();
+                    }
 
-                        @Override
-                        public void enable() {
-                            Class<?> klass = moduleInstance.getClass();
-                            Module module = klass.getAnnotation(Module.class);
-                            TypeAnnotation(moduleInstance.getClass().getAnnotation(Module.class), "enable", !module.enable());
+                    @Override
+                    public <T> T getExtend() {
+                        return (T) finalExtendInstance;
+                    }
 
-                            if (module.enable()) {
-                                CF4M.configuration.module().enable(moduleInstance);
-                                CF4M.event.register(moduleInstance);
-                            } else {
-                                CF4M.configuration.module().disable(moduleInstance);
-                                CF4M.event.unregister(moduleInstance);
-                            }
+                    @Override
+                    public SettingContainer getSetting() {
+                        return settingContainer;
+                    }
+                });
+            }
+        }
 
-                            for (Method method : klass.getDeclaredMethods()) {
-                                method.setAccessible(true);
-                                try {
-                                    if (module.enable()) {
-                                        if (method.isAnnotationPresent(Enable.class)) {
-                                            method.invoke(moduleInstance);
-                                        }
-                                    } else {
-                                        if (method.isAnnotationPresent(Disable.class)) {
-                                            method.invoke(moduleInstance);
-                                        }
-                                    }
-                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
+        moduleContainer = new ModuleContainer() {
+            @Override
+            public ArrayList<ModuleProvider> getAll() {
+                return new ArrayList<>(modules.values());
+            }
 
-                        @Override
-                        public int getKey() {
-                            return module.key();
-                        }
+            @Override
+            public ArrayList<ModuleProvider> getAllByType(String type) {
+                return modules.values().stream().filter(moduleProvider -> moduleProvider.getType().equals(type)).collect(Collectors.toCollection(ArrayList::new));
+            }
 
-                        @Override
-                        public void setKey(int key) {
-                            TypeAnnotation(moduleInstance.getClass().getAnnotation(Module.class), "key", key);
-                        }
+            @Override
+            public ArrayList<String> getAllType() {
+                return getAll().stream().map(ModuleProvider::getType).distinct().collect(Collectors.toCollection(ArrayList::new));
+            }
 
-                        @Override
-                        public Category getCategory() {
-                            return module.category();
-                        }
+            @Override
+            public ModuleProvider getByName(String name) {
+                for (ModuleProvider moduleProvider : getAll()) {
+                    if (moduleProvider.getName().equalsIgnoreCase(name)) {
+                        return moduleProvider;
+                    }
+                }
+                return null;
+            }
 
-                        @Override
-                        public String getDescription() {
-                            return module.description();
-                        }
+            @Override
+            public ModuleProvider getByInstance(Object instance) {
+                return modules.get(instance);
+            }
 
-                        @Override
-                        public <T> T getExtend() {
-                            return (T) extendInstance;
-                        }
-
-                        @Override
-                        public SettingContainer getSetting() {
-                            return settingContainer;
-                        }
-                    });
+            @Override
+            public void onKey(int key) {
+                for (ModuleProvider module : getAll()) {
+                    if (module.getKey() == key) {
+                        module.enable();
+                    }
                 }
             }
-        } catch (IllegalAccessException | InstantiationException e) {
-            e.printStackTrace();
+        };
+
+        for (Object module : modules.keySet()) {
+            Class<?> klass = module.getClass();
+            if (klass.isAnnotationPresent(Auto.class)) {
+                for (Field field : klass.getDeclaredFields()) {
+                    field.setAccessible(true);
+                    try {
+                        if (field.getType().equals(ModuleContainer.class)) {
+                            field.set(module, moduleContainer);
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 

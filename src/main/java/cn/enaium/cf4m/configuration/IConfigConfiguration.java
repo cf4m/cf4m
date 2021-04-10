@@ -1,14 +1,13 @@
 package cn.enaium.cf4m.configuration;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * @author Enaium
  */
 public interface IConfigConfiguration {
     /**
-     * @return enable or disable config.
+     * @return enable or disable config
      */
-    default boolean enable() {
+    default boolean getEnable() {
         return true;
     }
 }

@@ -1,83 +1,81 @@
 package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
-import cn.enaium.cf4m.container.CommandContainer;
-import cn.enaium.cf4m.container.ConfigContainer;
-import cn.enaium.cf4m.container.ModuleContainer;
+import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * @author Enaium
  */
 public final class CF4M {
 
-    /**
-     * Client package.
-     */
-    public static String packName;
+    public static ICF4M INSTANCE;
 
-    /**
-     * .minecraft/{clientName} path.
-     */
-    public static String dir;
+    public CF4M(Class<?> mainClass, String dir) {
+        final ClassContainer classContainer = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName()).classContainer;
+        final EventContainer eventContainer = new EventManager().eventContainer;
+        final IConfiguration configuration = new ConfigurationManager(classContainer).configuration;
+        final ModuleContainer moduleContainer = new ModuleManager(classContainer, configuration).moduleContainer;
+        final CommandContainer commandContainer = new CommandManager(classContainer, configuration).commandContainer;
+        final ConfigContainer configContainer = new ConfigManager(classContainer, configuration, dir).configContainer;
+        INSTANCE = new ICF4M() {
+            @Override
+            public ClassContainer getClassContainer() {
+                return classContainer;
+            }
 
-    /**
-     * CF4M configuration
-     */
-    public static IConfiguration configuration;
+            @Override
+            public EventContainer getEvent() {
+                return eventContainer;
+            }
 
-    /**
-     * ClassManager.
-     */
-    public static ClassManager klass;
+            @Override
+            public IConfiguration getConfiguration() {
+                return configuration;
+            }
 
-    /**
-     * EventManager.
-     */
-    public static EventManager event;
+            @Override
+            public ModuleContainer getModule() {
+                return moduleContainer;
+            }
 
-    /**
-     * ModuleContainer.
-     */
-    public static ModuleContainer module;
+            @Override
+            public CommandContainer getCommand() {
+                return commandContainer;
+            }
 
-    /**
-     * CommandContainer.
-     */
-    public static CommandContainer command;
-
-    /**
-     * ConfigContainer.
-     */
-    public static ConfigContainer config;
+            @Override
+            public ConfigContainer getConfig() {
+                return configContainer;
+            }
+        };
+        classContainer.accept();
+    }
 
     private static boolean run = false;
 
     /**
      * @param mainClass MainClass.
+     * @param path      .minecraft/{clientName} path.
+     */
+    public static void run(Class<?> mainClass, String path) {
+        if (run) {
+            new Exception("CF4M already run").printStackTrace();
+        } else {
+            new CF4M(mainClass, path);
+            INSTANCE.getConfig().load();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
+            run = true;
+        }
+    }
+
+    /**
+     * @param mainClass MainClass.
      */
     public static void run(Class<?> mainClass) {
-        if (run) {
-            throw new ExceptionInInitializerError();
-        }
-
-        packName = mainClass.getPackage().getName();
-        dir = new File(".", mainClass.getSimpleName()).toString();
-        configuration = new IConfiguration() {
-        };
-        klass = new ClassManager(mainClass.getClassLoader());
-        event = new EventManager();
-        module = new ModuleManager().moduleContainer;
-        command = new CommandManager().commandContainer;
-        config = new ConfigManager().configContainer;
-        if (configuration.config().enable()) {
-            config.load();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> config.save()));
-        }
-        run = true;
+        run(mainClass, new File(".", mainClass.getSimpleName()).toString());
     }
 
     /**
@@ -88,20 +86,10 @@ public final class CF4M {
     }
 
     /**
-     * @param mainClass MainClass.
-     * @param path      .minecraft/{clientName} path.
-     */
-    public static void run(Class<?> mainClass, String path) {
-        run(mainClass);
-        dir = path;
-    }
-
-    /**
      * @param instance MainClass instance.
      * @param path     .minecraft/{clientName} path.
      */
     public static void run(Object instance, String path) {
-        run(instance);
-        dir = path;
+        run(instance.getClass(), path);
     }
 }

@@ -6,8 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * Attached {@link Module}
+ * <p>
+ * Add this annotation to the class to that this class is a module extend
+ *
+ * @author Enaium
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

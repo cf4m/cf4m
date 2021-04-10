@@ -6,8 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * Attached to {@link Command}
+ * <p>
+ * Add this annotation to the method param to that this method param name
+ *
+ * @author Enaium
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

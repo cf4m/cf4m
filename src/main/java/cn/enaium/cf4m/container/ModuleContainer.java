@@ -1,22 +1,49 @@
 package cn.enaium.cf4m.container;
 
-import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.module.Category;
 import cn.enaium.cf4m.provider.ModuleProvider;
 
 import java.util.ArrayList;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * @author Enaium
  */
 public interface ModuleContainer {
+    /**
+     * NotNull
+     *
+     * @return module list
+     */
     ArrayList<ModuleProvider> getAll();
 
-    ArrayList<ModuleProvider> getAllByCategory(Category category);
+    /**
+     * NotNull
+     *
+     * @param type module type
+     * @return module
+     */
+    ArrayList<ModuleProvider> getAllByType(String type);
 
+    /**
+     * NotNull
+     *
+     * @return module type list
+     */
+    ArrayList<String> getAllType();
+
+    /**
+     * Nullable
+     *
+     * @param name module name
+     * @return module
+     */
     ModuleProvider getByName(String name);
 
+    /**
+     * Nullable
+     *
+     * @param instance module name
+     * @return module
+     */
     ModuleProvider getByInstance(Object instance);
 
     void onKey(int key);

@@ -6,8 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * Attached to {@link Command}
+ * <p>
+ * Add this annotation to the method to that this method is a executable command
+ *
+ * @author Enaium
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

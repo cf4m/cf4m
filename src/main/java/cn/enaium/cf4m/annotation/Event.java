@@ -6,8 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Project: cf4m
- * Author: Enaium
+ * Add this annotation to the method to that this method will be invoke at event fire
+ * <p>
+ * Must register instance
+ *
+ * @author Enaium
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
