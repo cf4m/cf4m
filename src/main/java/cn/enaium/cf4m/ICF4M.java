@@ -13,8 +13,8 @@ public interface ICF4M {
      * Nullable
      * Only read
      */
-    ClassContainer getClassContainer();
-    
+    ClassContainer getKlass();
+
     /**
      * EventContainer
      * Nullable

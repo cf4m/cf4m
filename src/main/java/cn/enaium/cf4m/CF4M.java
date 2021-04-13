@@ -22,7 +22,7 @@ public final class CF4M {
         final ConfigContainer configContainer = new ConfigManager(classContainer, configuration, dir).configContainer;
         INSTANCE = new ICF4M() {
             @Override
-            public ClassContainer getClassContainer() {
+            public ClassContainer getKlass() {
                 return classContainer;
             }
 
