@@ -1,13 +1,14 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Auto;
+import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
+import cn.enaium.cf4m.processor.ModuleActivityProcessor;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
@@ -104,13 +105,16 @@ public final class ModuleManager {
                         Class<?> klass = moduleInstance.getClass();
                         Module module = klass.getAnnotation(Module.class);
                         TypeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
+                        ArrayList<ModuleActivityProcessor> processors = classContainer.getProcessor(ModuleActivityProcessor.class);
 
                         if (module.enable()) {
-                            configuration.getModule().enable(this);
+                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.beforeEnable(this));
                             CF4M.INSTANCE.getEvent().register(moduleInstance);
+                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.afterEnable(this));
                         } else {
-                            configuration.getModule().disable(this);
+                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.beforeDisable(this));
                             CF4M.INSTANCE.getEvent().unregister(moduleInstance);
+                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.afterDisable(this));
                         }
 
                         for (Method method : klass.getDeclaredMethods()) {
@@ -207,7 +211,7 @@ public final class ModuleManager {
 
         for (Object module : modules.keySet()) {
             Class<?> klass = module.getClass();
-            if (klass.isAnnotationPresent(Auto.class)) {
+            if (klass.isAnnotationPresent(Autowired.class)) {
                 for (Field field : klass.getDeclaredFields()) {
                     field.setAccessible(true);
                     try {

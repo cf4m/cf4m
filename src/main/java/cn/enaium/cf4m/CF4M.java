@@ -51,7 +51,7 @@ public final class CF4M {
                 return configContainer;
             }
         };
-        classContainer.accept();
+        classContainer.autowired();
     }
 
     private static boolean run = false;

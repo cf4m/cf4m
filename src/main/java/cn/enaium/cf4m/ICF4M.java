@@ -2,7 +2,6 @@ package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.manager.EventManager;
 
 import java.io.File;
 

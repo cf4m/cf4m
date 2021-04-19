@@ -9,11 +9,6 @@ public interface IConfiguration {
         };
     }
 
-    default IModuleConfiguration getModule() {
-        return new IModuleConfiguration() {
-        };
-    }
-
     default IConfigConfiguration getConfig() {
         return new IConfigConfiguration() {
         };

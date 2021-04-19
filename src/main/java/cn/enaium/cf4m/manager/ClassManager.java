@@ -1,9 +1,11 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Auto;
+import cn.enaium.cf4m.annotation.Autowired;
+import cn.enaium.cf4m.annotation.Processor;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
+import cn.enaium.cf4m.processor.AutowiredProcessor;
 import cn.enaium.cf4m.provider.CommandProvider;
 import cn.enaium.cf4m.provider.ConfigProvider;
 import cn.enaium.cf4m.provider.ModuleProvider;
@@ -11,10 +13,9 @@ import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author Enaium
@@ -55,13 +56,23 @@ public final class ClassManager {
                 return (T) all.get(klass);
             }
 
+
             @Override
-            public void accept() {
+            public <T> ArrayList<T> getProcessor(Class<?> type) {
+                return getAll().stream().filter(klass -> klass.isAnnotationPresent(Processor.class)).filter(type::isAssignableFrom).map(klass -> (T) classContainer.create(klass)).collect(Collectors.toCollection(ArrayList::new));
+            }
+
+            @Override
+            public void autowired() {
+                ArrayList<AutowiredProcessor> autowiredProcessors = getProcessor(AutowiredProcessor.class);
                 all.forEach((klass, instance) -> {
                     for (Field field : klass.getDeclaredFields()) {
                         field.setAccessible(true);
-                        if (klass.isAnnotationPresent(Auto.class) || field.isAnnotationPresent(Auto.class)) {
+                        if (klass.isAnnotationPresent(Autowired.class) || field.isAnnotationPresent(Autowired.class)) {
                             try {
+                                for (AutowiredProcessor postProcessor : autowiredProcessors) {
+                                    postProcessor.beforeAutowired(field, instance);
+                                }
                                 if (field.getType().equals(ClassContainer.class)) {
                                     field.set(instance, this);
                                 } else if (field.getType().equals(EventContainer.class)) {
@@ -80,6 +91,9 @@ public final class ClassManager {
                                     field.set(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
                                 } else if (field.getType().equals(ConfigProvider.class)) {
                                     field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
+                                }
+                                for (AutowiredProcessor autowiredProcessor : autowiredProcessors) {
+                                    autowiredProcessor.afterAutowired(field, instance);
                                 }
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();

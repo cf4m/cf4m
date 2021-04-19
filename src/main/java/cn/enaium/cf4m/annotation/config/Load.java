@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Attached to {@link Config}
  * <p>
- * Add this annotation to the method to that this method will be invoke at load
+ * Add this annotation to the method to that this method will be invoke at config load
  *
  * @author Enaium
  */

@@ -18,5 +18,7 @@ public interface ClassContainer {
      */
     <T> T create(Class<?> klass);
 
-    void accept();
+    <T> ArrayList<T> getProcessor(Class<?> type);
+
+    void autowired();
 }
