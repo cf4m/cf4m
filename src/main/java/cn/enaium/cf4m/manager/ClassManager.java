@@ -3,6 +3,7 @@ package cn.enaium.cf4m.manager;
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.Processor;
+import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.processor.AutowiredProcessor;
@@ -14,6 +15,7 @@ import com.google.common.reflect.ClassPath;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -25,13 +27,20 @@ public final class ClassManager {
 
     public final ClassContainer classContainer;
 
-    public ClassManager(ClassLoader classLoader, String packName) {
+    public ClassManager(Class<?> mainClass) {
         final HashMap<Class<?>, Object> all = new HashMap<>();
+        final ArrayList<String> scan = new ArrayList<>();
+        scan.add(mainClass.getPackage().getName());
+        if (mainClass.isAnnotationPresent(Scan.class)) {
+            Collections.addAll(scan, mainClass.getAnnotation(Scan.class).value());
+        }
         try {
             for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
-                if (info.getName().startsWith(packName)) {
-                    Class<?> klass = classLoader.loadClass(info.getName());
-                    all.put(klass, null);
+                for (String packageName : scan) {
+                    if (info.getName().startsWith(packageName)) {
+                        Class<?> klass = mainClass.getClassLoader().loadClass(info.getName());
+                        all.put(klass, null);
+                    }
                 }
             }
         } catch (ClassNotFoundException | IOException e) {

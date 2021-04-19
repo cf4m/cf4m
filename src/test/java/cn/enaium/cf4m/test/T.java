@@ -1,6 +1,7 @@
 package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
+import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.test.config.ConfigTest;
 import cn.enaium.cf4m.test.event.EventCancelTest;
 import cn.enaium.cf4m.test.event.EventPriorityTest;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Enaium
  */
+@Scan("com.test")
 public class T {
     @Test
     public void test() {
@@ -56,6 +58,10 @@ public class T {
         System.out.println("Check ModuleAutowiredTest Start");
         CF4M.INSTANCE.getModule().onKey(6);
         System.out.println("Check ModuleAutowiredTest End");
+        System.out.println();
+        System.out.println("Check ModuleScanTest Start");
+        CF4M.INSTANCE.getModule().onKey(7);
+        System.out.println("Check ModuleScanTest End");
         System.out.println();
         System.out.println("Check CommandTest Start");
         System.out.println(CF4M.INSTANCE.getCommand().execCommand("-t"));

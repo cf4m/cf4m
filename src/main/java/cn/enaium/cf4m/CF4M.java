@@ -1,10 +1,13 @@
 package cn.enaium.cf4m;
 
+import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Enaium
@@ -14,7 +17,7 @@ public final class CF4M {
     public static ICF4M INSTANCE;
 
     public CF4M(Class<?> mainClass, String dir) {
-        final ClassContainer classContainer = new ClassManager(mainClass.getClassLoader(), mainClass.getPackage().getName()).classContainer;
+        final ClassContainer classContainer = new ClassManager(mainClass).classContainer;
         final EventContainer eventContainer = new EventManager().eventContainer;
         final IConfiguration configuration = new ConfigurationManager(classContainer).configuration;
         final ModuleContainer moduleContainer = new ModuleManager(classContainer, configuration).moduleContainer;
