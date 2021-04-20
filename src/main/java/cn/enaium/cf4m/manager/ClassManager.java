@@ -36,7 +36,7 @@ public final class ClassManager {
             Collections.addAll(scan, mainClass.getAnnotation(Scan.class).value());
         }
         try {
-            for (ClassPath.ClassInfo info : ClassPath.from(Thread.currentThread().getContextClassLoader()).getTopLevelClasses()) {
+            for (ClassPath.ClassInfo info : ClassPath.from(mainClass.getClassLoader()).getTopLevelClasses()) {
                 for (String packageName : scan) {
                     if (info.getName().startsWith(packageName)) {
                         Class<?> klass = mainClass.getClassLoader().loadClass(info.getName());
@@ -53,7 +53,6 @@ public final class ClassManager {
         }
 
         ArrayList<ClassProcessor> classProcessors = getProcessor(ClassProcessor.class);
-        ArrayList<AutowiredProcessor> autowiredProcessors = getProcessor(AutowiredProcessor.class);
 
         classContainer = new ClassContainer() {
             @Override

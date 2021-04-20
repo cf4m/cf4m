@@ -1,13 +1,10 @@
 package cn.enaium.cf4m;
 
-import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.manager.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * @author Enaium
@@ -57,6 +54,10 @@ public final class CF4M {
         classContainer.after();
     }
 
+    public void useless() {
+
+    }
+
     private static boolean run = false;
 
     /**
@@ -67,7 +68,7 @@ public final class CF4M {
         if (run) {
             new Exception("CF4M already run").printStackTrace();
         } else {
-            new CF4M(mainClass, path);
+            new CF4M(mainClass, path).useless();
             INSTANCE.getConfig().load();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
             run = true;
