@@ -1,13 +1,15 @@
 package cn.enaium.cf4m.manager;
 
 import cn.enaium.cf4m.annotation.Event;
+import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.EventContainer;
-import com.google.common.collect.Maps;
+import cn.enaium.cf4m.processor.EventProcessor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -16,38 +18,45 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class EventManager {
 
 
-    private final HashMap<Class<?>, CopyOnWriteArrayList<EventBean>> events;
+    private final ConcurrentHashMap<Class<?>, CopyOnWriteArrayList<EventBean>> events;
 
-    public final EventContainer eventContainer = new EventContainer() {
+    public final EventContainer eventContainer;
 
-        @Override
-        public void register(Object instance) {
-            EventManager.this.register(instance);
-        }
+    public EventManager(ClassContainer classContainer) {
+        events = new ConcurrentHashMap<>();
+        ArrayList<EventProcessor> processors = classContainer.getProcessor(EventProcessor.class);
+        eventContainer = new EventContainer() {
+            @Override
+            public void register(Object instance) {
+                processors.forEach(eventProcessor -> eventProcessor.beforeRegister(instance));
+                EventManager.this.register(instance);
+                processors.forEach(eventProcessor -> eventProcessor.afterRegister(instance));
+            }
 
-        @Override
-        public void unregister(Object instance) {
-            EventManager.this.unregister(instance);
-        }
+            @Override
+            public void unregister(Object instance) {
+                processors.forEach(eventProcessor -> eventProcessor.beforeUnregister(instance));
+                EventManager.this.unregister(instance);
+                processors.forEach(eventProcessor -> eventProcessor.afterUnregister(instance));
+            }
 
-        @Override
-        public void call(Object instance) {
-            if (events.get(instance.getClass()) != null) {
-                for (EventBean event : events.get(instance.getClass())) {
-                    try {
-                        event.target.invoke(event.instance, instance);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+            @Override
+            public void post(Object instance) {
+                if (events.get(instance.getClass()) != null) {
+                    for (EventBean event : events.get(instance.getClass())) {
+                        try {
+                            processors.forEach(eventProcessor -> eventProcessor.beforePost(event.target, event.instance));
+                            event.target.invoke(event.instance, instance);
+                            processors.forEach(eventProcessor -> eventProcessor.afterPost(event.target, event.instance));
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
-        }
-    };
-
-    public EventManager() {
-        events = Maps.newHashMap();
+        };
     }
-    
+
     private void register(Object instance) {
         Class<?> klass = instance.getClass();
 

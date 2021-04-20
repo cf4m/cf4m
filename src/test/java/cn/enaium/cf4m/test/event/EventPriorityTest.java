@@ -11,7 +11,7 @@ public class EventPriorityTest {
 
     public EventPriorityTest() {
         CF4M.INSTANCE.getEvent().register(this);
-        CF4M.INSTANCE.getEvent().call(new EventPriorityEventTest());
+        CF4M.INSTANCE.getEvent().post(new EventPriorityEventTest());
     }
 
     @Event(priority = 0)

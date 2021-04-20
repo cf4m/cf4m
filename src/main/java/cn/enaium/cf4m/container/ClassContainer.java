@@ -20,5 +20,5 @@ public interface ClassContainer {
 
     <T> ArrayList<T> getProcessor(Class<?> type);
 
-    void autowired();
+    void after();
 }

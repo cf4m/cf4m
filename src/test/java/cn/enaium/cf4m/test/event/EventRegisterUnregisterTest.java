@@ -12,9 +12,9 @@ public class EventRegisterUnregisterTest {
 
     public EventRegisterUnregisterTest() {
         INSTANCE.getEvent().register(this);
-        INSTANCE.getEvent().call(new EventRegisterUnregisterEventTest());
+        INSTANCE.getEvent().post(new EventRegisterUnregisterEventTest());
         INSTANCE.getEvent().unregister(this);
-        INSTANCE.getEvent().call(new EventRegisterUnregisterEventTest());
+        INSTANCE.getEvent().post(new EventRegisterUnregisterEventTest());
     }
 
     @Event

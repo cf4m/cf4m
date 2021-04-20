@@ -12,10 +12,10 @@ public class EventCancelTest {
         CF4M.INSTANCE.getEvent().register(this);
         EventCancelEventTest eventCancelEventTest = new EventCancelEventTest();
         if (!eventCancelEventTest.cancel) {
-            CF4M.INSTANCE.getEvent().call(eventCancelEventTest);
+            CF4M.INSTANCE.getEvent().post(eventCancelEventTest);
         }
         if (!eventCancelEventTest.cancel) {
-            CF4M.INSTANCE.getEvent().call(eventCancelEventTest);
+            CF4M.INSTANCE.getEvent().post(eventCancelEventTest);
         }
     }
 

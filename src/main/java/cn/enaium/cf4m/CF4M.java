@@ -18,9 +18,9 @@ public final class CF4M {
 
     public CF4M(Class<?> mainClass, String dir) {
         final ClassContainer classContainer = new ClassManager(mainClass).classContainer;
-        final EventContainer eventContainer = new EventManager().eventContainer;
+        final EventContainer eventContainer = new EventManager(classContainer).eventContainer;
         final IConfiguration configuration = new ConfigurationManager(classContainer).configuration;
-        final ModuleContainer moduleContainer = new ModuleManager(classContainer, configuration).moduleContainer;
+        final ModuleContainer moduleContainer = new ModuleManager(classContainer).moduleContainer;
         final CommandContainer commandContainer = new CommandManager(classContainer, configuration).commandContainer;
         final ConfigContainer configContainer = new ConfigManager(classContainer, configuration, dir).configContainer;
         INSTANCE = new ICF4M() {
@@ -54,7 +54,7 @@ public final class CF4M {
                 return configContainer;
             }
         };
-        classContainer.autowired();
+        classContainer.after();
     }
 
     private static boolean run = false;

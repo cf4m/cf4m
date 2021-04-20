@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
 @Processor
 public class FieldProcessor implements AutowiredProcessor {
     @Override
-    public void beforeAutowired(Field field, Object instance) throws IllegalAccessException {
+    public void beforePut(Field field, Object instance) throws IllegalAccessException {
         if (field.getName().equals("auto")) {
             field.set(instance, "AUTO");
         }

@@ -5,10 +5,9 @@ import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
-import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
-import cn.enaium.cf4m.processor.ModuleActivityProcessor;
+import cn.enaium.cf4m.processor.ModuleProcessor;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
@@ -26,7 +25,7 @@ public final class ModuleManager {
 
     public final ModuleContainer moduleContainer;
 
-    public ModuleManager(ClassContainer classContainer, IConfiguration configuration) {
+    public ModuleManager(ClassContainer classContainer) {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
         Object extendInstance = null;
@@ -89,6 +88,9 @@ public final class ModuleManager {
                     }
                 };
                 Object finalExtendInstance = extendInstance;
+
+                ArrayList<ModuleProcessor> processors = classContainer.getProcessor(ModuleProcessor.class);
+
                 modules.put(moduleInstance, new ModuleProvider() {
                     @Override
                     public String getName() {
@@ -105,16 +107,15 @@ public final class ModuleManager {
                         Class<?> klass = moduleInstance.getClass();
                         Module module = klass.getAnnotation(Module.class);
                         TypeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
-                        ArrayList<ModuleActivityProcessor> processors = classContainer.getProcessor(ModuleActivityProcessor.class);
 
                         if (module.enable()) {
-                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.beforeEnable(this));
+                            processors.forEach(moduleProcessor -> moduleProcessor.beforeEnable(this));
                             CF4M.INSTANCE.getEvent().register(moduleInstance);
-                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.afterEnable(this));
+                            processors.forEach(moduleProcessor -> moduleProcessor.afterEnable(this));
                         } else {
-                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.beforeDisable(this));
+                            processors.forEach(moduleProcessor -> moduleProcessor.beforeDisable(this));
                             CF4M.INSTANCE.getEvent().unregister(moduleInstance);
-                            processors.forEach(moduleActivityProcessor -> moduleActivityProcessor.afterDisable(this));
+                            processors.forEach(moduleProcessor -> moduleProcessor.afterDisable(this));
                         }
 
                         for (Method method : klass.getDeclaredMethods()) {

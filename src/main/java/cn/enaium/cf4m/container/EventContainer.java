@@ -23,5 +23,5 @@ public interface EventContainer {
      *
      * @param instance event
      */
-    void call(Object instance);
+    void post(Object instance);
 }

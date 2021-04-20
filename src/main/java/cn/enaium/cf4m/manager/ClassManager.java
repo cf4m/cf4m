@@ -7,6 +7,7 @@ import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.processor.AutowiredProcessor;
+import cn.enaium.cf4m.processor.ClassProcessor;
 import cn.enaium.cf4m.provider.CommandProvider;
 import cn.enaium.cf4m.provider.ConfigProvider;
 import cn.enaium.cf4m.provider.ModuleProvider;
@@ -26,9 +27,9 @@ import java.util.stream.Collectors;
 public final class ClassManager {
 
     public final ClassContainer classContainer;
+    private final HashMap<Class<?>, Object> all = new HashMap<>();
 
     public ClassManager(Class<?> mainClass) {
-        final HashMap<Class<?>, Object> all = new HashMap<>();
         final ArrayList<String> scan = new ArrayList<>();
         scan.add(mainClass.getPackage().getName());
         if (mainClass.isAnnotationPresent(Scan.class)) {
@@ -39,13 +40,20 @@ public final class ClassManager {
                 for (String packageName : scan) {
                     if (info.getName().startsWith(packageName)) {
                         Class<?> klass = mainClass.getClassLoader().loadClass(info.getName());
-                        all.put(klass, null);
+                        if (klass.isAnnotationPresent(Processor.class)) {
+                            all.put(klass, klass.newInstance());
+                        } else {
+                            all.put(klass, null);
+                        }
                     }
                 }
             }
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | IOException | InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
+
+        ArrayList<ClassProcessor> classProcessors = getProcessor(ClassProcessor.class);
+        ArrayList<AutowiredProcessor> autowiredProcessors = getProcessor(AutowiredProcessor.class);
 
         classContainer = new ClassContainer() {
             @Override
@@ -57,7 +65,10 @@ public final class ClassManager {
             public <T> T create(Class<?> klass) {
                 if (all.get(klass) == null) {
                     try {
-                        all.put(klass, klass.newInstance());
+                        Object instance = klass.newInstance();
+                        classProcessors.forEach(classProcessor -> classProcessor.beforeCreate(klass, instance));
+                        all.put(klass, instance);
+                        classProcessors.forEach(classProcessor -> classProcessor.afterCreate(klass, instance));
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -65,22 +76,21 @@ public final class ClassManager {
                 return (T) all.get(klass);
             }
 
-
             @Override
             public <T> ArrayList<T> getProcessor(Class<?> type) {
-                return getAll().stream().filter(klass -> klass.isAnnotationPresent(Processor.class)).filter(type::isAssignableFrom).map(klass -> (T) classContainer.create(klass)).collect(Collectors.toCollection(ArrayList::new));
+                return ClassManager.this.getProcessor(type);
             }
 
             @Override
-            public void autowired() {
-                ArrayList<AutowiredProcessor> autowiredProcessors = getProcessor(AutowiredProcessor.class);
+            public void after() {
+                ArrayList<AutowiredProcessor> processors = getProcessor(AutowiredProcessor.class);
                 all.forEach((klass, instance) -> {
                     for (Field field : klass.getDeclaredFields()) {
                         field.setAccessible(true);
                         if (klass.isAnnotationPresent(Autowired.class) || field.isAnnotationPresent(Autowired.class)) {
                             try {
-                                for (AutowiredProcessor postProcessor : autowiredProcessors) {
-                                    postProcessor.beforeAutowired(field, instance);
+                                for (AutowiredProcessor postProcessor : processors) {
+                                    postProcessor.beforePut(field, instance);
                                 }
                                 if (field.getType().equals(ClassContainer.class)) {
                                     field.set(instance, this);
@@ -101,8 +111,8 @@ public final class ClassManager {
                                 } else if (field.getType().equals(ConfigProvider.class)) {
                                     field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
                                 }
-                                for (AutowiredProcessor autowiredProcessor : autowiredProcessors) {
-                                    autowiredProcessor.afterAutowired(field, instance);
+                                for (AutowiredProcessor autowiredProcessor : processors) {
+                                    autowiredProcessor.afterPut(field, instance);
                                 }
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
@@ -112,5 +122,9 @@ public final class ClassManager {
                 });
             }
         };
+    }
+
+    private <T> ArrayList<T> getProcessor(Class<?> type) {
+        return all.keySet().stream().filter(klass -> klass.isAnnotationPresent(Processor.class)).filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).collect(Collectors.toCollection(ArrayList::new));
     }
 }
