@@ -76,7 +76,7 @@ public final class ClassManager {
             }
 
             @Override
-            public <T> ArrayList<T> getProcessor(Class<?> type) {
+            public <T> ArrayList<T> getProcessor(Class<T> type) {
                 return ClassManager.this.getProcessor(type);
             }
 
@@ -88,9 +88,7 @@ public final class ClassManager {
                         field.setAccessible(true);
                         if (klass.isAnnotationPresent(Autowired.class) || field.isAnnotationPresent(Autowired.class)) {
                             try {
-                                for (AutowiredProcessor postProcessor : processors) {
-                                    postProcessor.beforePut(field, instance);
-                                }
+                                processors.forEach(postProcessor -> postProcessor.beforePut(field, instance));
                                 if (field.getType().equals(ClassContainer.class)) {
                                     field.set(instance, this);
                                 } else if (field.getType().equals(EventContainer.class)) {
@@ -110,9 +108,7 @@ public final class ClassManager {
                                 } else if (field.getType().equals(ConfigProvider.class)) {
                                     field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
                                 }
-                                for (AutowiredProcessor autowiredProcessor : processors) {
-                                    autowiredProcessor.afterPut(field, instance);
-                                }
+                                processors.forEach(autowiredProcessor -> autowiredProcessor.afterPut(field, instance));
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
                             }
@@ -123,7 +119,7 @@ public final class ClassManager {
         };
     }
 
-    private <T> ArrayList<T> getProcessor(Class<?> type) {
+    private <T> ArrayList<T> getProcessor(Class<T> type) {
         return all.keySet().stream().filter(klass -> klass.isAnnotationPresent(Processor.class)).filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).collect(Collectors.toCollection(ArrayList::new));
     }
 }

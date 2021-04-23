@@ -18,7 +18,7 @@ public interface ClassContainer {
      */
     <T> T create(Class<?> klass);
 
-    <T> ArrayList<T> getProcessor(Class<?> type);
+    <T> ArrayList<T> getProcessor(Class<T> type);
 
     void after();
 }

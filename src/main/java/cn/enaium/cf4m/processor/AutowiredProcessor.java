@@ -11,9 +11,8 @@ public interface AutowiredProcessor {
      *
      * @param field    field
      * @param instance object
-     * @throws IllegalAccessException IllegalAccessException
      */
-    default void beforePut(Field field, Object instance) throws IllegalAccessException {
+    default void beforePut(Field field, Object instance) {
 
     }
 
@@ -22,9 +21,8 @@ public interface AutowiredProcessor {
      *
      * @param field    field
      * @param instance object
-     * @throws IllegalAccessException IllegalAccessException
      */
-    default void afterPut(Field field, Object instance) throws IllegalAccessException {
+    default void afterPut(Field field, Object instance) {
 
     }
 }

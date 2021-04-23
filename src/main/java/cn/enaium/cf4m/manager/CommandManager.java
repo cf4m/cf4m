@@ -6,6 +6,7 @@ import cn.enaium.cf4m.annotation.command.Param;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.CommandContainer;
+import cn.enaium.cf4m.processor.CommandProcessor;
 import cn.enaium.cf4m.provider.CommandProvider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -89,12 +90,12 @@ public final class CommandManager {
         }
     };
 
-    /**
-     * Prefix.
-     */
     private final IConfiguration configuration;
 
+    private final ClassContainer classContainer;
+
     public CommandManager(ClassContainer classContainer, IConfiguration configuration) {
+        this.classContainer = classContainer;
         this.configuration = configuration;
         commands = Maps.newHashMap();
 
@@ -153,12 +154,16 @@ public final class CommandManager {
                     }
                 }
 
+                List<CommandProcessor> processors = classContainer.getProcessor(CommandProcessor.class);
+
                 try {
+                    processors.forEach(commandProcessor -> commandProcessor.beforeExec(commands.get(command)));
                     if (params.size() == 0) {
                         method.invoke(command);
                     } else {
                         method.invoke(command, params.toArray());
                     }
+                    processors.forEach(commandProcessor -> commandProcessor.afterExec(commands.get(command)));
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     INSTANCE.getConfiguration().getCommand().message(e.getMessage());
