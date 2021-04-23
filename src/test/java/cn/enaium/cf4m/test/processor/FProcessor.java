@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
  * @author Enaium
  */
 @Processor
-public class FieldProcessor implements AutowiredProcessor {
+public class FProcessor implements AutowiredProcessor {
     @Override
     public void beforePut(Field field, Object instance) {
         if (field.getName().equals("auto")) {
