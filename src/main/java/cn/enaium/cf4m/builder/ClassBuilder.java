@@ -2,22 +2,21 @@ package cn.enaium.cf4m.builder;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
-import cn.enaium.cf4m.annotation.Processor;
+import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.processor.AutowiredProcessor;
-import cn.enaium.cf4m.processor.ClassProcessor;
+import cn.enaium.cf4m.service.AutowiredService;
+import cn.enaium.cf4m.service.ClassService;
 import cn.enaium.cf4m.provider.CommandProvider;
 import cn.enaium.cf4m.provider.ConfigProvider;
 import cn.enaium.cf4m.provider.ModuleProvider;
+import cn.enaium.cf4m.starter.Starter;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -30,29 +29,41 @@ public final class ClassBuilder {
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
     public ClassBuilder(Class<?> mainClass) {
+        List<String> allClassName = getAllClassName(mainClass.getClassLoader());
+
         final ArrayList<String> scan = new ArrayList<>();
+
+        for (Starter starter : ServiceLoader.load(Starter.class, mainClass.getClassLoader())) {
+            System.out.println("Load starter " + starter.getName()
+                    + " | " + starter.getDescription()
+                    + " | " + starter.getVersion()
+                    + " | " + starter.getAuthor());
+            scan.add(starter.getClass().getPackage().getName());
+        }
+
         scan.add(mainClass.getPackage().getName());
         if (mainClass.isAnnotationPresent(Scan.class)) {
             Collections.addAll(scan, mainClass.getAnnotation(Scan.class).value());
         }
-        try {
-            for (ClassPath.ClassInfo info : ClassPath.from(mainClass.getClassLoader()).getTopLevelClasses()) {
-                for (String packageName : scan) {
-                    if (info.getName().startsWith(packageName)) {
-                        Class<?> klass = mainClass.getClassLoader().loadClass(info.getName());
-                        if (klass.isAnnotationPresent(Processor.class)) {
+
+        for (String className : allClassName) {
+            for (String packageName : scan) {
+                if (className.startsWith(packageName)) {
+                    try {
+                        Class<?> klass = mainClass.getClassLoader().loadClass(className);
+                        if (klass.isAnnotationPresent(Service.class)) {
                             all.put(klass, klass.newInstance());
                         } else {
                             all.put(klass, null);
                         }
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
             }
-        } catch (ClassNotFoundException | IOException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
         }
 
-        ArrayList<ClassProcessor> classProcessors = getProcessor(ClassProcessor.class);
+        ArrayList<ClassService> classServices = getProcessor(ClassService.class);
 
         classContainer = new ClassContainer() {
             @Override
@@ -65,9 +76,9 @@ public final class ClassBuilder {
                 if (all.get(klass) == null) {
                     try {
                         Object instance = klass.newInstance();
-                        classProcessors.forEach(classProcessor -> classProcessor.beforeCreate(klass, instance));
+                        classServices.forEach(classService -> classService.beforeCreate(klass, instance));
                         all.put(klass, instance);
-                        classProcessors.forEach(classProcessor -> classProcessor.afterCreate(klass, instance));
+                        classServices.forEach(classService -> classService.afterCreate(klass, instance));
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -82,7 +93,7 @@ public final class ClassBuilder {
 
             @Override
             public void after() {
-                ArrayList<AutowiredProcessor> processors = getProcessor(AutowiredProcessor.class);
+                ArrayList<AutowiredService> processors = getProcessor(AutowiredService.class);
                 all.forEach((klass, instance) -> {
                     for (Field field : klass.getDeclaredFields()) {
                         field.setAccessible(true);
@@ -108,7 +119,7 @@ public final class ClassBuilder {
                                 } else if (field.getType().equals(ConfigProvider.class)) {
                                     field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
                                 }
-                                processors.forEach(autowiredProcessor -> autowiredProcessor.afterPut(field, instance));
+                                processors.forEach(autowiredService -> autowiredService.afterPut(field, instance));
                             } catch (IllegalAccessException e) {
                                 e.printStackTrace();
                             }
@@ -120,6 +131,18 @@ public final class ClassBuilder {
     }
 
     private <T> ArrayList<T> getProcessor(Class<T> type) {
-        return all.keySet().stream().filter(klass -> klass.isAnnotationPresent(Processor.class)).filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).collect(Collectors.toCollection(ArrayList::new));
+        return all.keySet().stream().filter(klass -> klass.isAnnotationPresent(Service.class)).filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private List<String> getAllClassName(ClassLoader classLoader) {
+        List<String> classes = new ArrayList<>();
+        try {
+            for (ClassPath.ClassInfo topLevelClass : ClassPath.from(classLoader).getTopLevelClasses()) {
+                classes.add(topLevelClass.getName());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return classes;
     }
 }

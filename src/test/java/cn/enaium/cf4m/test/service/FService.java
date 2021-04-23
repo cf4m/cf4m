@@ -1,15 +1,15 @@
-package cn.enaium.cf4m.test.processor;
+package cn.enaium.cf4m.test.service;
 
-import cn.enaium.cf4m.annotation.Processor;
-import cn.enaium.cf4m.processor.AutowiredProcessor;
+import cn.enaium.cf4m.annotation.Service;
+import cn.enaium.cf4m.service.AutowiredService;
 
 import java.lang.reflect.Field;
 
 /**
  * @author Enaium
  */
-@Processor
-public class FProcessor implements AutowiredProcessor {
+@Service
+public class FService implements AutowiredService {
     @Override
     public void beforePut(Field field, Object instance) {
         if (field.getName().equals("auto")) {

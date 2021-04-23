@@ -1,11 +1,11 @@
-package cn.enaium.cf4m.processor;
+package cn.enaium.cf4m.service;
 
 import java.lang.reflect.Field;
 
 /**
  * @author Enaium
  */
-public interface AutowiredProcessor {
+public interface AutowiredService {
     /**
      * Process before put field
      *

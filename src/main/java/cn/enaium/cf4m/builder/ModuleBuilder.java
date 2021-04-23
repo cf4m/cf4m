@@ -7,7 +7,7 @@ import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
-import cn.enaium.cf4m.processor.ModuleProcessor;
+import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
@@ -89,7 +89,7 @@ public final class ModuleBuilder {
                 };
                 Object finalExtendInstance = extendInstance;
 
-                ArrayList<ModuleProcessor> processors = classContainer.getProcessor(ModuleProcessor.class);
+                ArrayList<ModuleService> processors = classContainer.getProcessor(ModuleService.class);
 
                 modules.put(moduleInstance, new ModuleProvider() {
                     @Override
@@ -109,13 +109,13 @@ public final class ModuleBuilder {
                         TypeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
 
                         if (module.enable()) {
-                            processors.forEach(moduleProcessor -> moduleProcessor.beforeEnable(this));
+                            processors.forEach(moduleService -> moduleService.beforeEnable(this));
                             CF4M.INSTANCE.getEvent().register(moduleInstance);
-                            processors.forEach(moduleProcessor -> moduleProcessor.afterEnable(this));
+                            processors.forEach(moduleService -> moduleService.afterEnable(this));
                         } else {
-                            processors.forEach(moduleProcessor -> moduleProcessor.beforeDisable(this));
+                            processors.forEach(moduleService -> moduleService.beforeDisable(this));
                             CF4M.INSTANCE.getEvent().unregister(moduleInstance);
-                            processors.forEach(moduleProcessor -> moduleProcessor.afterDisable(this));
+                            processors.forEach(moduleService -> moduleService.afterDisable(this));
                         }
 
                         for (Method method : klass.getDeclaredMethods()) {

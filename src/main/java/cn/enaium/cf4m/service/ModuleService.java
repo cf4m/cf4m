@@ -1,11 +1,11 @@
-package cn.enaium.cf4m.processor;
+package cn.enaium.cf4m.service;
 
 import cn.enaium.cf4m.provider.ModuleProvider;
 
 /**
  * @author Enaium
  */
-public interface ModuleProcessor {
+public interface ModuleService {
     /**
      * Process before module enable
      *

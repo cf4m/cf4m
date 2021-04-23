@@ -1,11 +1,11 @@
-package cn.enaium.cf4m.processor;
+package cn.enaium.cf4m.service;
 
 import java.lang.reflect.Method;
 
 /**
  * @author Enaium
  */
-public interface EventProcessor {
+public interface EventService {
     /**
      * Process before event post
      *

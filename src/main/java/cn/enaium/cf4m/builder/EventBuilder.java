@@ -3,7 +3,7 @@ package cn.enaium.cf4m.builder;
 import cn.enaium.cf4m.annotation.Event;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.EventContainer;
-import cn.enaium.cf4m.processor.EventProcessor;
+import cn.enaium.cf4m.service.EventService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,20 +24,20 @@ public final class EventBuilder {
 
     public EventBuilder(ClassContainer classContainer) {
         events = new ConcurrentHashMap<>();
-        ArrayList<EventProcessor> processors = classContainer.getProcessor(EventProcessor.class);
+        ArrayList<EventService> processors = classContainer.getProcessor(EventService.class);
         eventContainer = new EventContainer() {
             @Override
             public void register(Object instance) {
-                processors.forEach(eventProcessor -> eventProcessor.beforeRegister(instance));
+                processors.forEach(eventService -> eventService.beforeRegister(instance));
                 EventBuilder.this.register(instance);
-                processors.forEach(eventProcessor -> eventProcessor.afterRegister(instance));
+                processors.forEach(eventService -> eventService.afterRegister(instance));
             }
 
             @Override
             public void unregister(Object instance) {
-                processors.forEach(eventProcessor -> eventProcessor.beforeUnregister(instance));
+                processors.forEach(eventService -> eventService.beforeUnregister(instance));
                 EventBuilder.this.unregister(instance);
-                processors.forEach(eventProcessor -> eventProcessor.afterUnregister(instance));
+                processors.forEach(eventService -> eventService.afterUnregister(instance));
             }
 
             @Override
@@ -45,9 +45,9 @@ public final class EventBuilder {
                 if (events.get(instance.getClass()) != null) {
                     for (EventBean event : events.get(instance.getClass())) {
                         try {
-                            processors.forEach(eventProcessor -> eventProcessor.beforePost(event.target, event.instance));
+                            processors.forEach(eventService -> eventService.beforePost(event.target, event.instance));
                             event.target.invoke(event.instance, instance);
-                            processors.forEach(eventProcessor -> eventProcessor.afterPost(event.target, event.instance));
+                            processors.forEach(eventService -> eventService.afterPost(event.target, event.instance));
                         } catch (IllegalAccessException | InvocationTargetException e) {
                             e.printStackTrace();
                         }

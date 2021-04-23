@@ -1,14 +1,14 @@
-package cn.enaium.cf4m.test.processor;
+package cn.enaium.cf4m.test.service;
 
-import cn.enaium.cf4m.annotation.Processor;
-import cn.enaium.cf4m.processor.ModuleProcessor;
+import cn.enaium.cf4m.annotation.Service;
+import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 
 /**
  * @author Enaium
  */
-@Processor
-public class MProcessor implements ModuleProcessor {
+@Service
+public class MService implements ModuleService {
     @Override
     public void beforeEnable(ModuleProvider moduleProvider) {
         System.out.println(moduleProvider.getName() + " beforeEnable");

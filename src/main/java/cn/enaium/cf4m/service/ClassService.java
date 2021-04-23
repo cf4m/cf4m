@@ -1,9 +1,20 @@
-package cn.enaium.cf4m.processor;
+package cn.enaium.cf4m.service;
+
+import java.util.List;
 
 /**
  * @author Enaium
  */
-public interface ClassProcessor {
+public interface ClassService {
+
+    default void beforeScan(List<String> scan) {
+
+    }
+
+    default void afterScan(List<String> scan) {
+
+    }
+
     /**
      * Process before instance put to Class container
      *

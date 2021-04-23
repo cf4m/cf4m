@@ -6,7 +6,7 @@ import cn.enaium.cf4m.annotation.command.Param;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.CommandContainer;
-import cn.enaium.cf4m.processor.CommandProcessor;
+import cn.enaium.cf4m.service.CommandService;
 import cn.enaium.cf4m.provider.CommandProvider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -154,16 +154,16 @@ public final class CommandBuilder {
                     }
                 }
 
-                List<CommandProcessor> processors = classContainer.getProcessor(CommandProcessor.class);
+                List<CommandService> processors = classContainer.getProcessor(CommandService.class);
 
                 try {
-                    processors.forEach(commandProcessor -> commandProcessor.beforeExec(commands.get(command)));
+                    processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
                     if (params.size() == 0) {
                         method.invoke(command);
                     } else {
                         method.invoke(command, params.toArray());
                     }
-                    processors.forEach(commandProcessor -> commandProcessor.afterExec(commands.get(command)));
+                    processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     INSTANCE.getConfiguration().getCommand().message(e.getMessage());

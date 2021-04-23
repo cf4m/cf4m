@@ -1,11 +1,11 @@
-package cn.enaium.cf4m.processor;
+package cn.enaium.cf4m.service;
 
 import cn.enaium.cf4m.provider.ConfigProvider;
 
 /**
  * @author Enaium
  */
-public interface ConfigProcessor {
+public interface ConfigService {
     /**
      * Process before config load
      *

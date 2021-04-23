@@ -6,7 +6,7 @@ import cn.enaium.cf4m.annotation.config.Save;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
-import cn.enaium.cf4m.processor.ConfigProcessor;
+import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,7 +28,7 @@ public final class ConfigBuilder {
 
     public ConfigBuilder(ClassContainer classContainer, IConfiguration configuration, String path) {
         final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
-        ArrayList<ConfigProcessor> processors = classContainer.getProcessor(ConfigProcessor.class);
+        ArrayList<ConfigService> processors = classContainer.getProcessor(ConfigService.class);
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Config.class)) {
                 configs.put(classContainer.create(klass), new ConfigProvider() {
@@ -80,9 +80,9 @@ public final class ConfigBuilder {
                             if (method.isAnnotationPresent(Load.class)) {
                                 try {
                                     if (new File(getByInstance(config).getPath()).exists()) {
-                                        processors.forEach(configProcessor -> configProcessor.beforeLoad(getByInstance(config)));
+                                        processors.forEach(configService -> configService.beforeLoad(getByInstance(config)));
                                         method.invoke(config);
-                                        processors.forEach(configProcessor -> configProcessor.afterLoad(getByInstance(config)));
+                                        processors.forEach(configService -> configService.afterLoad(getByInstance(config)));
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                     e.printStackTrace();
@@ -106,9 +106,9 @@ public final class ConfigBuilder {
                                 try {
                                     new File(getByInstance(config).getPath()).createNewFile();
                                     if (new File(getByInstance(config).getPath()).exists()) {
-                                        processors.forEach(configProcessor -> configProcessor.beforeSave(getByInstance(config)));
+                                        processors.forEach(configService -> configService.beforeSave(getByInstance(config)));
                                         method.invoke(config);
-                                        processors.forEach(configProcessor -> configProcessor.afterSave(getByInstance(config)));
+                                        processors.forEach(configService -> configService.afterSave(getByInstance(config)));
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException | IOException e) {
                                     e.printStackTrace();
