@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.manager;
+package cn.enaium.cf4m.builder;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
  * @author Enaium
  */
 @SuppressWarnings({"UnstableApiUsage", "unchecked"})
-public final class ClassManager {
+public final class ClassBuilder {
 
     public final ClassContainer classContainer;
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
-    public ClassManager(Class<?> mainClass) {
+    public ClassBuilder(Class<?> mainClass) {
         final ArrayList<String> scan = new ArrayList<>();
         scan.add(mainClass.getPackage().getName());
         if (mainClass.isAnnotationPresent(Scan.class)) {
@@ -77,7 +77,7 @@ public final class ClassManager {
 
             @Override
             public <T> ArrayList<T> getProcessor(Class<T> type) {
-                return ClassManager.this.getProcessor(type);
+                return ClassBuilder.this.getProcessor(type);
             }
 
             @Override

@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.manager;
+package cn.enaium.cf4m.builder;
 
 import cn.enaium.cf4m.annotation.Event;
 import cn.enaium.cf4m.container.ClassContainer;
@@ -15,28 +15,28 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @author Enaium
  */
-public final class EventManager {
+public final class EventBuilder {
 
 
     private final ConcurrentHashMap<Class<?>, CopyOnWriteArrayList<EventBean>> events;
 
     public final EventContainer eventContainer;
 
-    public EventManager(ClassContainer classContainer) {
+    public EventBuilder(ClassContainer classContainer) {
         events = new ConcurrentHashMap<>();
         ArrayList<EventProcessor> processors = classContainer.getProcessor(EventProcessor.class);
         eventContainer = new EventContainer() {
             @Override
             public void register(Object instance) {
                 processors.forEach(eventProcessor -> eventProcessor.beforeRegister(instance));
-                EventManager.this.register(instance);
+                EventBuilder.this.register(instance);
                 processors.forEach(eventProcessor -> eventProcessor.afterRegister(instance));
             }
 
             @Override
             public void unregister(Object instance) {
                 processors.forEach(eventProcessor -> eventProcessor.beforeUnregister(instance));
-                EventManager.this.unregister(instance);
+                EventBuilder.this.unregister(instance);
                 processors.forEach(eventProcessor -> eventProcessor.afterUnregister(instance));
             }
 
