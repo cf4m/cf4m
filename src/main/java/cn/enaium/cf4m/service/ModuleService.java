@@ -7,7 +7,7 @@ import cn.enaium.cf4m.provider.ModuleProvider;
  */
 public interface ModuleService {
     /**
-     * Process before module enable
+     * Before module enable
      *
      * @param moduleProvider module
      */
@@ -16,7 +16,7 @@ public interface ModuleService {
     }
 
     /**
-     * Process before module disable
+     * Before module disable
      *
      * @param moduleProvider module
      */
@@ -25,7 +25,7 @@ public interface ModuleService {
     }
 
     /**
-     * Process after module enable
+     * After module enable
      *
      * @param moduleProvider module
      */
@@ -34,7 +34,7 @@ public interface ModuleService {
     }
 
     /**
-     * Process after module disable
+     * After module disable
      *
      * @param moduleProvider module
      */

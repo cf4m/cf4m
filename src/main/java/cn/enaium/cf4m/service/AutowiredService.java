@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
  */
 public interface AutowiredService {
     /**
-     * Process before put field
+     * Before put field
      *
      * @param field    field
      * @param instance object
@@ -17,7 +17,7 @@ public interface AutowiredService {
     }
 
     /**
-     * Process after put field
+     * After put field
      *
      * @param field    field
      * @param instance object

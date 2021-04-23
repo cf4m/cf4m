@@ -7,7 +7,7 @@ import cn.enaium.cf4m.provider.ConfigProvider;
  */
 public interface ConfigService {
     /**
-     * Process before config load
+     * Before config load
      *
      * @param configProvider config
      */
@@ -16,7 +16,7 @@ public interface ConfigService {
     }
 
     /**
-     * Process before config save
+     * Before config save
      *
      * @param configProvider config
      */
@@ -26,7 +26,7 @@ public interface ConfigService {
 
 
     /**
-     * Process after config load
+     * After config load
      *
      * @param configProvider config
      */
@@ -35,7 +35,7 @@ public interface ConfigService {
     }
 
     /**
-     * Process after config save
+     * After config save
      *
      * @param configProvider config
      */

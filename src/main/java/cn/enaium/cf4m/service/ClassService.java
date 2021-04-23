@@ -16,7 +16,7 @@ public interface ClassService {
     }
 
     /**
-     * Process before instance put to Class container
+     * Before instance put to Class container
      *
      * @param klass    class
      * @param instance class instance
@@ -26,7 +26,7 @@ public interface ClassService {
     }
 
     /**
-     * Process after instance put to Class container
+     * After instance put to Class container
      *
      * @param klass    class
      * @param instance class instance

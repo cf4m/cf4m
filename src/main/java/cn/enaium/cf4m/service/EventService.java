@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
  */
 public interface EventService {
     /**
-     * Process before event post
+     * Before event post
      *
      * @param method   target
      * @param instance object
@@ -17,7 +17,7 @@ public interface EventService {
     }
 
     /**
-     * Process after event post
+     * After event post
      *
      * @param method   target
      * @param instance object
@@ -27,7 +27,7 @@ public interface EventService {
     }
 
     /**
-     * Process before event register
+     * Before event register
      *
      * @param instance object
      */
@@ -36,7 +36,7 @@ public interface EventService {
     }
 
     /**
-     * Process after event register
+     * After event register
      *
      * @param instance object
      */
@@ -45,7 +45,7 @@ public interface EventService {
     }
 
     /**
-     * Process before event unregister
+     * Before event unregister
      *
      * @param instance object
      */
@@ -54,7 +54,7 @@ public interface EventService {
     }
 
     /**
-     * Process after event unregister
+     * After event unregister
      *
      * @param instance object
      */
