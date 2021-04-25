@@ -24,7 +24,7 @@ public final class EventBuilder {
 
     public EventBuilder(ClassContainer classContainer) {
         events = new ConcurrentHashMap<>();
-        ArrayList<EventService> processors = classContainer.getProcessor(EventService.class);
+        ArrayList<EventService> processors = classContainer.getService(EventService.class);
         eventContainer = new EventContainer() {
             @Override
             public void register(Object instance) {
@@ -61,7 +61,7 @@ public final class EventBuilder {
         Class<?> klass = instance.getClass();
 
         for (Method method : klass.getDeclaredMethods()) {
-            if (method.getParameterTypes().length == 1 && method.isAnnotationPresent(Event.class)) {
+            if (method.getParameterCount() == 1 && method.isAnnotationPresent(Event.class)) {
                 method.setAccessible(true);
                 Class<?> listener = method.getParameterTypes()[0];
                 EventBean eventBean = new EventBean(instance, method, method.getAnnotation(Event.class).priority());

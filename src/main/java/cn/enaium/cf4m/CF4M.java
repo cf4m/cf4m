@@ -62,7 +62,6 @@ public final class CF4M {
                 }
             };
             classContainer.after();
-
             INSTANCE.getConfig().load();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
             run = true;

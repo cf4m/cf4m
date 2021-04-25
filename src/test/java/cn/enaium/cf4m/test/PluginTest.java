@@ -1,11 +1,11 @@
 package cn.enaium.cf4m.test;
 
-import cn.enaium.cf4m.starter.Starter;
+import cn.enaium.cf4m.plugin.Plugin;
 
 /**
  * @author Enaium
  */
-public class StarterTest implements Starter {
+public class PluginTest implements Plugin {
     @Override
     public String getName() {
         return "Test";

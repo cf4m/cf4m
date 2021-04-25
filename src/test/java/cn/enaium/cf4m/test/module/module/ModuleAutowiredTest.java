@@ -10,17 +10,27 @@ import org.junit.jupiter.api.Assertions;
 /**
  * @author Enaium
  */
-@Autowired
 @Module(value = "ModuleAutowiredTest", key = 6)
 public class ModuleAutowiredTest {
+
     private ClassContainer classContainer;
+    @Autowired
     private IConfiguration configuration;
+    @Autowired
     private EventContainer eventContainer;
+    @Autowired
     private ModuleContainer moduleContainer;
+    @Autowired
     private CommandContainer commandContainer;
+    @Autowired
     private ConfigContainer configContainer;
+    @Autowired
     private String auto;
 
+    @Autowired
+    public void setClassContainer(ClassContainer classContainer) {
+        this.classContainer = classContainer;
+    }
 
     @Enable
     public void enable() {

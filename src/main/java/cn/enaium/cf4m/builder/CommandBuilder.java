@@ -154,7 +154,7 @@ public final class CommandBuilder {
                     }
                 }
 
-                List<CommandService> processors = classContainer.getProcessor(CommandService.class);
+                List<CommandService> processors = classContainer.getService(CommandService.class);
 
                 try {
                     processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));

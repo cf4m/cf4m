@@ -28,7 +28,7 @@ public final class ConfigBuilder {
 
     public ConfigBuilder(ClassContainer classContainer, IConfiguration configuration, String path) {
         final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
-        ArrayList<ConfigService> processors = classContainer.getProcessor(ConfigService.class);
+        ArrayList<ConfigService> processors = classContainer.getService(ConfigService.class);
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Config.class)) {
                 configs.put(classContainer.create(klass), new ConfigProvider() {

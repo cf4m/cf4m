@@ -6,16 +6,16 @@ import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.service.AutowiredService;
-import cn.enaium.cf4m.service.ClassService;
-import cn.enaium.cf4m.provider.CommandProvider;
-import cn.enaium.cf4m.provider.ConfigProvider;
-import cn.enaium.cf4m.provider.ModuleProvider;
-import cn.enaium.cf4m.starter.Starter;
+import cn.enaium.cf4m.plugin.Plugin;
+import cn.enaium.cf4m.provider.*;
+import cn.enaium.cf4m.service.*;
+import cn.enaium.cf4m.plugin.PluginLoader;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,13 +33,13 @@ public final class ClassBuilder {
 
         final ArrayList<String> scan = new ArrayList<>();
 
-        for (Starter starter : ServiceLoader.load(Starter.class, mainClass.getClassLoader())) {
-            System.out.println("Load starter " + starter.getName()
-                    + " | " + starter.getDescription()
-                    + " | " + starter.getVersion()
-                    + " | " + starter.getAuthor());
-            scan.add(starter.getClass().getPackage().getName());
-        }
+        PluginLoader.load(Plugin.class).forEach(plugin -> {
+            System.out.println("Load plugin " + plugin.getName()
+                    + " | " + plugin.getDescription()
+                    + " | " + plugin.getVersion()
+                    + " | " + plugin.getAuthor());
+            scan.add(plugin.getClass().getPackage().getName());
+        });
 
         scan.add(mainClass.getPackage().getName());
         if (mainClass.isAnnotationPresent(Scan.class)) {
@@ -63,7 +63,7 @@ public final class ClassBuilder {
             }
         }
 
-        ArrayList<ClassService> classServices = getProcessor(ClassService.class);
+        ArrayList<ClassService> classServices = getService(ClassService.class);
 
         classContainer = new ClassContainer() {
             @Override
@@ -87,42 +87,83 @@ public final class ClassBuilder {
             }
 
             @Override
-            public <T> ArrayList<T> getProcessor(Class<T> type) {
-                return ClassBuilder.this.getProcessor(type);
+            public <T> ArrayList<T> getService(Class<T> type) {
+                return ClassBuilder.this.getService(type);
             }
 
             @Override
             public void after() {
-                ArrayList<AutowiredService> processors = getProcessor(AutowiredService.class);
                 all.forEach((klass, instance) -> {
                     for (Field field : klass.getDeclaredFields()) {
                         field.setAccessible(true);
-                        if (klass.isAnnotationPresent(Autowired.class) || field.isAnnotationPresent(Autowired.class)) {
-                            try {
-                                processors.forEach(postProcessor -> postProcessor.beforePut(field, instance));
-                                if (field.getType().equals(ClassContainer.class)) {
-                                    field.set(instance, this);
-                                } else if (field.getType().equals(EventContainer.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getEvent());
-                                } else if (field.getType().equals(ModuleContainer.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getModule());
-                                } else if (field.getType().equals(CommandContainer.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getCommand());
-                                } else if (field.getType().equals(ConfigContainer.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getConfig());
-                                } else if (field.getType().equals(IConfiguration.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getConfiguration());
-                                } else if (field.getType().equals(ModuleProvider.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
-                                } else if (field.getType().equals(CommandProvider.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
-                                } else if (field.getType().equals(ConfigProvider.class)) {
-                                    field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
-                                }
-                                processors.forEach(autowiredService -> autowiredService.afterPut(field, instance));
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
+                        if (!klass.isAnnotationPresent(Autowired.class) && !field.isAnnotationPresent(Autowired.class)) {
+                            continue;
+                        }
+
+                        try {
+                            getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
+                            if (field.getType().equals(ClassContainer.class)) {
+                                field.set(instance, this);
+                            } else if (field.getType().equals(EventContainer.class)) {
+                                field.set(instance, CF4M.INSTANCE.getEvent());
+                            } else if (field.getType().equals(ModuleContainer.class)) {
+                                field.set(instance, CF4M.INSTANCE.getModule());
+                            } else if (field.getType().equals(CommandContainer.class)) {
+                                field.set(instance, CF4M.INSTANCE.getCommand());
+                            } else if (field.getType().equals(ConfigContainer.class)) {
+                                field.set(instance, CF4M.INSTANCE.getConfig());
+                            } else if (field.getType().equals(IConfiguration.class)) {
+                                field.set(instance, CF4M.INSTANCE.getConfiguration());
+                            } else if (field.getType().equals(ModuleProvider.class)) {
+                                field.set(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
+                            } else if (field.getType().equals(CommandProvider.class)) {
+                                field.set(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
+                            } else if (field.getType().equals(ConfigProvider.class)) {
+                                field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
                             }
+                            getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    for (Method method : klass.getDeclaredMethods()) {
+                        method.setAccessible(true);
+
+                        if (!klass.isAnnotationPresent(Autowired.class) && !method.isAnnotationPresent(Autowired.class)) {
+                            continue;
+                        }
+
+                        if (method.getParameterCount() != 1) {
+                            continue;
+                        }
+
+                        Class<?> type = method.getParameterTypes()[0];
+
+                        try {
+                            getService(AutowiredService.class).forEach(autowiredService -> autowiredService.beforeSet(method, instance));
+                            if (type.equals(ClassContainer.class)) {
+                                method.invoke(instance, this);
+                            } else if (type.equals(EventContainer.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getEvent());
+                            } else if (type.equals(ModuleContainer.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getModule());
+                            } else if (type.equals(CommandContainer.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getCommand());
+                            } else if (type.equals(ConfigContainer.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getConfig());
+                            } else if (type.equals(IConfiguration.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getConfiguration());
+                            } else if (type.equals(ModuleProvider.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
+                            } else if (type.equals(CommandProvider.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
+                            } else if (type.equals(ConfigProvider.class)) {
+                                method.invoke(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
+                            }
+                            getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterSet(method, instance));
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -130,7 +171,7 @@ public final class ClassBuilder {
         };
     }
 
-    private <T> ArrayList<T> getProcessor(Class<T> type) {
+    private <T> ArrayList<T> getService(Class<T> type) {
         return all.keySet().stream().filter(klass -> klass.isAnnotationPresent(Service.class)).filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).collect(Collectors.toCollection(ArrayList::new));
     }
 

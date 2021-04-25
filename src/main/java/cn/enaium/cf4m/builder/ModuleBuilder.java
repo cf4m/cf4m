@@ -89,7 +89,7 @@ public final class ModuleBuilder {
                 };
                 Object finalExtendInstance = extendInstance;
 
-                ArrayList<ModuleService> processors = classContainer.getProcessor(ModuleService.class);
+                ArrayList<ModuleService> processors = classContainer.getService(ModuleService.class);
 
                 modules.put(moduleInstance, new ModuleProvider() {
                     @Override

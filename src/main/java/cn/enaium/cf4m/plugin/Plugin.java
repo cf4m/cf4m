@@ -1,9 +1,9 @@
-package cn.enaium.cf4m.starter;
+package cn.enaium.cf4m.plugin;
 
 /**
  * @author Enaium
  */
-public interface Starter {
+public interface Plugin {
     String getName();
 
     String getDescription();

@@ -8,7 +8,6 @@ import java.util.ArrayList;
  * @author Enaium
  */
 public interface SettingContainer {
-
     /**
      * NotNull
      *

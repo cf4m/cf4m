@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  *
  * @author Enaium
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Autowired {
 }

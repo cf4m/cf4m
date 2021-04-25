@@ -4,7 +4,6 @@ package cn.enaium.cf4m.container;
  * @author Enaium
  */
 public interface EventContainer {
-    
     /**
      * Register all event
      *
