@@ -10,12 +10,6 @@ import java.util.List;
  */
 @Service
 public class CService implements ClassService {
-
-    @Override
-    public void afterScan(List<String> scan) {
-        scan.forEach(s -> System.out.println("Scan:" + s));
-    }
-
     @Override
     public void afterCreate(Class<?> klass, Object instance) {
         System.out.println(klass.getName());

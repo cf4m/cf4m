@@ -44,13 +44,15 @@ public final class EventBuilder {
             public void post(Object instance) {
                 if (events.get(instance.getClass()) != null) {
                     for (EventBean event : events.get(instance.getClass())) {
-                        try {
-                            processors.forEach(eventService -> eventService.beforePost(event.target, event.instance));
-                            event.target.invoke(event.instance, instance);
-                            processors.forEach(eventService -> eventService.afterPost(event.target, event.instance));
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
+                        processors.forEach(eventService -> eventService.beforePost(event.target, event.instance));
+                        new Thread(() -> {
+                            try {
+                                event.target.invoke(event.instance, instance);
+                            } catch (IllegalAccessException | InvocationTargetException e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
+                        processors.forEach(eventService -> eventService.afterPost(event.target, event.instance));
                     }
                 }
             }

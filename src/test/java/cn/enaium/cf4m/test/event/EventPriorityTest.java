@@ -22,10 +22,16 @@ public class EventPriorityTest {
     @Event(priority = 1)
     public void onUpdate1(EventPriorityEventTest event) {
         System.out.println("Event 1");
+        System.out.println("Event 1");
+        System.out.println("Event 1");
+        System.out.println("Event 1");
     }
 
     @Event(priority = 2)
     public void onUpdate2(EventPriorityEventTest event) {
+        System.out.println("Event 2");
+        System.out.println("Event 2");
+        System.out.println("Event 2");
         System.out.println("Event 2");
     }
 

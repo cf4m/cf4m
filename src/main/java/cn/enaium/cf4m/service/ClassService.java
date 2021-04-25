@@ -6,15 +6,6 @@ import java.util.List;
  * @author Enaium
  */
 public interface ClassService {
-
-    default void beforeScan(List<String> scan) {
-
-    }
-
-    default void afterScan(List<String> scan) {
-
-    }
-
     /**
      * Before instance put to Class container
      *

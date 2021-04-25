@@ -23,7 +23,6 @@ public final class CF4M {
         if (run) {
             new Exception("CF4M already run").printStackTrace();
         } else {
-
             final ClassContainer classContainer = new ClassBuilder(mainClass).classContainer;
             final EventContainer eventContainer = new EventBuilder(classContainer).eventContainer;
             final IConfiguration configuration = new ConfigurationBuilder(classContainer).configuration;
@@ -62,8 +61,13 @@ public final class CF4M {
                 }
             };
             classContainer.after();
-            INSTANCE.getConfig().load();
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> INSTANCE.getConfig().save()));
+            configContainer.load();
+            Runtime.getRuntime().addShutdownHook(new Thread("CF4M Shutdown Thread") {
+                @Override
+                public void run() {
+                    configContainer.save();
+                }
+            });
             run = true;
         }
     }
