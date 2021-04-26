@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.builder;
+package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.annotation.command.Command;
 import cn.enaium.cf4m.annotation.command.Exec;
@@ -21,7 +21,7 @@ import static cn.enaium.cf4m.CF4M.INSTANCE;
 /**
  * @author Enaium
  */
-public final class CommandBuilder {
+public final class CommandFacade {
     /**
      * <K> command
      * <V> keys
@@ -68,7 +68,7 @@ public final class CommandBuilder {
                 Object command = getCommand(key);
 
                 if (command != null) {
-                    if (!CommandBuilder.this.execCommand(command, args)) {
+                    if (!CommandFacade.this.execCommand(command, args)) {
                         for (Method method : command.getClass().getDeclaredMethods()) {
                             if (method.isAnnotationPresent(Exec.class)) {
                                 Parameter[] parameters = method.getParameters();
@@ -94,7 +94,7 @@ public final class CommandBuilder {
 
     private final ClassContainer classContainer;
 
-    public CommandBuilder(ClassContainer classContainer, IConfiguration configuration) {
+    public CommandFacade(ClassContainer classContainer, IConfiguration configuration) {
         this.classContainer = classContainer;
         this.configuration = configuration;
         commands = Maps.newHashMap();

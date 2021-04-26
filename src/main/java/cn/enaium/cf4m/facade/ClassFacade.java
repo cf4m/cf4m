@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.builder;
+package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
  * @author Enaium
  */
 @SuppressWarnings({"UnstableApiUsage", "unchecked"})
-public final class ClassBuilder {
+public final class ClassFacade {
 
     public final ClassContainer classContainer;
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
-    public ClassBuilder(Class<?> mainClass) {
+    public ClassFacade(Class<?> mainClass) {
         List<String> allClassName = getAllClassName(mainClass.getClassLoader());
 
         final ArrayList<String> scan = new ArrayList<>();
@@ -88,7 +88,7 @@ public final class ClassBuilder {
 
             @Override
             public <T> ArrayList<T> getService(Class<T> type) {
-                return ClassBuilder.this.getService(type);
+                return ClassFacade.this.getService(type);
             }
 
             @Override

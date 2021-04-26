@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.builder;
+package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
  * @author Enaium
  */
 @SuppressWarnings({"unchecked", "unused"})
-public final class ModuleBuilder {
+public final class ModuleFacade {
 
     public final ModuleContainer moduleContainer;
 
-    public ModuleBuilder(ClassContainer classContainer) {
+    public ModuleFacade(ClassContainer classContainer) {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
         Object extendInstance = null;

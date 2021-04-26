@@ -2,7 +2,7 @@ package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.builder.*;
+import cn.enaium.cf4m.facade.*;
 
 import java.io.File;
 
@@ -23,12 +23,12 @@ public final class CF4M {
         if (run) {
             new Exception("CF4M already run").printStackTrace();
         } else {
-            final ClassContainer classContainer = new ClassBuilder(mainClass).classContainer;
-            final EventContainer eventContainer = new EventBuilder(classContainer).eventContainer;
-            final IConfiguration configuration = new ConfigurationBuilder(classContainer).configuration;
-            final ModuleContainer moduleContainer = new ModuleBuilder(classContainer).moduleContainer;
-            final CommandContainer commandContainer = new CommandBuilder(classContainer, configuration).commandContainer;
-            final ConfigContainer configContainer = new ConfigBuilder(classContainer, configuration, path).configContainer;
+            final ClassContainer classContainer = new ClassFacade(mainClass).classContainer;
+            final EventContainer eventContainer = new EventFacade(classContainer).eventContainer;
+            final IConfiguration configuration = new ConfigurationFacade(classContainer).configuration;
+            final ModuleContainer moduleContainer = new ModuleFacade(classContainer).moduleContainer;
+            final CommandContainer commandContainer = new CommandFacade(classContainer, configuration).commandContainer;
+            final ConfigContainer configContainer = new ConfigFacade(classContainer, configuration, path).configContainer;
             INSTANCE = new ICF4M() {
                 @Override
                 public ClassContainer getKlass() {

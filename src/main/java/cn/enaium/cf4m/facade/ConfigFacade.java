@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.builder;
+package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
@@ -21,12 +21,12 @@ import java.util.HashMap;
 /**
  * @author Enaium
  */
-public final class ConfigBuilder {
+public final class ConfigFacade {
 
 
     public final ConfigContainer configContainer;
 
-    public ConfigBuilder(ClassContainer classContainer, IConfiguration configuration, String path) {
+    public ConfigFacade(ClassContainer classContainer, IConfiguration configuration, String path) {
         final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
         ArrayList<ConfigService> processors = classContainer.getService(ConfigService.class);
         for (Class<?> klass : classContainer.getAll()) {
