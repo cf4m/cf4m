@@ -15,7 +15,7 @@ public final class ConfigurationFacade {
     public ConfigurationFacade(ClassContainer classContainer) {
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Configuration.class)) {
-                configuration = classContainer.create(klass);
+                configuration = (IConfiguration) classContainer.create(klass);
             }
         }
     }

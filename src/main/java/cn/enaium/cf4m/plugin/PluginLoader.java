@@ -17,7 +17,7 @@ public final class PluginLoader {
     private static List<Properties> load(ClassLoader classLoader) {
         List<Properties> configList = new ArrayList<>();
         try {
-            Enumeration<URL> resources = classLoader.getResources("cf4m.config.properties");
+            Enumeration<URL> resources = classLoader.getResources("cf4m.properties");
             while (resources.hasMoreElements()) {
                 Properties properties = new Properties();
                 properties.load(resources.nextElement().openStream());
@@ -30,7 +30,7 @@ public final class PluginLoader {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> ArrayList<T> load(Class<T> klass) {
+    public static <T> ArrayList<T> loadPlugin(Class<T> klass) {
         ArrayList<T> instance = new ArrayList<>();
         try {
             for (Properties properties : load(klass.getClassLoader())) {

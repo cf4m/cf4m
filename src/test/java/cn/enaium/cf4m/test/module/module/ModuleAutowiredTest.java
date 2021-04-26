@@ -5,6 +5,7 @@ import cn.enaium.cf4m.annotation.module.Enable;
 import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
+import cn.enaium.cf4m.test.gui.Gui;
 import org.junit.jupiter.api.Assertions;
 
 /**
@@ -41,5 +42,6 @@ public class ModuleAutowiredTest {
         Assertions.assertNotNull(commandContainer);
         Assertions.assertNotNull(configContainer);
         Assertions.assertNotNull(auto);
+        classContainer.create(Gui.class).render();
     }
 }

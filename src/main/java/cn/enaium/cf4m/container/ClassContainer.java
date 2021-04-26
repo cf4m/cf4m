@@ -16,7 +16,7 @@ public interface ClassContainer {
      * @param <T>   class
      * @return class instance
      */
-    <T> T create(Class<?> klass);
+    <T> T create(Class<T> klass);
 
     <T> ArrayList<T> getService(Class<T> type);
 

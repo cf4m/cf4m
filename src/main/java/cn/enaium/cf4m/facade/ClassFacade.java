@@ -33,7 +33,7 @@ public final class ClassFacade {
 
         final ArrayList<String> scan = new ArrayList<>();
 
-        PluginLoader.load(Plugin.class).forEach(plugin -> {
+        PluginLoader.loadPlugin(Plugin.class).forEach(plugin -> {
             System.out.println("Load plugin " + plugin.getName()
                     + " | " + plugin.getDescription()
                     + " | " + plugin.getVersion()
@@ -72,7 +72,7 @@ public final class ClassFacade {
             }
 
             @Override
-            public <T> T create(Class<?> klass) {
+            public <T> T create(Class<T> klass) {
                 if (all.get(klass) == null) {
                     try {
                         Object instance = klass.newInstance();
@@ -83,6 +83,7 @@ public final class ClassFacade {
                         e.printStackTrace();
                     }
                 }
+                autowired();
                 return (T) all.get(klass);
             }
 
@@ -93,7 +94,16 @@ public final class ClassFacade {
 
             @Override
             public void after() {
+                autowired();
+            }
+
+            public void autowired() {
                 all.forEach((klass, instance) -> {
+
+                    if (instance == null || !CF4M.isRun()) {
+                        return;
+                    }
+
                     for (Field field : klass.getDeclaredFields()) {
                         field.setAccessible(true);
                         if (!klass.isAnnotationPresent(Autowired.class) && !field.isAnnotationPresent(Autowired.class)) {

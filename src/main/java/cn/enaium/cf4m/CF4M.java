@@ -15,6 +15,10 @@ public final class CF4M {
 
     private static boolean run = false;
 
+    public static boolean isRun() {
+        return run;
+    }
+
     /**
      * @param mainClass MainClass.
      * @param path      .minecraft/{clientName} path.
@@ -60,6 +64,7 @@ public final class CF4M {
                     return configContainer;
                 }
             };
+            run = true;
             classContainer.after();
             configContainer.load();
             Runtime.getRuntime().addShutdownHook(new Thread("CF4M Shutdown Thread") {
@@ -68,7 +73,6 @@ public final class CF4M {
                     configContainer.save();
                 }
             });
-            run = true;
         }
     }
 
