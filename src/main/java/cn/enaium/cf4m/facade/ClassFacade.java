@@ -11,7 +11,7 @@ import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.provider.*;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
-import cn.enaium.cf4m.structure.KeyValue;
+import cn.enaium.cf4m.struct.KeyValue;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;

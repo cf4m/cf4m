@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.structure;
+package cn.enaium.cf4m.struct;
 
 public class KeyValue<K, V> {
     private final K key;

@@ -1,7 +1,7 @@
 package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.annotation.Configuration;
-import cn.enaium.cf4m.structure.KeyValue;
+import cn.enaium.cf4m.struct.KeyValue;
 import cn.enaium.cf4m.configuration.ICommandConfiguration;
 import cn.enaium.cf4m.configuration.IConfigConfiguration;
 import cn.enaium.cf4m.configuration.IConfiguration;
