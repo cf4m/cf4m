@@ -59,13 +59,18 @@ public final class ModuleFacade {
                             }
 
                             @Override
-                            public <T> T getSetting() {
+                            public Object getInstance() {
                                 try {
-                                    return (T) field.get(moduleInstance);
+                                    return field.get(moduleInstance);
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
                                 }
                                 return null;
+                            }
+
+                            @Override
+                            public <T> T getSetting() {
+                                return (T) getInstance();
                             }
                         });
                     }
@@ -100,6 +105,11 @@ public final class ModuleFacade {
                     @Override
                     public boolean getEnable() {
                         return module.enable();
+                    }
+
+                    @Override
+                    public Object getInstance() {
+                        return moduleInstance;
                     }
 
                     @Override

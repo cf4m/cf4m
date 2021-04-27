@@ -2,11 +2,12 @@ package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
+import cn.enaium.cf4m.annotation.Plugin;
 import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.plugin.Plugin;
+import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.provider.*;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
@@ -33,12 +34,14 @@ public final class ClassFacade {
 
         final ArrayList<String> scan = new ArrayList<>();
 
-        PluginLoader.loadPlugin(Plugin.class).forEach(plugin -> {
-            System.out.println("Load plugin " + plugin.getName()
-                    + " | " + plugin.getDescription()
-                    + " | " + plugin.getVersion()
-                    + " | " + plugin.getAuthor());
-            scan.add(plugin.getClass().getPackage().getName());
+        PluginLoader.loadPlugin(PluginInitialize.class).forEach(pluginInitialize -> {
+            Plugin plugin = pluginInitialize.getClass().getAnnotation(Plugin.class);
+            System.out.println("Load plugin " + plugin.name()
+                    + " | " + plugin.description()
+                    + " | " + plugin.version()
+                    + " | " + plugin.author());
+            pluginInitialize.initialize();
+            scan.add(pluginInitialize.getClass().getPackage().getName());
         });
 
         scan.add(mainClass.getPackage().getName());

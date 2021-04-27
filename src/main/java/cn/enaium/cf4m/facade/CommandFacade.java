@@ -22,10 +22,7 @@ import static cn.enaium.cf4m.CF4M.INSTANCE;
  * @author Enaium
  */
 public final class CommandFacade {
-    /**
-     * <K> command
-     * <V> keys
-     */
+
     private final HashMap<Object, CommandProvider> commands;
 
     public final CommandContainer commandContainer = new CommandContainer() {
@@ -101,7 +98,8 @@ public final class CommandFacade {
 
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Command.class)) {
-                commands.put(classContainer.create(klass), new CommandProvider() {
+                final Object commandInstance = classContainer.create(klass);
+                commands.put(commandInstance, new CommandProvider() {
                     @Override
                     public String getName() {
                         return "";
@@ -110,6 +108,11 @@ public final class CommandFacade {
                     @Override
                     public String getDescription() {
                         return klass.getAnnotation(Command.class).description();
+                    }
+
+                    @Override
+                    public Object getInstance() {
+                        return commandInstance;
                     }
 
                     @Override

@@ -14,8 +14,11 @@ import org.junit.jupiter.api.Test;
  */
 @Scan("com.test")
 public class T {
+
+
     @Test
     public void test() {
+        final long start = System.currentTimeMillis();
         CF4M.run(this, System.getProperty("user.dir") + "/build/configTest");
         System.out.println("Check ModuleBeanTest Start");
         new ModuleBeanTest();
@@ -72,5 +75,6 @@ public class T {
         System.out.println("Check ConfigTest Start");
         new ConfigTest();
         System.out.println("Check ConfigTest End");
+        System.out.println(System.currentTimeMillis() - start);
     }
 }

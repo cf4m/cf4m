@@ -23,7 +23,6 @@ import java.util.HashMap;
  */
 public final class ConfigFacade {
 
-
     public final ConfigContainer configContainer;
 
     public ConfigFacade(ClassContainer classContainer, IConfiguration configuration, String path) {
@@ -31,7 +30,8 @@ public final class ConfigFacade {
         ArrayList<ConfigService> processors = classContainer.getService(ConfigService.class);
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Config.class)) {
-                configs.put(classContainer.create(klass), new ConfigProvider() {
+                final Object configInstance = classContainer.create(klass);
+                configs.put(configInstance, new ConfigProvider() {
                     @Override
                     public String getName() {
                         return klass.getAnnotation(Config.class).value();
@@ -40,6 +40,11 @@ public final class ConfigFacade {
                     @Override
                     public String getDescription() {
                         return klass.getAnnotation(Config.class).description();
+                    }
+
+                    @Override
+                    public Object getInstance() {
+                        return configInstance;
                     }
 
                     @Override

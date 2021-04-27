@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Enaium
@@ -24,7 +26,7 @@ public final class EventFacade {
 
     public EventFacade(ClassContainer classContainer) {
         events = new ConcurrentHashMap<>();
-        ArrayList<EventService> processors = classContainer.getService(EventService.class);
+        final ArrayList<EventService> processors = classContainer.getService(EventService.class);
         eventContainer = new EventContainer() {
             @Override
             public void register(Object instance) {
@@ -42,7 +44,7 @@ public final class EventFacade {
 
             @Override
             public void post(Object instance) {
-                if (events.get(instance.getClass()) != null) {
+                if (events.containsKey(instance.getClass())) {
                     for (EventBean event : events.get(instance.getClass())) {
                         processors.forEach(eventService -> eventService.beforePost(event.target, event.instance));
                         new Thread(() -> {

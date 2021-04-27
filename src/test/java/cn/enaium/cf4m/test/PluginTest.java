@@ -1,28 +1,15 @@
 package cn.enaium.cf4m.test;
 
-import cn.enaium.cf4m.plugin.Plugin;
+import cn.enaium.cf4m.annotation.Plugin;
+import cn.enaium.cf4m.plugin.PluginInitialize;
 
 /**
  * @author Enaium
  */
-public class PluginTest implements Plugin {
+@Plugin(name = "Test", description = "This is starter test", version = "1.0", author = "Enaium")
+public class PluginTest implements PluginInitialize {
     @Override
-    public String getName() {
-        return "Test";
-    }
+    public void initialize() {
 
-    @Override
-    public String getDescription() {
-        return "This is starter test";
-    }
-
-    @Override
-    public String getVersion() {
-        return "1.0";
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Enaium";
     }
 }

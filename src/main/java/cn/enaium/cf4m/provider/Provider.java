@@ -17,4 +17,11 @@ public interface Provider {
      * @return description
      */
     String getDescription();
+
+    /**
+     * NotNull
+     *
+     * @return instance
+     */
+    Object getInstance();
 }
