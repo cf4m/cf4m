@@ -11,6 +11,7 @@ import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.provider.*;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
+import cn.enaium.cf4m.structure.KeyValue;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
@@ -32,28 +33,35 @@ public final class ClassFacade {
     public ClassFacade(Class<?> mainClass) {
         List<String> allClassName = getAllClassName(mainClass.getClassLoader());
 
-        final ArrayList<String> scan = new ArrayList<>();
+        final List<KeyValue<ClassLoader, String>> scan = new ArrayList<>();
+        ArrayList<PluginInitialize> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
 
-        PluginLoader.loadPlugin(PluginInitialize.class).forEach(pluginInitialize -> {
+        pluginInitializes.forEach(pluginInitialize -> {
             Plugin plugin = pluginInitialize.getClass().getAnnotation(Plugin.class);
-            System.out.println("Load plugin " + plugin.name()
+            System.out.println(plugin.name()
                     + " | " + plugin.description()
                     + " | " + plugin.version()
                     + " | " + plugin.author());
             pluginInitialize.initialize();
-            scan.add(pluginInitialize.getClass().getPackage().getName());
+            scan.add(new KeyValue<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getClass().getPackage().getName()));
         });
 
-        scan.add(mainClass.getPackage().getName());
+        if (!pluginInitializes.isEmpty()) {
+            System.out.println("Loaded " + pluginInitializes.size() + " Plugin");
+        }
+
+        scan.add(new KeyValue<>(mainClass.getClassLoader(), mainClass.getPackage().getName()));
         if (mainClass.isAnnotationPresent(Scan.class)) {
-            Collections.addAll(scan, mainClass.getAnnotation(Scan.class).value());
+            for (String s : mainClass.getAnnotation(Scan.class).value()) {
+                scan.add(new KeyValue<>(mainClass.getClassLoader(), s));
+            }
         }
 
         for (String className : allClassName) {
-            for (String packageName : scan) {
-                if (className.startsWith(packageName)) {
+            scan.forEach((s) -> {
+                if (className.startsWith(s.getValue())) {
                     try {
-                        Class<?> klass = mainClass.getClassLoader().loadClass(className);
+                        Class<?> klass = s.getKey().loadClass(className);
                         if (klass.isAnnotationPresent(Service.class)) {
                             all.put(klass, klass.newInstance());
                         } else {
@@ -63,7 +71,7 @@ public final class ClassFacade {
                         e.printStackTrace();
                     }
                 }
-            }
+            });
         }
 
         ArrayList<ClassService> classServices = getService(ClassService.class);
@@ -72,6 +80,11 @@ public final class ClassFacade {
             @Override
             public ArrayList<Class<?>> getAll() {
                 return new ArrayList<>(all.keySet());
+            }
+
+            @Override
+            public ClassLoader getClassLoader() {
+                return mainClass.getClassLoader();
             }
 
             @Override

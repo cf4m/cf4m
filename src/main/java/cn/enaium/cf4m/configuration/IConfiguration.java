@@ -4,13 +4,7 @@ package cn.enaium.cf4m.configuration;
  * @author Enaium
  */
 public interface IConfiguration {
-    default ICommandConfiguration getCommand() {
-        return new ICommandConfiguration() {
-        };
-    }
+    ICommandConfiguration getCommand();
 
-    default IConfigConfiguration getConfig() {
-        return new IConfigConfiguration() {
-        };
-    }
+    IConfigConfiguration getConfig();
 }

@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 /**
  * @author Enaium
  */
@@ -47,13 +44,11 @@ public final class EventFacade {
                 if (events.containsKey(instance.getClass())) {
                     for (EventBean event : events.get(instance.getClass())) {
                         processors.forEach(eventService -> eventService.beforePost(event.target, event.instance));
-                        new Thread(() -> {
-                            try {
-                                event.target.invoke(event.instance, instance);
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        }).start();
+                        try {
+                            event.target.invoke(event.instance, instance);
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
                         processors.forEach(eventService -> eventService.afterPost(event.target, event.instance));
                     }
                 }

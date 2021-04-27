@@ -11,6 +11,8 @@ public interface ClassContainer {
      */
     ArrayList<Class<?>> getAll();
 
+    ClassLoader getClassLoader();
+
     /**
      * @param klass class
      * @param <T>   class

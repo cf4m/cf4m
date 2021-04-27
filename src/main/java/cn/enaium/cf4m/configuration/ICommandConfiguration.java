@@ -7,14 +7,10 @@ public interface ICommandConfiguration {
     /**
      * @return Command prefix
      */
-    default String getPrefix() {
-        return "`";
-    }
+    String getPrefix();
 
     /**
      * @param message print chat message
      */
-    default void message(String message) {
-        System.err.println(message);
-    }
+    void message(String message);
 }

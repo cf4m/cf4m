@@ -17,7 +17,7 @@ public final class PluginLoader {
     private static List<Properties> load(ClassLoader classLoader) {
         List<Properties> configList = new ArrayList<>();
         try {
-            Enumeration<URL> resources = classLoader.getResources("cf4m.properties");
+            Enumeration<URL> resources = classLoader.getResources("cf4m.plugin.properties");
             while (resources.hasMoreElements()) {
                 Properties properties = new Properties();
                 properties.load(resources.nextElement().openStream());
