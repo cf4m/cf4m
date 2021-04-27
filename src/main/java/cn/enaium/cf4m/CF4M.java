@@ -27,12 +27,12 @@ public final class CF4M {
         if (run) {
             new Exception("CF4M already run").printStackTrace();
         } else {
-            final ClassContainer classContainer = new ClassFacade(mainClass).classContainer;
+            ClassFacade classFacade = new ClassFacade(mainClass);
+            final ClassContainer classContainer = classFacade.classContainer;
             final EventContainer eventContainer = new EventFacade(classContainer).eventContainer;
-            final IConfiguration configuration = new ConfigurationFacade(classContainer).configuration;
             final ModuleContainer moduleContainer = new ModuleFacade(classContainer).moduleContainer;
-            final CommandContainer commandContainer = new CommandFacade(classContainer, configuration).commandContainer;
-            final ConfigContainer configContainer = new ConfigFacade(classContainer, configuration, path).configContainer;
+            final CommandContainer commandContainer = new CommandFacade(classContainer, classFacade.configuration.configuration).commandContainer;
+            final ConfigContainer configContainer = new ConfigFacade(classContainer, classFacade.configuration.configuration, path).configContainer;
             INSTANCE = new ICF4M() {
                 @Override
                 public ClassContainer getKlass() {
@@ -42,11 +42,6 @@ public final class CF4M {
                 @Override
                 public EventContainer getEvent() {
                     return eventContainer;
-                }
-
-                @Override
-                public IConfiguration getConfiguration() {
-                    return configuration;
                 }
 
                 @Override

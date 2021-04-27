@@ -11,22 +11,18 @@ import cn.enaium.cf4m.provider.CommandProvider;
  */
 @Command({"t", "test"})
 public class CommandTest {
-
-    @Autowired
-    private IConfiguration configuration;
-
     @Exec
     public void exec() {
-        configuration.getCommand().message("No var");
+        System.out.println("No var");
     }
 
     @Exec
     public void exec(String var1) {
-        configuration.getCommand().message(var1);
+        System.out.println("No var");
     }
 
     @Exec
     public void exec(String var1, int var2) {
-        configuration.getCommand().message(var1 + "|" + var2);
+        System.out.println(var1 + "|" + var2);
     }
 }

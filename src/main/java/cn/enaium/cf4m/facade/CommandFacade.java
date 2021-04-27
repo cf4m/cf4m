@@ -25,67 +25,7 @@ public final class CommandFacade {
 
     private final HashMap<Object, CommandProvider> commands;
 
-    public final CommandContainer commandContainer = new CommandContainer() {
-        @Override
-        public ArrayList<CommandProvider> getAll() {
-            return Lists.newArrayList(commands.values());
-        }
-
-        @Override
-        public CommandProvider getByInstance(Object instance) {
-            return commands.get(instance);
-        }
-
-        @Override
-        public CommandProvider getByKey(String key) {
-            for (CommandProvider commandProvider : getAll()) {
-                for (String s : commandProvider.getKey()) {
-                    if (s.equalsIgnoreCase(key)) {
-                        return commandProvider;
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public boolean execCommand(String rawMessage) {
-            if (!rawMessage.startsWith(configuration.getCommand().getPrefix())) {
-                return false;
-            }
-
-            boolean safe = rawMessage.split(configuration.getCommand().getPrefix()).length > 1;
-
-            if (safe) {
-                String beheaded = rawMessage.split(configuration.getCommand().getPrefix())[1];
-                List<String> args = Lists.newArrayList(beheaded.split(" "));
-                String key = args.get(0);
-                args.remove(key);
-
-                Object command = getCommand(key);
-
-                if (command != null) {
-                    if (!CommandFacade.this.execCommand(command, args)) {
-                        for (Method method : command.getClass().getDeclaredMethods()) {
-                            if (method.isAnnotationPresent(Exec.class)) {
-                                Parameter[] parameters = method.getParameters();
-                                List<String> params = Lists.newArrayList();
-                                for (Parameter parameter : parameters) {
-                                    params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
-                                }
-                                INSTANCE.getConfiguration().getCommand().message(key + " " + params);
-                            }
-                        }
-                    }
-                } else {
-                    help();
-                }
-            } else {
-                help();
-            }
-            return true;
-        }
-    };
+    public final CommandContainer commandContainer;
 
     private final IConfiguration configuration;
 
@@ -95,6 +35,68 @@ public final class CommandFacade {
         this.classContainer = classContainer;
         this.configuration = configuration;
         commands = Maps.newHashMap();
+
+        commandContainer = new CommandContainer() {
+            @Override
+            public ArrayList<CommandProvider> getAll() {
+                return Lists.newArrayList(commands.values());
+            }
+
+            @Override
+            public CommandProvider getByInstance(Object instance) {
+                return commands.get(instance);
+            }
+
+            @Override
+            public CommandProvider getByKey(String key) {
+                for (CommandProvider commandProvider : getAll()) {
+                    for (String s : commandProvider.getKey()) {
+                        if (s.equalsIgnoreCase(key)) {
+                            return commandProvider;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public boolean execCommand(String rawMessage) {
+                if (!rawMessage.startsWith(configuration.getCommand().getPrefix())) {
+                    return false;
+                }
+
+                boolean safe = rawMessage.split(configuration.getCommand().getPrefix()).length > 1;
+
+                if (safe) {
+                    String beheaded = rawMessage.split(configuration.getCommand().getPrefix())[1];
+                    List<String> args = Lists.newArrayList(beheaded.split(" "));
+                    String key = args.get(0);
+                    args.remove(key);
+
+                    Object command = getCommand(key);
+
+                    if (command != null) {
+                        if (!CommandFacade.this.execCommand(command, args)) {
+                            for (Method method : command.getClass().getDeclaredMethods()) {
+                                if (method.isAnnotationPresent(Exec.class)) {
+                                    Parameter[] parameters = method.getParameters();
+                                    List<String> params = Lists.newArrayList();
+                                    for (Parameter parameter : parameters) {
+                                        params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
+                                    }
+                                    configuration.getCommand().message(key + " " + params);
+                                }
+                            }
+                        }
+                    } else {
+                        help();
+                    }
+                } else {
+                    help();
+                }
+                return true;
+            }
+        };
 
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Command.class)) {
@@ -152,7 +154,7 @@ public final class CommandFacade {
                             params.add(String.valueOf(arg));
                         }
                     } catch (Exception e) {
-                        INSTANCE.getConfiguration().getCommand().message(e.getMessage());
+                        configuration.getCommand().message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -169,7 +171,7 @@ public final class CommandFacade {
                     processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
                     return true;
                 } catch (IllegalAccessException | InvocationTargetException e) {
-                    INSTANCE.getConfiguration().getCommand().message(e.getMessage());
+                    configuration.getCommand().message(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -179,7 +181,7 @@ public final class CommandFacade {
 
     private void help() {
         for (CommandProvider commandProvider : commandContainer.getAll()) {
-            INSTANCE.getConfiguration().getCommand().message(configuration.getCommand().getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
+            configuration.getCommand().message(configuration.getCommand().getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }
 

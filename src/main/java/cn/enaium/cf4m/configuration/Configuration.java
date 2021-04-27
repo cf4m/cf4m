@@ -1,11 +1,6 @@
-package cn.enaium.cf4m.facade;
+package cn.enaium.cf4m.configuration;
 
-import cn.enaium.cf4m.annotation.Configuration;
 import cn.enaium.cf4m.struct.KeyValue;
-import cn.enaium.cf4m.configuration.ICommandConfiguration;
-import cn.enaium.cf4m.configuration.IConfigConfiguration;
-import cn.enaium.cf4m.configuration.IConfiguration;
-import cn.enaium.cf4m.container.ClassContainer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,15 +10,17 @@ import java.util.Properties;
 /**
  * @author Enaium
  */
-public class ConfigurationFacade {
-    private final Properties properties = new Properties();
-    public IConfiguration configuration;
+public class Configuration {
+
+    public final IConfiguration configuration;
+
+    public final Properties properties = new Properties();
     public final KeyValue<String, String> COMMAND_PREFIX = new KeyValue<>("cf4m.command.prefix", "`");
     public final KeyValue<String, String> COMMAND_MESSAGE = new KeyValue<>("cf4m.command.message", this.getClass().getName() + ":message");
     public final KeyValue<String, Boolean> CONFIG_ENABLE = new KeyValue<>("cf4m.config.enable", true);
 
-    public ConfigurationFacade(ClassContainer classContainer) {
-        InputStream resourceAsStream = classContainer.getClassLoader().getResourceAsStream("cf4m.configuration.properties");
+    public Configuration(ClassLoader classLoader) {
+        InputStream resourceAsStream = classLoader.getResourceAsStream("cf4m.configuration.properties");
         try {
             if (resourceAsStream != null) {
                 properties.load(resourceAsStream);
@@ -33,7 +30,6 @@ public class ConfigurationFacade {
         }
 
         configuration = new IConfiguration() {
-
             @Override
             public ICommandConfiguration getCommand() {
                 return new ICommandConfiguration() {
@@ -47,7 +43,7 @@ public class ConfigurationFacade {
                         String orDefault = getOrDefault(properties, COMMAND_MESSAGE);
                         try {
                             String[] split = orDefault.split(":");
-                            classContainer.getClassLoader().loadClass(split[0]).getMethod(split[1], String.class).invoke(null, message);
+                            classLoader.loadClass(split[0]).getMethod(split[1], String.class).invoke(null, message);
                         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
                             e.printStackTrace();
                         }
@@ -60,12 +56,6 @@ public class ConfigurationFacade {
                 return () -> getOrDefault(properties, CONFIG_ENABLE);
             }
         };
-
-        for (Class<?> klass : classContainer.getAll()) {
-            if (klass.isAnnotationPresent(Configuration.class)) {
-                configuration = (IConfiguration) classContainer.create(klass);
-            }
-        }
     }
 
     public static void message(String message) {

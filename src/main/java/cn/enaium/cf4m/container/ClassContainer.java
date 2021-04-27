@@ -11,8 +11,6 @@ public interface ClassContainer {
      */
     ArrayList<Class<?>> getAll();
 
-    ClassLoader getClassLoader();
-
     /**
      * @param klass class
      * @param <T>   class
@@ -20,6 +18,11 @@ public interface ClassContainer {
      */
     <T> T create(Class<T> klass);
 
+    /**
+     * @param type Service
+     * @param <T>  Service
+     * @return Service list
+     */
     <T> ArrayList<T> getService(Class<T> type);
 
     void after();

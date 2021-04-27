@@ -14,9 +14,8 @@ import org.junit.jupiter.api.Assertions;
 @Module(value = "ModuleAutowiredTest", key = 6)
 public class ModuleAutowiredTest {
 
-    private ClassContainer classContainer;
     @Autowired
-    private IConfiguration configuration;
+    private ClassContainer classContainer;
     @Autowired
     private EventContainer eventContainer;
     @Autowired
@@ -25,23 +24,14 @@ public class ModuleAutowiredTest {
     private CommandContainer commandContainer;
     @Autowired
     private ConfigContainer configContainer;
-    @Autowired
-    private String auto;
-
-    @Autowired
-    public void setClassContainer(ClassContainer classContainer) {
-        this.classContainer = classContainer;
-    }
 
     @Enable
     public void enable() {
         Assertions.assertNotNull(classContainer);
-        Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(eventContainer);
         Assertions.assertNotNull(moduleContainer);
         Assertions.assertNotNull(commandContainer);
         Assertions.assertNotNull(configContainer);
-        Assertions.assertNotNull(auto);
         classContainer.create(Gui.class).render();
     }
 }

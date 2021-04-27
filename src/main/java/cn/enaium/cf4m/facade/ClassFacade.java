@@ -5,7 +5,7 @@ import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.Plugin;
 import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
-import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.configuration.Configuration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.provider.*;
@@ -16,8 +16,6 @@ import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,10 +26,13 @@ import java.util.stream.Collectors;
 public final class ClassFacade {
 
     public final ClassContainer classContainer;
+    public final Configuration configuration;
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
     public ClassFacade(Class<?> mainClass) {
         List<String> allClassName = getAllClassName(mainClass.getClassLoader());
+
+        configuration = new Configuration(mainClass.getClassLoader());
 
         final List<KeyValue<ClassLoader, String>> scan = new ArrayList<>();
         ArrayList<PluginInitialize> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
@@ -42,7 +43,6 @@ public final class ClassFacade {
                     + " | " + plugin.description()
                     + " | " + plugin.version()
                     + " | " + plugin.author());
-            pluginInitialize.initialize();
             scan.add(new KeyValue<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getClass().getPackage().getName()));
         });
 
@@ -58,7 +58,7 @@ public final class ClassFacade {
         }
 
         for (String className : allClassName) {
-            scan.forEach((s) -> {
+            for (KeyValue<ClassLoader, String> s : scan) {
                 if (className.startsWith(s.getValue())) {
                     try {
                         Class<?> klass = s.getKey().loadClass(className);
@@ -71,7 +71,7 @@ public final class ClassFacade {
                         e.printStackTrace();
                     }
                 }
-            });
+            }
         }
 
         ArrayList<ClassService> classServices = getService(ClassService.class);
@@ -80,11 +80,6 @@ public final class ClassFacade {
             @Override
             public ArrayList<Class<?>> getAll() {
                 return new ArrayList<>(all.keySet());
-            }
-
-            @Override
-            public ClassLoader getClassLoader() {
-                return mainClass.getClassLoader();
             }
 
             @Override
@@ -138,8 +133,6 @@ public final class ClassFacade {
                                 field.set(instance, CF4M.INSTANCE.getCommand());
                             } else if (field.getType().equals(ConfigContainer.class)) {
                                 field.set(instance, CF4M.INSTANCE.getConfig());
-                            } else if (field.getType().equals(IConfiguration.class)) {
-                                field.set(instance, CF4M.INSTANCE.getConfiguration());
                             } else if (field.getType().equals(ModuleProvider.class)) {
                                 field.set(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
                             } else if (field.getType().equals(CommandProvider.class)) {
@@ -152,49 +145,11 @@ public final class ClassFacade {
                             e.printStackTrace();
                         }
                     }
-
-                    for (Method method : klass.getDeclaredMethods()) {
-                        method.setAccessible(true);
-
-                        if (!klass.isAnnotationPresent(Autowired.class) && !method.isAnnotationPresent(Autowired.class)) {
-                            continue;
-                        }
-
-                        if (method.getParameterCount() != 1) {
-                            continue;
-                        }
-
-                        Class<?> type = method.getParameterTypes()[0];
-
-                        try {
-                            getService(AutowiredService.class).forEach(autowiredService -> autowiredService.beforeSet(method, instance));
-                            if (type.equals(ClassContainer.class)) {
-                                method.invoke(instance, this);
-                            } else if (type.equals(EventContainer.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getEvent());
-                            } else if (type.equals(ModuleContainer.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getModule());
-                            } else if (type.equals(CommandContainer.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getCommand());
-                            } else if (type.equals(ConfigContainer.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getConfig());
-                            } else if (type.equals(IConfiguration.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getConfiguration());
-                            } else if (type.equals(ModuleProvider.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
-                            } else if (type.equals(CommandProvider.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
-                            } else if (type.equals(ConfigProvider.class)) {
-                                method.invoke(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
-                            }
-                            getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterSet(method, instance));
-                        } catch (IllegalAccessException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
-                    }
                 });
             }
         };
+
+        pluginInitializes.forEach(it -> it.initialize(configuration.properties, classContainer));
     }
 
     private <T> ArrayList<T> getService(Class<T> type) {

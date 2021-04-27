@@ -22,13 +22,6 @@ public interface ICF4M {
     EventContainer getEvent();
 
     /**
-     * Configuration
-     * NotNull
-     * Only read
-     */
-    IConfiguration getConfiguration();
-
-    /**
      * ModuleContainer
      * Nullable
      * Only read
