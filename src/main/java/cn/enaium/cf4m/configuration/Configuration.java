@@ -17,9 +17,9 @@ public class Configuration {
     public final IConfiguration configuration;
 
     public final Properties properties = new Properties();
-    public final Pair<String, String> COMMAND_PREFIX = new Pair<>("cf4m.command.prefix", "`");
-    public final Pair<String, String> COMMAND_MESSAGE = new Pair<>("cf4m.command.message", this.getClass().getName() + ":message");
-    public final Pair<String, Boolean> CONFIG_ENABLE = new Pair<>("cf4m.config.enable", true);
+    private final Pair<String, String> COMMAND_PREFIX = new Pair<>("cf4m.command.prefix", "`");
+    private final Pair<String, String> COMMAND_MESSAGE = new Pair<>("cf4m.command.message", this.getClass().getName() + ":message");
+    private final Pair<String, Boolean> CONFIG_ENABLE = new Pair<>("cf4m.config.enable", true);
 
     public Configuration(ClassLoader classLoader) {
         InputStream resourceAsStream = classLoader.getResourceAsStream("cf4m.configuration.properties");

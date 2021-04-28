@@ -12,6 +12,14 @@ public interface ClassContainer {
     ArrayList<Class<?>> getAll();
 
     /**
+     * @param klass    klass
+     * @param instance object
+     * @param <T>      class
+     * @return class instance
+     */
+    <T> T create(Class<T> klass, Object instance);
+
+    /**
      * @param klass class
      * @param <T>   class
      * @return class instance

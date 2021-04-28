@@ -1,6 +1,7 @@
 package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
+import cn.enaium.cf4m.CF4MBootstrap;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.test.config.ConfigTest;
 import cn.enaium.cf4m.test.event.EventCancelTest;
@@ -19,7 +20,7 @@ public class T {
     @Test
     public void test() {
         final long start = System.currentTimeMillis();
-        CF4M.run(this, System.getProperty("user.dir") + "/build/configTest");
+        CF4MBootstrap.run(this, System.getProperty("user.dir") + "/build/configTest");
         System.out.println("Check ModuleBeanTest Start");
         new ModuleBeanTest();
         System.out.println("Check ModuleBeanTest End");

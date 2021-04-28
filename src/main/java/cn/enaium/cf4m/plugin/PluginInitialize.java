@@ -7,5 +7,5 @@ import java.util.Properties;
  */
 @FunctionalInterface
 public interface PluginInitialize {
-    void initialize(Properties configuration);
+    void initialize(Plugin plugin);
 }

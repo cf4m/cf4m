@@ -2,99 +2,45 @@ package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.facade.*;
-
-import java.io.File;
 
 /**
  * @author Enaium
  */
 public final class CF4M {
-
-    public static ICF4M INSTANCE;
-
-    private static boolean run = false;
-
-    public static boolean isRun() {
-        return run;
-    }
-
     /**
-     * @param mainClass MainClass.
-     * @param path      .minecraft/{clientName} path.
+     * Not final
+     * Nullable
+     * Only read
      */
-    public static void run(Class<?> mainClass, String path) {
-        if (run) {
-            new Exception("CF4M already run").printStackTrace();
-        } else {
-            ClassFacade classFacade = new ClassFacade(mainClass);
-            final ClassContainer classContainer = classFacade.classContainer;
-            final EventContainer eventContainer = new EventFacade(classContainer).eventContainer;
-            final ModuleContainer moduleContainer = new ModuleFacade(classContainer).moduleContainer;
-            final CommandContainer commandContainer = new CommandFacade(classContainer, classFacade.configuration.configuration).commandContainer;
-            final ConfigContainer configContainer = new ConfigFacade(classContainer, classFacade.configuration.configuration, path).configContainer;
-            INSTANCE = new ICF4M() {
-                @Override
-                public ClassContainer getKlass() {
-                    return classContainer;
-                }
-
-                @Override
-                public IConfiguration getConfiguration() {
-                    return classFacade.configuration.configuration;
-                }
-
-                @Override
-                public EventContainer getEvent() {
-                    return eventContainer;
-                }
-
-                @Override
-                public ModuleContainer getModule() {
-                    return moduleContainer;
-                }
-
-                @Override
-                public CommandContainer getCommand() {
-                    return commandContainer;
-                }
-
-                @Override
-                public ConfigContainer getConfig() {
-                    return configContainer;
-                }
-            };
-            run = true;
-            classFacade.after();
-            configContainer.load();
-            Runtime.getRuntime().addShutdownHook(new Thread("CF4M Shutdown Thread") {
-                @Override
-                public void run() {
-                    configContainer.save();
-                }
-            });
+    public static final ICF4M INSTANCE = new ICF4M() {
+        @Override
+        public ClassContainer getKlass() {
+            return null;
         }
-    }
 
-    /**
-     * @param mainClass MainClass.
-     */
-    public static void run(Class<?> mainClass) {
-        run(mainClass, new File(".", mainClass.getSimpleName()).toString());
-    }
+        @Override
+        public IConfiguration getConfiguration() {
+            return null;
+        }
 
-    /**
-     * @param instance MainClass instance.
-     */
-    public static void run(Object instance) {
-        run(instance.getClass());
-    }
+        @Override
+        public EventContainer getEvent() {
+            return null;
+        }
 
-    /**
-     * @param instance MainClass instance.
-     * @param path     .minecraft/{clientName} path.
-     */
-    public static void run(Object instance, String path) {
-        run(instance.getClass(), path);
-    }
+        @Override
+        public ModuleContainer getModule() {
+            return null;
+        }
+
+        @Override
+        public CommandContainer getCommand() {
+            return null;
+        }
+
+        @Override
+        public ConfigContainer getConfig() {
+            return null;
+        }
+    };
 }
