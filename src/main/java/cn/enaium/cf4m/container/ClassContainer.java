@@ -24,6 +24,4 @@ public interface ClassContainer {
      * @return Service list
      */
     <T> ArrayList<T> getService(Class<T> type);
-
-    void after();
 }

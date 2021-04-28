@@ -15,6 +15,13 @@ public interface ICF4M {
     ClassContainer getKlass();
 
     /**
+     * Configuration
+     * Nullable
+     * Only read
+     */
+    IConfiguration getConfiguration();
+
+    /**
      * EventContainer
      * Nullable
      * Only read

@@ -1,10 +1,12 @@
 package cn.enaium.cf4m.configuration;
 
-import cn.enaium.cf4m.struct.KeyValue;
+import cn.enaium.cf4m.struct.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Properties;
 
 /**
@@ -15,9 +17,9 @@ public class Configuration {
     public final IConfiguration configuration;
 
     public final Properties properties = new Properties();
-    public final KeyValue<String, String> COMMAND_PREFIX = new KeyValue<>("cf4m.command.prefix", "`");
-    public final KeyValue<String, String> COMMAND_MESSAGE = new KeyValue<>("cf4m.command.message", this.getClass().getName() + ":message");
-    public final KeyValue<String, Boolean> CONFIG_ENABLE = new KeyValue<>("cf4m.config.enable", true);
+    public final Pair<String, String> COMMAND_PREFIX = new Pair<>("cf4m.command.prefix", "`");
+    public final Pair<String, String> COMMAND_MESSAGE = new Pair<>("cf4m.command.message", this.getClass().getName() + ":message");
+    public final Pair<String, Boolean> CONFIG_ENABLE = new Pair<>("cf4m.config.enable", true);
 
     public Configuration(ClassLoader classLoader) {
         InputStream resourceAsStream = classLoader.getResourceAsStream("cf4m.configuration.properties");
@@ -43,8 +45,15 @@ public class Configuration {
                         String orDefault = getOrDefault(properties, COMMAND_MESSAGE);
                         try {
                             String[] split = orDefault.split(":");
-                            classLoader.loadClass(split[0]).getMethod(split[1], String.class).invoke(null, message);
-                        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+                            Class<?> klass = classLoader.loadClass(split[0]);
+                            Method method = klass.getDeclaredMethod(split[1], String.class);
+                            method.setAccessible(true);
+                            if (Modifier.isStatic(method.getModifiers())) {
+                                method.invoke(null, message);
+                            } else {
+                                method.invoke(klass.newInstance(), message);
+                            }
+                        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException | InstantiationException e) {
                             e.printStackTrace();
                         }
                     }
@@ -58,12 +67,12 @@ public class Configuration {
         };
     }
 
-    public static void message(String message) {
+    private static void message(String message) {
         System.err.println(message);
     }
 
     @SuppressWarnings({"unchecked"})
-    private <T> T getOrDefault(Properties properties, KeyValue<String, T> keyValue) {
-        return (T) properties.getOrDefault(keyValue.getKey(), keyValue.getValue());
+    private <T> T getOrDefault(Properties properties, Pair<String, T> pair) {
+        return (T) properties.getOrDefault(pair.getKey(), pair.getValue());
     }
 }

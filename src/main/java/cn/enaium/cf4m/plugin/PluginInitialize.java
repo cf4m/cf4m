@@ -1,7 +1,5 @@
 package cn.enaium.cf4m.plugin;
 
-import cn.enaium.cf4m.container.ClassContainer;
-
 import java.util.Properties;
 
 /**
@@ -9,5 +7,5 @@ import java.util.Properties;
  */
 @FunctionalInterface
 public interface PluginInitialize {
-    void initialize(Properties configuration, ClassContainer classContainer);
+    void initialize(Properties configuration);
 }

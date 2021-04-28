@@ -6,12 +6,15 @@ import cn.enaium.cf4m.annotation.Plugin;
 import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.Configuration;
+import cn.enaium.cf4m.configuration.ICommandConfiguration;
+import cn.enaium.cf4m.configuration.IConfigConfiguration;
+import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.provider.*;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
-import cn.enaium.cf4m.struct.KeyValue;
+import cn.enaium.cf4m.struct.Pair;
 import com.google.common.reflect.ClassPath;
 
 import java.io.IOException;
@@ -27,6 +30,7 @@ public final class ClassFacade {
 
     public final ClassContainer classContainer;
     public final Configuration configuration;
+    final ArrayList<PluginInitialize> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
     public ClassFacade(Class<?> mainClass) {
@@ -34,8 +38,8 @@ public final class ClassFacade {
 
         configuration = new Configuration(mainClass.getClassLoader());
 
-        final List<KeyValue<ClassLoader, String>> scan = new ArrayList<>();
-        ArrayList<PluginInitialize> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
+        final List<Pair<ClassLoader, String>> scan = new ArrayList<>();
+
 
         pluginInitializes.forEach(pluginInitialize -> {
             Plugin plugin = pluginInitialize.getClass().getAnnotation(Plugin.class);
@@ -43,22 +47,22 @@ public final class ClassFacade {
                     + " | " + plugin.description()
                     + " | " + plugin.version()
                     + " | " + plugin.author());
-            scan.add(new KeyValue<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getClass().getPackage().getName()));
+            scan.add(new Pair<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getClass().getPackage().getName()));
         });
 
         if (!pluginInitializes.isEmpty()) {
             System.out.println("Loaded " + pluginInitializes.size() + " Plugin");
         }
 
-        scan.add(new KeyValue<>(mainClass.getClassLoader(), mainClass.getPackage().getName()));
+        scan.add(new Pair<>(mainClass.getClassLoader(), mainClass.getPackage().getName()));
         if (mainClass.isAnnotationPresent(Scan.class)) {
             for (String s : mainClass.getAnnotation(Scan.class).value()) {
-                scan.add(new KeyValue<>(mainClass.getClassLoader(), s));
+                scan.add(new Pair<>(mainClass.getClassLoader(), s));
             }
         }
 
         for (String className : allClassName) {
-            for (KeyValue<ClassLoader, String> s : scan) {
+            for (Pair<ClassLoader, String> s : scan) {
                 if (className.startsWith(s.getValue())) {
                     try {
                         Class<?> klass = s.getKey().loadClass(className);
@@ -102,54 +106,62 @@ public final class ClassFacade {
             public <T> ArrayList<T> getService(Class<T> type) {
                 return ClassFacade.this.getService(type);
             }
-
-            @Override
-            public void after() {
-                autowired();
-            }
-
-            public void autowired() {
-                all.forEach((klass, instance) -> {
-
-                    if (instance == null || !CF4M.isRun()) {
-                        return;
-                    }
-
-                    for (Field field : klass.getDeclaredFields()) {
-                        field.setAccessible(true);
-                        if (!klass.isAnnotationPresent(Autowired.class) && !field.isAnnotationPresent(Autowired.class)) {
-                            continue;
-                        }
-
-                        try {
-                            getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
-                            if (field.getType().equals(ClassContainer.class)) {
-                                field.set(instance, this);
-                            } else if (field.getType().equals(EventContainer.class)) {
-                                field.set(instance, CF4M.INSTANCE.getEvent());
-                            } else if (field.getType().equals(ModuleContainer.class)) {
-                                field.set(instance, CF4M.INSTANCE.getModule());
-                            } else if (field.getType().equals(CommandContainer.class)) {
-                                field.set(instance, CF4M.INSTANCE.getCommand());
-                            } else if (field.getType().equals(ConfigContainer.class)) {
-                                field.set(instance, CF4M.INSTANCE.getConfig());
-                            } else if (field.getType().equals(ModuleProvider.class)) {
-                                field.set(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
-                            } else if (field.getType().equals(CommandProvider.class)) {
-                                field.set(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
-                            } else if (field.getType().equals(ConfigProvider.class)) {
-                                field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
-                            }
-                            getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
         };
+    }
 
-        pluginInitializes.forEach(it -> it.initialize(configuration.properties, classContainer));
+    public void after() {
+        initializePlugin();
+        autowired();
+    }
+
+    private void initializePlugin() {
+        pluginInitializes.forEach(it -> it.initialize(configuration.properties));
+    }
+
+    private void autowired() {
+        all.forEach((klass, instance) -> {
+
+            if (instance == null || !CF4M.isRun()) {
+                return;
+            }
+
+            for (Field field : klass.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (!klass.isAnnotationPresent(Autowired.class) && !field.isAnnotationPresent(Autowired.class)) {
+                    continue;
+                }
+
+                try {
+                    getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
+                    if (field.getType().equals(ClassContainer.class)) {
+                        field.set(instance, classContainer);
+                    } else if (field.getType().equals(IConfiguration.class)) {
+                        field.set(instance, CF4M.INSTANCE.getConfiguration());
+                    } else if (field.getType().equals(ICommandConfiguration.class)) {
+                        field.set(instance, CF4M.INSTANCE.getConfiguration().getCommand());
+                    } else if (field.getType().equals(IConfigConfiguration.class)) {
+                        field.set(instance, CF4M.INSTANCE.getConfiguration().getConfig());
+                    } else if (field.getType().equals(EventContainer.class)) {
+                        field.set(instance, CF4M.INSTANCE.getEvent());
+                    } else if (field.getType().equals(ModuleContainer.class)) {
+                        field.set(instance, CF4M.INSTANCE.getModule());
+                    } else if (field.getType().equals(CommandContainer.class)) {
+                        field.set(instance, CF4M.INSTANCE.getCommand());
+                    } else if (field.getType().equals(ConfigContainer.class)) {
+                        field.set(instance, CF4M.INSTANCE.getConfig());
+                    } else if (field.getType().equals(ModuleProvider.class)) {
+                        field.set(instance, CF4M.INSTANCE.getModule().getByInstance(instance));
+                    } else if (field.getType().equals(CommandProvider.class)) {
+                        field.set(instance, CF4M.INSTANCE.getCommand().getByInstance(instance));
+                    } else if (field.getType().equals(ConfigProvider.class)) {
+                        field.set(instance, CF4M.INSTANCE.getConfig().getByInstance(instance));
+                    }
+                    getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private <T> ArrayList<T> getService(Class<T> type) {

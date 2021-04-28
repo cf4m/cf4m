@@ -40,6 +40,11 @@ public final class CF4M {
                 }
 
                 @Override
+                public IConfiguration getConfiguration() {
+                    return classFacade.configuration.configuration;
+                }
+
+                @Override
                 public EventContainer getEvent() {
                     return eventContainer;
                 }
@@ -60,7 +65,7 @@ public final class CF4M {
                 }
             };
             run = true;
-            classContainer.after();
+            classFacade.after();
             configContainer.load();
             Runtime.getRuntime().addShutdownHook(new Thread("CF4M Shutdown Thread") {
                 @Override

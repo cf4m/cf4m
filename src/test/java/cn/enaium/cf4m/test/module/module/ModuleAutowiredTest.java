@@ -17,6 +17,8 @@ public class ModuleAutowiredTest {
     @Autowired
     private ClassContainer classContainer;
     @Autowired
+    private IConfiguration configuration;
+    @Autowired
     private EventContainer eventContainer;
     @Autowired
     private ModuleContainer moduleContainer;
@@ -28,6 +30,7 @@ public class ModuleAutowiredTest {
     @Enable
     public void enable() {
         Assertions.assertNotNull(classContainer);
+        Assertions.assertNotNull(configuration);
         Assertions.assertNotNull(eventContainer);
         Assertions.assertNotNull(moduleContainer);
         Assertions.assertNotNull(commandContainer);
