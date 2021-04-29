@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Attached to {@link Command}
  * <p>
- * Add this annotation to the method param to that this method param name
+ * Add this annotation to the method param to that this command param name
  *
  * @author Enaium
  */

@@ -4,7 +4,6 @@ package cn.enaium.cf4m.container;
  * @author Enaium
  */
 public interface EventContainer {
-    
     /**
      * Register all event
      *
@@ -20,8 +19,9 @@ public interface EventContainer {
     void unregister(Object instance);
 
     /**
+     * post all event
      *
      * @param instance event
      */
-    void call(Object instance);
+    void post(Object instance);
 }

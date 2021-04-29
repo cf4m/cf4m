@@ -46,5 +46,10 @@ public interface ModuleContainer {
      */
     ModuleProvider getByInstance(Object instance);
 
+    /**
+     * enable all module
+     *
+     * @param key keyboard
+     */
     void onKey(int key);
 }

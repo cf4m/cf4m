@@ -7,16 +7,37 @@ import java.util.ArrayList;
  */
 public interface ClassContainer {
     /**
+     * get all the classes in the container
+     *
      * @return class list
      */
     ArrayList<Class<?>> getAll();
 
     /**
+     * put the classes in the container
+     *
+     * @param klass    klass
+     * @param instance object
+     * @param <T>      class
+     * @return class instance
+     */
+    <T> T create(Class<T> klass, Object instance);
+
+    /**
+     * put the classes in the container
+     *
      * @param klass class
      * @param <T>   class
      * @return class instance
      */
-    <T> T create(Class<?> klass);
+    <T> T create(Class<T> klass);
 
-    void accept();
+    /**
+     * get service
+     *
+     * @param type Service
+     * @param <T>  Service
+     * @return Service list
+     */
+    <T> ArrayList<T> getService(Class<T> type);
 }

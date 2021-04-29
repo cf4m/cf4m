@@ -2,37 +2,47 @@ package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.manager.EventManager;
 
 import java.io.File;
 
+/**
+ * @author Enaium
+ */
 public interface ICF4M {
 
     /**
      * ClassContainer
      * Nullable
      * Only read
+     *
+     * @return classContainer
      */
     ClassContainer getKlass();
+
+    /**
+     * Configuration
+     * Nullable
+     * Only read
+     *
+     * @return configuration
+     */
+    IConfiguration getConfiguration();
 
     /**
      * EventContainer
      * Nullable
      * Only read
+     *
+     * @return eventContainer
      */
     EventContainer getEvent();
-
-    /**
-     * Configuration
-     * NotNull
-     * Only read
-     */
-    IConfiguration getConfiguration();
 
     /**
      * ModuleContainer
      * Nullable
      * Only read
+     *
+     * @return moduleContainer
      */
     ModuleContainer getModule();
 
@@ -40,6 +50,8 @@ public interface ICF4M {
      * CommandContainer
      * Nullable
      * Only read
+     *
+     * @return commandContainer
      */
     CommandContainer getCommand();
 
@@ -47,6 +59,8 @@ public interface ICF4M {
      * ConfigContainer
      * Nullable
      * Only read
+     *
+     * @return configContainer
      */
     ConfigContainer getConfig();
 }
