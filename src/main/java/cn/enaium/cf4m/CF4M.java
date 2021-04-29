@@ -123,7 +123,7 @@ public final class CF4M {
             };
             try {
                 setStaticFinalField("INSTANCE", cf4m);
-                setStaticFinalField("KLASS", classContainer);
+                setStaticFinalField("CLASS", classContainer);
                 setStaticFinalField("CONFIGURATION", configuration.configuration);
                 setStaticFinalField("EVENT", eventContainer);
                 setStaticFinalField("MODULE", moduleContainer);

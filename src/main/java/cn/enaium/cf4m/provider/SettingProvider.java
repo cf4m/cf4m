@@ -11,4 +11,11 @@ public interface SettingProvider extends Provider {
      * @return setting instance
      */
     <T> T getSetting();
+
+    /**
+     * @param value setting value
+     * @param <T>   setting class
+     * @return setting instance
+     */
+    <T> T setSetting(Object value);
 }

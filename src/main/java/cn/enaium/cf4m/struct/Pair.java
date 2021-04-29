@@ -2,6 +2,11 @@ package cn.enaium.cf4m.struct;
 
 import java.util.Objects;
 
+/**
+ * @param <K> key
+ * @param <V> value
+ * @author Enaium
+ */
 public final class Pair<K, V> {
     private final K key;
     private final V value;

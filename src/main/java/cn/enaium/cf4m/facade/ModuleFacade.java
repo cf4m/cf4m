@@ -72,6 +72,16 @@ public final class ModuleFacade {
                             public <T> T getSetting() {
                                 return (T) getInstance();
                             }
+
+                            @Override
+                            public <T> T setSetting(Object value) {
+                                try {
+                                    field.set(moduleInstance, value);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                                return (T) getInstance();
+                            }
                         });
                     }
                 }
