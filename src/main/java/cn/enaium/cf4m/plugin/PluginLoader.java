@@ -8,8 +8,6 @@ import java.util.*;
  * @author Enaium
  */
 public final class PluginLoader {
-
-
     private static final String CF4M_PLUGIN = "cf4m.plugin";
     private static final String CF4M_PLUGIN_NAME = "cf4m.plugin.name";
     private static final String CF4M_PLUGIN_DESCRIPTION = "cf4m.plugin.description";

@@ -11,7 +11,7 @@ import cn.enaium.cf4m.annotation.module.Module;
 public class ModuleTypeTest {
     @Enable
     public void enable() {
-        for (String s : CF4M.INSTANCE.getModule().getAllType()) {
+        for (String s : CF4M.MODULE.getAllType()) {
             System.out.println(s);
         }
     }

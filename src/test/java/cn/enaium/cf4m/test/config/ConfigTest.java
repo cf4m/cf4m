@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Assertions;
  */
 public class ConfigTest {
     public ConfigTest() {
-        Assertions.assertNotEquals(0, CF4M.INSTANCE.getConfig().getAll().size());
-        for (ConfigProvider configProvider : CF4M.INSTANCE.getConfig().getAll()) {
+        Assertions.assertNotEquals(0, CF4M.CONFIG.getAll().size());
+        for (ConfigProvider configProvider : CF4M.CONFIG.getAll()) {
             System.out.println(configProvider.getName() + "|" + configProvider.getPath());
         }
     }

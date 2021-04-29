@@ -8,6 +8,8 @@ import cn.enaium.cf4m.container.SettingContainer;
 public interface ModuleProvider extends Provider {
     /**
      * NotNull
+     * <p>
+     * get module enable
      *
      * @return module enable
      */
@@ -26,6 +28,8 @@ public interface ModuleProvider extends Provider {
     int getKey();
 
     /**
+     * set module keyboard
+     *
      * @param key keyboard
      */
     void setKey(int key);

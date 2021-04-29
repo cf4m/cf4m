@@ -14,7 +14,11 @@ import java.lang.reflect.Modifier;
 /**
  * @author Enaium
  */
-public final class CF4MBootstrap {
+public final class Bootstrap {
+
+    private Bootstrap() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static boolean run = false;
 
@@ -73,14 +77,15 @@ public final class CF4MBootstrap {
                 }
             };
             try {
-                Field instance = CF4M.class.getDeclaredField("INSTANCE");
-                instance.setAccessible(true);
-                Field modifiers = Field.class.getDeclaredField("modifiers");
-                modifiers.setAccessible(true);
-                modifiers.setInt(instance, instance.getModifiers() & ~Modifier.FINAL);
-                instance.set(null, cf4m);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+                setStaticFinalField(CF4M.class.getDeclaredField("INSTANCE"), cf4m);
+                setStaticFinalField(CF4M.class.getDeclaredField("KLASS"), classContainer);
+                setStaticFinalField(CF4M.class.getDeclaredField("CONFIGURATION"), configuration.configuration);
+                setStaticFinalField(CF4M.class.getDeclaredField("EVENT"), eventContainer);
+                setStaticFinalField(CF4M.class.getDeclaredField("MODULE"), moduleContainer);
+                setStaticFinalField(CF4M.class.getDeclaredField("COMMAND"), commandContainer);
+                setStaticFinalField(CF4M.class.getDeclaredField("CONFIG"), configContainer);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
             }
             run = true;
             classFacade.after();
@@ -92,6 +97,14 @@ public final class CF4MBootstrap {
                 }
             });
         }
+    }
+
+    private static void setStaticFinalField(Field field, Object value) throws NoSuchFieldException, IllegalAccessException {
+        field.setAccessible(true);
+        Field modifiers = Field.class.getDeclaredField("modifiers");
+        modifiers.setAccessible(true);
+        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        field.set(null, value);
     }
 
     /**

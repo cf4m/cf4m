@@ -18,8 +18,8 @@ public class ModuleSettingTest {
     @Enable
     public void enable() {
         System.out.println(enableSettingTest.getEnable());
-        System.out.println(CF4M.INSTANCE.getModule().getByInstance(this).getSetting().getByName("setting1").<EnableSettingTest>getSetting());
-        for (SettingProvider settingProvider : CF4M.INSTANCE.getModule().getByInstance(this).getSetting().getAll()) {
+        System.out.println(CF4M.MODULE.getByInstance(this).getSetting().getByName("setting1").<EnableSettingTest>getSetting());
+        for (SettingProvider settingProvider : CF4M.MODULE.getByInstance(this).getSetting().getAll()) {
             if (settingProvider.getSetting() instanceof EnableSettingTest) {
                 System.out.println(settingProvider.getName());
             }

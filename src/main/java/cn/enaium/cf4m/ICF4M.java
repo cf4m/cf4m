@@ -5,12 +5,17 @@ import cn.enaium.cf4m.container.*;
 
 import java.io.File;
 
+/**
+ * @author Enaium
+ */
 public interface ICF4M {
 
     /**
      * ClassContainer
      * Nullable
      * Only read
+     *
+     * @return classContainer
      */
     ClassContainer getKlass();
 
@@ -18,6 +23,8 @@ public interface ICF4M {
      * Configuration
      * Nullable
      * Only read
+     *
+     * @return configuration
      */
     IConfiguration getConfiguration();
 
@@ -25,6 +32,8 @@ public interface ICF4M {
      * EventContainer
      * Nullable
      * Only read
+     *
+     * @return eventContainer
      */
     EventContainer getEvent();
 
@@ -32,6 +41,8 @@ public interface ICF4M {
      * ModuleContainer
      * Nullable
      * Only read
+     *
+     * @return moduleContainer
      */
     ModuleContainer getModule();
 
@@ -39,6 +50,8 @@ public interface ICF4M {
      * CommandContainer
      * Nullable
      * Only read
+     *
+     * @return commandContainer
      */
     CommandContainer getCommand();
 
@@ -46,6 +59,8 @@ public interface ICF4M {
      * ConfigContainer
      * Nullable
      * Only read
+     *
+     * @return configContainer
      */
     ConfigContainer getConfig();
 }

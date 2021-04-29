@@ -116,15 +116,15 @@ public final class ModuleFacade {
                     public void enable() {
                         Class<?> klass = moduleInstance.getClass();
                         Module module = klass.getAnnotation(Module.class);
-                        TypeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
+                        typeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
 
                         if (module.enable()) {
                             processors.forEach(moduleService -> moduleService.beforeEnable(this));
-                            CF4M.INSTANCE.getEvent().register(moduleInstance);
+                            CF4M.EVENT.register(moduleInstance);
                             processors.forEach(moduleService -> moduleService.afterEnable(this));
                         } else {
                             processors.forEach(moduleService -> moduleService.beforeDisable(this));
-                            CF4M.INSTANCE.getEvent().unregister(moduleInstance);
+                            CF4M.EVENT.unregister(moduleInstance);
                             processors.forEach(moduleService -> moduleService.afterDisable(this));
                         }
 
@@ -153,7 +153,7 @@ public final class ModuleFacade {
 
                     @Override
                     public void setKey(int key) {
-                        TypeAnnotation(klass.getAnnotation(Module.class), "key", key);
+                        typeAnnotation(klass.getAnnotation(Module.class), "key", key);
                     }
 
                     @Override
@@ -237,7 +237,7 @@ public final class ModuleFacade {
         }
     }
 
-    private void TypeAnnotation(Annotation annotation, String name, Object value) {
+    private void typeAnnotation(Annotation annotation, String name, Object value) {
         try {
             InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
             Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");

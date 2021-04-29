@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Assertions;
 public class ModuleConfigTest {
     @Save
     public void save() {
-        ConfigProvider configProvider = CF4M.INSTANCE.getConfig().getByInstance(this);
+        ConfigProvider configProvider = CF4M.CONFIG.getByInstance(this);
         Assertions.assertNotNull(configProvider);
         Assertions.assertEquals("Module", configProvider.getName());
         System.out.println(configProvider.getName() + " Save");

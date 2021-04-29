@@ -15,7 +15,7 @@ public class ModuleExtendTest {
 
     @Enable
     public void enable() {
-        moduleExtend = CF4M.INSTANCE.getModule().getByInstance(this).getExtend();
+        moduleExtend = CF4M.MODULE.getByInstance(this).getExtend();
         moduleExtend.tag = "tag1";
         moduleExtend.age = 1;
         moduleExtend.func = () -> System.out.println("FUN1");

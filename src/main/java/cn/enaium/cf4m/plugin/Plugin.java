@@ -9,5 +9,10 @@ import java.util.Properties;
  * @author Enaium
  */
 public interface Plugin {
+    /**
+     * configuration
+     *
+     * @return configuration
+     */
     Properties getConfiguration();
 }

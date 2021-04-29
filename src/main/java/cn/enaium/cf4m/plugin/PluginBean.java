@@ -1,5 +1,8 @@
 package cn.enaium.cf4m.plugin;
 
+/**
+ * @author Enaium
+ */
 public final class PluginBean<T> {
     private final T instance;
     private final String name;

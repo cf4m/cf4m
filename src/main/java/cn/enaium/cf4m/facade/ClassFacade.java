@@ -1,8 +1,5 @@
 package cn.enaium.cf4m.facade;
 
-import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.CF4MBootstrap;
-import cn.enaium.cf4m.ICF4M;
 import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;

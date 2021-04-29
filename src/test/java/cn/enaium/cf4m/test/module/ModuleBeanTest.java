@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Assertions;
  */
 public class ModuleBeanTest {
     public ModuleBeanTest() {
-        for (ModuleProvider moduleProvider : CF4M.INSTANCE.getModule().getAll()) {
+        for (ModuleProvider moduleProvider : CF4M.MODULE.getAll()) {
             System.out.println(moduleProvider.getName());
         }
-        Assertions.assertNotNull(CF4M.INSTANCE.getModule().getAll());
+        Assertions.assertNotNull(CF4M.MODULE.getAll());
     }
 }

@@ -19,6 +19,7 @@ public interface EventContainer {
     void unregister(Object instance);
 
     /**
+     * post all event
      *
      * @param instance event
      */

@@ -5,7 +5,9 @@ package cn.enaium.cf4m.configuration;
  */
 public interface IConfigConfiguration {
     /**
-     * @return enable or disable config
+     * enable or disable config
+     *
+     * @return enable
      */
     boolean getEnable();
 }

@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
-import static cn.enaium.cf4m.CF4M.INSTANCE;
 
 /**
  * @author Enaium
@@ -163,7 +162,7 @@ public final class CommandFacade {
 
                 try {
                     processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
-                    if (params.size() == 0) {
+                    if (params.isEmpty()) {
                         method.invoke(command);
                     } else {
                         method.invoke(command, params.toArray());
