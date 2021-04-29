@@ -8,7 +8,6 @@ import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.plugin.Plugin;
 import cn.enaium.cf4m.plugin.PluginBean;
 import cn.enaium.cf4m.plugin.PluginInitialize;
-import cn.enaium.cf4m.provider.*;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
 import cn.enaium.cf4m.struct.Pair;
@@ -29,6 +28,7 @@ public final class ClassFacade {
     public final Configuration configuration;
     private final ArrayList<PluginBean<PluginInitialize>> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
     private final HashMap<Class<?>, Object> all = new HashMap<>();
+
 
     public ClassFacade(Class<?> mainClass) {
         List<String> allClassName = getAllClassName(mainClass.getClassLoader());
@@ -109,20 +109,15 @@ public final class ClassFacade {
     private void initializePlugin() {
         if (!pluginInitializes.isEmpty()) {
             System.out.println("Loaded " + pluginInitializes.size() + " Plugin");
-        }
 
-        pluginInitializes.forEach(it -> {
-            System.out.println(it.getName()
-                    + " | " + it.getDescription()
-                    + " | " + it.getVersion()
-                    + " | " + it.getAuthor());
-            it.getInstance().initialize(new Plugin() {
-                @Override
-                public Properties getConfiguration() {
-                    return configuration.properties;
-                }
+            pluginInitializes.forEach(it -> {
+                System.out.println(it.getName()
+                        + " | " + it.getDescription()
+                        + " | " + it.getVersion()
+                        + " | " + it.getAuthor());
+                it.getInstance().initialize(() -> configuration.properties);
             });
-        });
+        }
     }
 
     private void autowired() {
@@ -140,7 +135,7 @@ public final class ClassFacade {
 
                 try {
                     getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
-                    if (all.get(field.getType()) != null) {
+                    if (all.get(field.getType()) != null && field.get(instance) == null) {
                         field.set(instance, all.get(field.getType()));
                     }
                     getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
