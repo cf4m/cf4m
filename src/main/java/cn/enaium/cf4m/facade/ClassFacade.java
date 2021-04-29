@@ -5,23 +5,27 @@ import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.configuration.Configuration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.plugin.Plugin;
 import cn.enaium.cf4m.plugin.PluginBean;
 import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
 import cn.enaium.cf4m.struct.Pair;
-import com.google.common.reflect.ClassPath;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 /**
  * @author Enaium
  */
-@SuppressWarnings({"UnstableApiUsage", "unchecked"})
+@SuppressWarnings({"unchecked"})
 public final class ClassFacade {
 
     public final ClassContainer classContainer;
@@ -47,7 +51,6 @@ public final class ClassFacade {
                 scan.add(new Pair<>(mainClass.getClassLoader(), s));
             }
         }
-
         for (String className : allClassName) {
             for (Pair<ClassLoader, String> s : scan) {
                 if (className.startsWith(s.getValue())) {
@@ -151,14 +154,69 @@ public final class ClassFacade {
     }
 
     private List<String> getAllClassName(ClassLoader classLoader) {
+        if (!(classLoader instanceof URLClassLoader)) {
+            return new ArrayList<>();
+        }
+
+        URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
         List<String> classes = new ArrayList<>();
-        try {
-            for (ClassPath.ClassInfo topLevelClass : ClassPath.from(classLoader).getTopLevelClasses()) {
-                classes.add(topLevelClass.getName());
+        for (URL url : urlClassLoader.getURLs()) {
+            try {
+                if (url.toURI().getScheme().equals("file")) {
+                    File file = new File(url.toURI());
+                    if (file.exists()) {
+                        try {
+                            if (file.isDirectory()) {
+                                List<File> files = new ArrayList<>();
+                                listFiles(file, files);
+                                for (File listFile : files) {
+                                    String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
+                                    if (classFile.startsWith(File.separator)) {
+                                        classFile = classFile.substring(1);
+                                    }
+                                    classes.add(classFile.replace(File.separator, "."));
+                                }
+                            } else {
+                                JarFile jarFile = new JarFile(file);
+                                if (url.getFile().endsWith(".jar")) {
+                                    Enumeration<JarEntry> entries = jarFile.entries();
+                                    while (entries.hasMoreElements()) {
+                                        JarEntry jarEntry = entries.nextElement();
+
+                                        if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
+                                            continue;
+                                        }
+
+                                        if (jarEntry.getName().endsWith(".class")) {
+                                            classes.add(jarEntry.getName().replace(".class", "").replace("/", "."));
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return classes;
+    }
+
+    private void listFiles(File file, List<File> list) {
+        File[] listFiles = file.listFiles();
+        if (listFiles == null) {
+            return;
+        }
+
+        for (File listFile : listFiles) {
+            if (listFile.isFile() && listFile.getName().endsWith(".class")) {
+                list.add(listFile);
+            } else if (file.isDirectory()) {
+                listFiles(listFile.getAbsoluteFile(), list);
+            }
+        }
     }
 }

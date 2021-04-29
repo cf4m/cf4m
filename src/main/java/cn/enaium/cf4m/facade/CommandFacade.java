@@ -8,8 +8,6 @@ import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.CommandContainer;
 import cn.enaium.cf4m.service.CommandService;
 import cn.enaium.cf4m.provider.CommandProvider;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,12 +31,12 @@ public final class CommandFacade {
     public CommandFacade(ClassContainer classContainer, IConfiguration configuration) {
         this.classContainer = classContainer;
         this.configuration = configuration;
-        commands = Maps.newHashMap();
+        commands = new HashMap<>();
 
         commandContainer = new CommandContainer() {
             @Override
             public ArrayList<CommandProvider> getAll() {
-                return Lists.newArrayList(commands.values());
+                return new ArrayList<>(commands.values());
             }
 
             @Override
@@ -68,7 +66,8 @@ public final class CommandFacade {
 
                 if (safe) {
                     String beheaded = rawMessage.split(configuration.getCommand().getPrefix())[1];
-                    List<String> args = Lists.newArrayList(beheaded.split(" "));
+                    List<String> args = new ArrayList<>();
+                    Collections.addAll(args, beheaded.split(" "));
                     String key = args.get(0);
                     args.remove(key);
 
@@ -79,7 +78,7 @@ public final class CommandFacade {
                             for (Method method : command.getClass().getDeclaredMethods()) {
                                 if (method.isAnnotationPresent(Exec.class)) {
                                     Parameter[] parameters = method.getParameters();
-                                    List<String> params = Lists.newArrayList();
+                                    List<String> params = new ArrayList<>();
                                     for (Parameter parameter : parameters) {
                                         params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
                                     }
@@ -130,7 +129,7 @@ public final class CommandFacade {
             method.setAccessible(true);
 
             if (method.getParameterTypes().length == args.size() && method.isAnnotationPresent(Exec.class)) {
-                List<Object> params = Lists.newArrayList();
+                List<Object> params = new ArrayList<>();
                 for (int i = 0; i < method.getParameterTypes().length; i++) {
                     String arg = args.get(i);
                     Class<?> paramType = method.getParameterTypes()[i];

@@ -8,8 +8,6 @@ import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +24,7 @@ public final class ConfigFacade {
     public final ConfigContainer configContainer;
 
     public ConfigFacade(ClassContainer classContainer, IConfiguration configuration, String path) {
-        final HashMap<Object, ConfigProvider> configs = Maps.newHashMap();
+        final HashMap<Object, ConfigProvider> configs = new HashMap<>();
         ArrayList<ConfigService> processors = classContainer.getService(ConfigService.class);
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Config.class)) {
@@ -58,7 +56,7 @@ public final class ConfigFacade {
         configContainer = new ConfigContainer() {
             @Override
             public ArrayList<ConfigProvider> getAll() {
-                return Lists.newArrayList(configs.values());
+                return new ArrayList<>(configs.values());
             }
 
             @Override
