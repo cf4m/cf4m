@@ -27,8 +27,6 @@ public class ModuleAutowiredTest {
     private CommandContainer commandContainer;
     @Autowired
     private ConfigContainer configContainer;
-    @Autowired
-    private ModuleProvider moduleProvider;
 
     @Enable
     public void enable() {
@@ -38,7 +36,6 @@ public class ModuleAutowiredTest {
         Assertions.assertNotNull(moduleContainer);
         Assertions.assertNotNull(commandContainer);
         Assertions.assertNotNull(configContainer);
-        Assertions.assertNotNull(moduleProvider);
         classContainer.create(Gui.class).render();
     }
 }

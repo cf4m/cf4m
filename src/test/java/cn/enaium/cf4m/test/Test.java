@@ -1,26 +1,21 @@
 package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.Bootstrap;
 import cn.enaium.cf4m.annotation.Scan;
 import cn.enaium.cf4m.test.config.ConfigTest;
 import cn.enaium.cf4m.test.event.EventCancelTest;
 import cn.enaium.cf4m.test.event.EventPriorityTest;
 import cn.enaium.cf4m.test.event.EventRegisterUnregisterTest;
 import cn.enaium.cf4m.test.module.ModuleBeanTest;
-import org.junit.jupiter.api.Test;
 
 /**
  * @author Enaium
  */
 @Scan("com.test")
-public class T {
-
-
-    @Test
-    public void test() {
+public class Test {
+    public static void main(String[] args) {
         final long start = System.currentTimeMillis();
-        Bootstrap.run(this, System.getProperty("user.dir") + "/build/configTest");
+        CF4M.run(Test.class, System.getProperty("user.dir") + "/build/configTest");
         System.out.println("Check ModuleBeanTest Start");
         new ModuleBeanTest();
         System.out.println("Check ModuleBeanTest End");

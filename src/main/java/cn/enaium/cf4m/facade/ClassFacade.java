@@ -142,12 +142,6 @@ public final class ClassFacade {
                     getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
                     if (all.get(field.getType()) != null) {
                         field.set(instance, all.get(field.getType()));
-                    } else if (field.getType().equals(ModuleProvider.class) && all.get(ModuleContainer.class) != null) {
-                        field.set(instance, ((ModuleContainer) all.get(ModuleContainer.class)).getByInstance(instance));
-                    } else if (field.getType().equals(CommandProvider.class) && all.get(CommandContainer.class) != null) {
-                        field.set(instance, ((CommandContainer) all.get(CommandContainer.class)).getByInstance(instance));
-                    } else if (field.getType().equals(ConfigProvider.class) && all.get(ConfigContainer.class) != null) {
-                        field.set(instance, ((ConfigContainer) all.get(ConfigContainer.class)).getByInstance(instance));
                     }
                     getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
                 } catch (IllegalAccessException e) {

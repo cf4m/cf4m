@@ -8,11 +8,11 @@ import java.util.*;
  * @author Enaium
  */
 public final class PluginLoader {
-    private static final String CF4M_PLUGIN = "cf4m.plugin";
-    private static final String CF4M_PLUGIN_NAME = "cf4m.plugin.name";
-    private static final String CF4M_PLUGIN_DESCRIPTION = "cf4m.plugin.description";
-    private static final String CF4M_PLUGIN_VERSION = "cf4m.plugin.version";
-    private static final String CF4M_PLUGIN_AUTHOR = "cf4m.plugin.author";
+    private static final String PLUGIN = "plugin";
+    private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
+    private static final String VERSION = "version";
+    private static final String AUTHOR = "author";
 
     private static List<Properties> load(ClassLoader classLoader) {
         List<Properties> configList = new ArrayList<>();
@@ -35,9 +35,9 @@ public final class PluginLoader {
         ArrayList<PluginBean<T>> instance = new ArrayList<>();
         try {
             for (Properties properties : load(klass.getClassLoader())) {
-                if (properties.containsKey(CF4M_PLUGIN)) {
-                    Class<?> plugin = klass.getClassLoader().loadClass(properties.getProperty(CF4M_PLUGIN));
-                    instance.add(new PluginBean<>((T) plugin.newInstance(), properties.getProperty(CF4M_PLUGIN_NAME), properties.getProperty(CF4M_PLUGIN_DESCRIPTION), properties.getProperty(CF4M_PLUGIN_VERSION), properties.getProperty(CF4M_PLUGIN_AUTHOR)));
+                if (properties.containsKey(PLUGIN)) {
+                    Class<?> plugin = klass.getClassLoader().loadClass(properties.getProperty(PLUGIN));
+                    instance.add(new PluginBean<>((T) plugin.newInstance(), properties.getProperty(NAME), properties.getProperty(DESCRIPTION), properties.getProperty(VERSION), properties.getProperty(AUTHOR)));
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {

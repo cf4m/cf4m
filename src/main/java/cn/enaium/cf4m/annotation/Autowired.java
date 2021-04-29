@@ -29,12 +29,6 @@ import java.lang.annotation.Target;
  * Support {@link cn.enaium.cf4m.configuration.ICommandConfiguration}
  * <p>
  * Support {@link cn.enaium.cf4m.configuration.IConfigConfiguration}
- * <p>
- * Support {@link cn.enaium.cf4m.provider.ModuleProvider}
- * <p>
- * Support {@link cn.enaium.cf4m.provider.CommandProvider}
- * <p>
- * Support {@link cn.enaium.cf4m.provider.ConfigProvider}
  *
  * @author Enaium
  */

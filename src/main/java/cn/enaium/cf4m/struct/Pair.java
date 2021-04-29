@@ -2,7 +2,6 @@ package cn.enaium.cf4m.struct;
 
 import java.util.Objects;
 
-@SuppressWarnings("ALL")
 public final class Pair<K, V> {
     private final K key;
     private final V value;
