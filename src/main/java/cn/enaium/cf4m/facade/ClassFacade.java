@@ -35,15 +35,13 @@ public final class ClassFacade {
 
 
     public ClassFacade(Class<?> mainClass) {
-        List<String> allClassName = getAllClassName(mainClass.getClassLoader());
+        LinkedHashSet<String> allClassName = getAllClassName(mainClass.getClassLoader());
 
         configuration = new Configuration(mainClass.getClassLoader());
 
         final List<Pair<ClassLoader, String>> scan = new ArrayList<>();
 
-        pluginInitializes.forEach(pluginInitialize -> {
-            scan.add(new Pair<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getInstance().getClass().getPackage().getName()));
-        });
+        pluginInitializes.forEach(pluginInitialize -> scan.add(new Pair<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getInstance().getClass().getPackage().getName())));
 
         scan.add(new Pair<>(mainClass.getClassLoader(), mainClass.getPackage().getName()));
         if (mainClass.isAnnotationPresent(Scan.class)) {
@@ -150,59 +148,77 @@ public final class ClassFacade {
     }
 
     private <T> ArrayList<T> getService(Class<T> type) {
-        return all.keySet().stream().filter(klass -> klass.isAnnotationPresent(Service.class)).filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).collect(Collectors.toCollection(ArrayList::new));
+        return all.keySet().
+                stream().filter(klass -> klass.isAnnotationPresent(Service.class)).
+                filter(type::isAssignableFrom).map(klass -> (T) all.get(klass)).
+                collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private List<String> getAllClassName(ClassLoader classLoader) {
-        if (!(classLoader instanceof URLClassLoader)) {
-            return new ArrayList<>();
-        }
+    private LinkedHashSet<String> getAllClassName(ClassLoader classLoader) {
 
-        URLClassLoader urlClassLoader = (URLClassLoader) classLoader;
-        List<String> classes = new ArrayList<>();
-        for (URL url : urlClassLoader.getURLs()) {
-            try {
-                if (url.toURI().getScheme().equals("file")) {
-                    File file = new File(url.toURI());
-                    if (file.exists()) {
-                        try {
-                            if (file.isDirectory()) {
-                                List<File> files = new ArrayList<>();
-                                listFiles(file, files);
-                                for (File listFile : files) {
-                                    String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
-                                    if (classFile.startsWith(File.separator)) {
-                                        classFile = classFile.substring(1);
-                                    }
-                                    classes.add(classFile.replace(File.separator, "."));
-                                }
-                            } else {
-                                JarFile jarFile = new JarFile(file);
-                                if (url.getFile().endsWith(".jar")) {
-                                    Enumeration<JarEntry> entries = jarFile.entries();
-                                    while (entries.hasMoreElements()) {
-                                        JarEntry jarEntry = entries.nextElement();
+        List<ClassLoader> classLoaders = new ArrayList<>();
+        findClassLoader(classLoader, classLoaders);
 
-                                        if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
-                                            continue;
+        LinkedHashSet<String> classNames = new LinkedHashSet<>();
+
+        for (ClassLoader cl : classLoaders) {
+            if (!(cl instanceof URLClassLoader)) {
+                continue;
+            }
+
+            URLClassLoader urlClassLoader = (URLClassLoader) cl;
+            for (URL url : urlClassLoader.getURLs()) {
+                try {
+                    if (url.toURI().getScheme().equals("file")) {
+                        File file = new File(url.toURI());
+                        if (file.exists()) {
+                            try {
+                                if (file.isDirectory()) {
+                                    List<File> files = new ArrayList<>();
+                                    listFiles(file, files);
+                                    for (File listFile : files) {
+                                        String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
+                                        if (classFile.startsWith(File.separator)) {
+                                            classFile = classFile.substring(1);
                                         }
+                                        classNames.add(classFile.replace(File.separator, "."));
+                                    }
+                                } else {
+                                    JarFile jarFile = new JarFile(file);
+                                    if (url.getFile().endsWith(".jar")) {
+                                        Enumeration<JarEntry> entries = jarFile.entries();
+                                        while (entries.hasMoreElements()) {
+                                            JarEntry jarEntry = entries.nextElement();
 
-                                        if (jarEntry.getName().endsWith(".class")) {
-                                            classes.add(jarEntry.getName().replace(".class", "").replace("/", "."));
+                                            if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
+                                                continue;
+                                            }
+
+                                            if (jarEntry.getName().endsWith(".class")) {
+                                                classNames.add(jarEntry.getName().replace(".class", "").replace("/", "."));
+                                            }
                                         }
                                     }
                                 }
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
                     }
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
                 }
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
             }
         }
-        return classes;
+
+        return classNames;
+    }
+
+    private void findClassLoader(ClassLoader classLoader, List<ClassLoader> classLoaders) {
+        classLoaders.add(classLoader);
+        if (classLoader.getParent() != null) {
+            findClassLoader(classLoader.getParent(), classLoaders);
+        }
     }
 
     private void listFiles(File file, List<File> list) {
