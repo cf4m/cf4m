@@ -40,6 +40,15 @@ public final class ModuleFacade {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
                 Object moduleInstance = classContainer.create(klass);
+                Object moduleExtendInstance = null;
+
+                try {
+                    if (extendClass != null) {
+                        moduleExtendInstance = extendClass.newInstance();
+                    }
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
 
                 //Add Setting
                 ArrayList<SettingProvider> settingProviders = new ArrayList<>();
@@ -105,7 +114,7 @@ public final class ModuleFacade {
 
                 ArrayList<ModuleService> processors = classContainer.getService(ModuleService.class);
 
-                Class<?> finalExtendClass = extendClass;
+                Object finalModuleExtendInstance = moduleExtendInstance;
                 modules.put(moduleInstance, new ModuleProvider() {
                     @Override
                     public String getName() {
@@ -178,14 +187,7 @@ public final class ModuleFacade {
 
                     @Override
                     public <T> T getExtend() {
-                        if (finalExtendClass != null) {
-                            try {
-                                return (T) finalExtendClass.newInstance();
-                            } catch (InstantiationException | IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        return null;
+                        return finalModuleExtendInstance != null ? (T) finalModuleExtendInstance : null;
                     }
 
                     @Override
