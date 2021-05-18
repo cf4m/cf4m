@@ -28,10 +28,10 @@ public final class ModuleFacade {
     public ModuleFacade(ClassContainer classContainer) {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
-        Object extendInstance = null;
+        Class<?> extendClass = null;
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Extend.class)) {
-                extendInstance = classContainer.create(klass);
+                extendClass = klass;
             }
         }
 
@@ -102,10 +102,10 @@ public final class ModuleFacade {
                         return null;
                     }
                 };
-                Object finalExtendInstance = extendInstance;
 
                 ArrayList<ModuleService> processors = classContainer.getService(ModuleService.class);
 
+                Class<?> finalExtendClass = extendClass;
                 modules.put(moduleInstance, new ModuleProvider() {
                     @Override
                     public String getName() {
@@ -178,7 +178,14 @@ public final class ModuleFacade {
 
                     @Override
                     public <T> T getExtend() {
-                        return (T) finalExtendInstance;
+                        if (finalExtendClass != null) {
+                            try {
+                                return (T) finalExtendClass.newInstance();
+                            } catch (InstantiationException | IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return null;
                     }
 
                     @Override
