@@ -1,9 +1,9 @@
 package cn.enaium.cf4m.facade;
 
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.annotation.Scan;
-import cn.enaium.cf4m.configuration.Configuration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.plugin.PluginBean;
 import cn.enaium.cf4m.plugin.PluginInitialize;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public final class ClassFacade {
 
     public final ClassContainer classContainer;
-    public final Configuration configuration;
+    public final ConfigurationContainer configuration;
     private final ArrayList<PluginBean<PluginInitialize>> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
@@ -37,13 +37,12 @@ public final class ClassFacade {
     public ClassFacade(Class<?> mainClass) {
         LinkedHashSet<String> allClassName = getAllClassName(mainClass.getClassLoader());
 
-        configuration = new Configuration(mainClass.getClassLoader());
-
         final List<Pair<ClassLoader, String>> scan = new ArrayList<>();
 
         pluginInitializes.forEach(pluginInitialize -> scan.add(new Pair<>(pluginInitialize.getClass().getClassLoader(), pluginInitialize.getInstance().getClass().getPackage().getName())));
 
         scan.add(new Pair<>(mainClass.getClassLoader(), mainClass.getPackage().getName()));
+        scan.add(new Pair<>(mainClass.getClassLoader(), CF4M.class.getPackage().getName()));
         if (mainClass.isAnnotationPresent(Scan.class)) {
             for (String s : mainClass.getAnnotation(Scan.class).value()) {
                 scan.add(new Pair<>(mainClass.getClassLoader(), s));
@@ -75,13 +74,19 @@ public final class ClassFacade {
             }
 
             @Override
+            public <T> T recreate(Class<T> klass, Object instance) {
+                classServices.forEach(classService -> classService.beforeCreate(klass, instance));
+                all.put(klass, instance);
+                classServices.forEach(classService -> classService.afterCreate(klass, instance));
+                autowired();
+                return (T) all.get(klass);
+            }
+
+            @Override
             public <T> T create(Class<T> klass, Object instance) {
                 if (all.get(klass) == null) {
-                    classServices.forEach(classService -> classService.beforeCreate(klass, instance));
-                    all.put(klass, instance);
-                    classServices.forEach(classService -> classService.afterCreate(klass, instance));
+                    return recreate(klass, instance);
                 }
-                autowired();
                 return (T) all.get(klass);
             }
 
@@ -100,6 +105,8 @@ public final class ClassFacade {
                 return ClassFacade.this.getService(type);
             }
         };
+
+        configuration = new ConfigurationFacade(classContainer, mainClass.getClassLoader()).configurationContainer;
     }
 
     public void after() {
@@ -116,7 +123,7 @@ public final class ClassFacade {
                         + " | " + it.getDescription()
                         + " | " + it.getVersion()
                         + " | " + it.getAuthor());
-                it.getInstance().initialize(() -> configuration.properties);
+                it.getInstance().initialize(() -> configuration);
             });
         }
     }

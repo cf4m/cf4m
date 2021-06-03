@@ -1,10 +1,7 @@
 package cn.enaium.cf4m.test.command;
 
-import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.command.Command;
 import cn.enaium.cf4m.annotation.command.Exec;
-import cn.enaium.cf4m.configuration.IConfiguration;
-import cn.enaium.cf4m.provider.CommandProvider;
 
 /**
  * @author Enaium

@@ -230,6 +230,11 @@ public final class ModuleFacade {
             }
 
             @Override
+            public <T> ModuleProvider getByClass(Class<T> klass) {
+                return getByInstance(classContainer.create(klass));
+            }
+
+            @Override
             public void onKey(int key) {
                 for (ModuleProvider module : getAll()) {
                     if (module.getKey() == key) {

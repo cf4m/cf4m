@@ -33,6 +33,13 @@ public interface ConfigContainer {
     ConfigProvider getByInstance(Object instance);
 
     /**
+     * @param klass class
+     * @param <T>   config
+     * @return config
+     */
+    <T> ConfigProvider getByClass(Class<T> klass);
+
+    /**
      * load config
      */
     void load();

@@ -3,9 +3,7 @@ package cn.enaium.cf4m.test.module.module;
 import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.module.Enable;
 import cn.enaium.cf4m.annotation.module.Module;
-import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.test.gui.Gui;
 import org.junit.jupiter.api.Assertions;
 
@@ -18,7 +16,7 @@ public class ModuleAutowiredTest {
     @Autowired
     private ClassContainer classContainer;
     @Autowired
-    private IConfiguration configuration;
+    private ConfigurationContainer configuration;
     @Autowired
     private EventContainer eventContainer;
     @Autowired

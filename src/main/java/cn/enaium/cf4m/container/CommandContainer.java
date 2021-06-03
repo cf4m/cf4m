@@ -24,6 +24,13 @@ public interface CommandContainer {
     CommandProvider getByInstance(Object instance);
 
     /**
+     * @param klass class
+     * @param <T>   command
+     * @return command
+     */
+    <T> CommandProvider getByClass(Class<T> klass);
+
+    /**
      * Nullable
      *
      * @param key command key
