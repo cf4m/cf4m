@@ -13,7 +13,7 @@ public interface ClassContainer {
      */
     ArrayList<Class<?>> getAll();
 
-    <T> T recreate(Class<T> klass, Object instance);
+    <T> T put(Class<T> klass, Object instance);
 
     /**
      * put the classes in the container

@@ -1,7 +1,6 @@
 package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.annotation.configuration.Configuration;
-import cn.enaium.cf4m.annotation.configuration.Impl;
 import cn.enaium.cf4m.annotation.configuration.Value;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigurationContainer;
@@ -64,9 +63,9 @@ public final class ConfigurationFacade {
         }
 
         for (Class<?> klass : classContainer.getAll()) {
-            if (klass.isAnnotationPresent(Impl.class)) {
+            if (klass.getSuperclass() != null && klass.getSuperclass().isAnnotationPresent(Configuration.class)) {
                 Configuration annotation = klass.getSuperclass().getAnnotation(Configuration.class);
-                configurations.put(annotation.value(), classContainer.recreate(klass.getSuperclass(), classContainer.create(klass)));
+                configurations.put(annotation.value(), classContainer.put(klass.getSuperclass(), classContainer.create(klass)));
             }
         }
 

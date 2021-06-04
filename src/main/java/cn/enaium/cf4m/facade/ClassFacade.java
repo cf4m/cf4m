@@ -1,9 +1,7 @@
 package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Autowired;
-import cn.enaium.cf4m.annotation.Service;
-import cn.enaium.cf4m.annotation.Scan;
+import cn.enaium.cf4m.annotation.*;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.plugin.PluginBean;
 import cn.enaium.cf4m.plugin.PluginInitialize;
@@ -14,6 +12,8 @@ import cn.enaium.cf4m.struct.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -53,12 +53,23 @@ public final class ClassFacade {
                 if (className.startsWith(s.getValue())) {
                     try {
                         Class<?> klass = s.getKey().loadClass(className);
-                        if (klass.isAnnotationPresent(Service.class)) {
-                            all.put(klass, klass.newInstance());
+                        if (klass.isAnnotationPresent(Service.class) || klass.isAnnotationPresent(Component.class)) {
+                            Object instance = klass.newInstance();
+
+                            if (klass.isAnnotationPresent(Component.class)) {
+                                for (Method declaredMethod : klass.getDeclaredMethods()) {
+                                    declaredMethod.setAccessible(true);
+                                    if (declaredMethod.isAnnotationPresent(Bean.class)) {
+                                        all.put(declaredMethod.getReturnType(), declaredMethod.invoke(instance));
+                                    }
+                                }
+                            }
+
+                            all.put(klass, instance);
                         } else {
                             all.put(klass, null);
                         }
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
@@ -74,7 +85,7 @@ public final class ClassFacade {
             }
 
             @Override
-            public <T> T recreate(Class<T> klass, Object instance) {
+            public <T> T put(Class<T> klass, Object instance) {
                 classServices.forEach(classService -> classService.beforeCreate(klass, instance));
                 all.put(klass, instance);
                 classServices.forEach(classService -> classService.afterCreate(klass, instance));
@@ -85,7 +96,7 @@ public final class ClassFacade {
             @Override
             public <T> T create(Class<T> klass, Object instance) {
                 if (all.get(klass) == null) {
-                    return recreate(klass, instance);
+                    return put(klass, instance);
                 }
                 return (T) all.get(klass);
             }

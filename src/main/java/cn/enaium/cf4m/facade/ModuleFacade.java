@@ -28,10 +28,10 @@ public final class ModuleFacade {
     public ModuleFacade(ClassContainer classContainer) {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
-        Class<?> extendClass = null;
+        Map<Class<?>, Object> extendClasses = new HashMap<>();
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Extend.class)) {
-                extendClass = klass;
+                extendClasses.put(klass, classContainer.create(klass));
             }
         }
 
@@ -40,15 +40,6 @@ public final class ModuleFacade {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
                 Object moduleInstance = classContainer.create(klass);
-                Object moduleExtendInstance = null;
-
-                try {
-                    if (extendClass != null) {
-                        moduleExtendInstance = extendClass.newInstance();
-                    }
-                } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
 
                 //Add Setting
                 ArrayList<SettingProvider> settingProviders = new ArrayList<>();
@@ -114,7 +105,6 @@ public final class ModuleFacade {
 
                 ArrayList<ModuleService> processors = classContainer.getService(ModuleService.class);
 
-                Object finalModuleExtendInstance = moduleExtendInstance;
                 modules.put(moduleInstance, new ModuleProvider() {
                     @Override
                     public String getName() {
@@ -186,8 +176,8 @@ public final class ModuleFacade {
                     }
 
                     @Override
-                    public <T> T getExtend() {
-                        return finalModuleExtendInstance != null ? (T) finalModuleExtendInstance : null;
+                    public <T> T getExtend(Class<T> klass) {
+                        return (T) extendClasses.get(klass);
                     }
 
                     @Override
