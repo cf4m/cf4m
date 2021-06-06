@@ -44,10 +44,11 @@ public interface ModuleProvider extends Provider {
     /**
      * Nullable
      *
-     * @param <T> extend class
+     * @param klass class
+     * @param <T>   extend class
      * @return extend instance
      */
-    <T> T getExtend();
+    <T> T getExtend(Class<T> klass);
 
     /**
      * NotNull

@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Add this annotation to the class to that this class is a configuration
+ * Add this annotation to the method to that this method is a bean
  *
  * @author Enaium
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Configuration {
+public @interface Bean {
 }

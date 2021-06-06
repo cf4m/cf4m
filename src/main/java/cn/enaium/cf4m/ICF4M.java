@@ -1,9 +1,6 @@
 package cn.enaium.cf4m;
 
-import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
-
-import java.io.File;
 
 /**
  * @author Enaium
@@ -20,13 +17,13 @@ public interface ICF4M {
     ClassContainer getKlass();
 
     /**
-     * Configuration
+     * ConfigurationContainer
      * Nullable
      * Only read
      *
-     * @return configuration
+     * @return configurationContainer
      */
-    IConfiguration getConfiguration();
+    ConfigurationContainer getConfiguration();
 
     /**
      * EventContainer

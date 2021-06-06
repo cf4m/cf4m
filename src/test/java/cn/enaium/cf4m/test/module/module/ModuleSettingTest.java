@@ -20,6 +20,7 @@ public class ModuleSettingTest {
 
     @Enable
     public void enable() {
+        System.out.println(CF4M.MODULE.getByClass(this.getClass()).getName());
         System.out.println(enableSettingTest.getEnable());
         System.out.println(CF4M.MODULE.getByInstance(this).getSetting().getByName("setting1").<EnableSettingTest>getSetting());
         Object setting2 = CF4M.MODULE.getByInstance(this).getSetting().getByName("setting2").getSetting();

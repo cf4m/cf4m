@@ -1,9 +1,5 @@
 package cn.enaium.cf4m;
 
-import cn.enaium.cf4m.configuration.Configuration;
-import cn.enaium.cf4m.configuration.ICommandConfiguration;
-import cn.enaium.cf4m.configuration.IConfigConfiguration;
-import cn.enaium.cf4m.configuration.IConfiguration;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.facade.*;
 
@@ -33,7 +29,7 @@ public final class CF4M {
         }
 
         @Override
-        public IConfiguration getConfiguration() {
+        public ConfigurationContainer getConfiguration() {
             return null;
         }
 
@@ -59,7 +55,7 @@ public final class CF4M {
     };
 
     public static final ClassContainer CLASS = INSTANCE.getKlass();
-    public static final IConfiguration CONFIGURATION = INSTANCE.getConfiguration();
+    public static final ConfigurationContainer CONFIGURATION = INSTANCE.getConfiguration();
     public static final EventContainer EVENT = INSTANCE.getEvent();
     public static final ModuleContainer MODULE = INSTANCE.getModule();
     public static final CommandContainer COMMAND = INSTANCE.getCommand();
@@ -77,19 +73,17 @@ public final class CF4M {
         } else {
             ClassFacade classFacade = new ClassFacade(mainClass);
             final ClassContainer classContainer = classFacade.classContainer;
-            final Configuration configuration = classFacade.configuration;
+            final ConfigurationContainer configuration = classFacade.configuration;
             final EventContainer eventContainer = new EventFacade(classContainer).eventContainer;
             final ModuleContainer moduleContainer = new ModuleFacade(classContainer).moduleContainer;
-            final CommandContainer commandContainer = new CommandFacade(classContainer, configuration.configuration).commandContainer;
-            final ConfigContainer configContainer = new ConfigFacade(classContainer, configuration.configuration, path).configContainer;
+            final CommandContainer commandContainer = new CommandFacade(classContainer, configuration).commandContainer;
+            final ConfigContainer configContainer = new ConfigFacade(classContainer, configuration, path).configContainer;
             classContainer.create(EventContainer.class, eventContainer);
             classContainer.create(ModuleContainer.class, moduleContainer);
             classContainer.create(CommandContainer.class, commandContainer);
             classContainer.create(ClassContainer.class, classContainer);
             classContainer.create(ConfigContainer.class, configContainer);
-            classContainer.create(IConfiguration.class, configuration.configuration);
-            classContainer.create(ICommandConfiguration.class, configuration.configuration.getCommand());
-            classContainer.create(IConfigConfiguration.class, configuration.configuration.getConfig());
+            classContainer.create(ConfigurationContainer.class, configuration);
             ICF4M cf4m = new ICF4M() {
                 @Override
                 public ClassContainer getKlass() {
@@ -97,8 +91,8 @@ public final class CF4M {
                 }
 
                 @Override
-                public IConfiguration getConfiguration() {
-                    return configuration.configuration;
+                public ConfigurationContainer getConfiguration() {
+                    return configuration;
                 }
 
                 @Override
@@ -124,7 +118,7 @@ public final class CF4M {
             try {
                 setStaticFinalField("INSTANCE", cf4m);
                 setStaticFinalField("CLASS", classContainer);
-                setStaticFinalField("CONFIGURATION", configuration.configuration);
+                setStaticFinalField("CONFIGURATION", configuration);
                 setStaticFinalField("EVENT", eventContainer);
                 setStaticFinalField("MODULE", moduleContainer);
                 setStaticFinalField("COMMAND", commandContainer);

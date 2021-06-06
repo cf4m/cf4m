@@ -3,9 +3,10 @@ package cn.enaium.cf4m.facade;
 import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
-import cn.enaium.cf4m.configuration.IConfiguration;
+import cn.enaium.cf4m.configuration.ConfigConfiguration;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
+import cn.enaium.cf4m.container.ConfigurationContainer;
 import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
 
@@ -23,7 +24,7 @@ public final class ConfigFacade {
 
     public final ConfigContainer configContainer;
 
-    public ConfigFacade(ClassContainer classContainer, IConfiguration configuration, String path) {
+    public ConfigFacade(ClassContainer classContainer, ConfigurationContainer configuration, String path) {
         final HashMap<Object, ConfigProvider> configs = new HashMap<>();
         ArrayList<ConfigService> processors = classContainer.getService(ConfigService.class);
         for (Class<?> klass : classContainer.getAll()) {
@@ -75,8 +76,13 @@ public final class ConfigFacade {
             }
 
             @Override
+            public <T> ConfigProvider getByClass(Class<T> klass) {
+                return getByInstance(classContainer.create(klass));
+            }
+
+            @Override
             public void load() {
-                if (configuration.getConfig().getEnable()) {
+                if (configuration.getByClass(ConfigConfiguration.class).getEnable()) {
                     configs.keySet().forEach(config -> {
                         for (Method method : config.getClass().getMethods()) {
                             method.setAccessible(true);
@@ -99,7 +105,7 @@ public final class ConfigFacade {
             @SuppressWarnings("ResultOfMethodCallIgnored")
             @Override
             public void save() {
-                if (configuration.getConfig().getEnable()) {
+                if (configuration.getByClass(ConfigConfiguration.class).getEnable()) {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
                     configs.keySet().forEach(config -> {

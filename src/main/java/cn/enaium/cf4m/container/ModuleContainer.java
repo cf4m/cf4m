@@ -39,6 +39,13 @@ public interface ModuleContainer {
     ModuleProvider getByName(String name);
 
     /**
+     * @param klass class
+     * @param <T>   module
+     * @return module
+     */
+    <T> ModuleProvider getByClass(Class<T> klass);
+
+    /**
      * Nullable
      *
      * @param instance module name

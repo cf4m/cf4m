@@ -6,11 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Add this annotation to the class to that this class is a service impl
- *
  * @author Enaium
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Service {
+public @interface Component {
 }
