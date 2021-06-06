@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Add this annotation to the class to that this class is a bean
+ * Add this annotation to the method to that this method is a bean
  *
  * @author Enaium
  */

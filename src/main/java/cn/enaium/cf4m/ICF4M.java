@@ -17,7 +17,7 @@ public interface ICF4M {
     ClassContainer getKlass();
 
     /**
-     * Configuration
+     * ConfigurationContainer
      * Nullable
      * Only read
      *
