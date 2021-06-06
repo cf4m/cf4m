@@ -46,7 +46,11 @@ public final class ModuleFacade {
                 Map<Class<?>, Object> extend = new HashMap<>();
 
                 for (Class<?> extendClass : extendClasses) {
-                    extend.put(extendClass, classContainer.create(extendClass));
+                    try {
+                        extend.put(extendClass, extendClass.newInstance());
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 multipleExtend.put(moduleInstance, extend);
