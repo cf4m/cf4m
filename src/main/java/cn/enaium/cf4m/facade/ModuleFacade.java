@@ -28,18 +28,28 @@ public final class ModuleFacade {
     public ModuleFacade(ClassContainer classContainer) {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
-        Map<Class<?>, Object> extendClasses = new HashMap<>();
+        Set<Class<?>> extendClasses = new HashSet<>();
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Extend.class)) {
-                extendClasses.put(klass, classContainer.create(klass));
+                extendClasses.add(klass);
             }
         }
+
+        final Map<Object, Map<Class<?>, Object>> multipleExtend = new HashMap<>();
 
         //Add Modules
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
                 Object moduleInstance = classContainer.create(klass);
+
+                Map<Class<?>, Object> extend = new HashMap<>();
+
+                for (Class<?> extendClass : extendClasses) {
+                    extend.put(extendClass, classContainer.create(extendClass));
+                }
+
+                multipleExtend.put(moduleInstance, extend);
 
                 //Add Setting
                 ArrayList<SettingProvider> settingProviders = new ArrayList<>();
@@ -177,7 +187,8 @@ public final class ModuleFacade {
 
                     @Override
                     public <T> T getExtend(Class<T> klass) {
-                        return (T) extendClasses.get(klass);
+                        Map<Class<?>, Object> classObjectMap = multipleExtend.get(moduleInstance);
+                        return (T) classObjectMap.get(klass);
                     }
 
                     @Override
