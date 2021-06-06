@@ -3,6 +3,9 @@ package cn.enaium.cf4m.configuration;
 import cn.enaium.cf4m.annotation.configuration.Configuration;
 import cn.enaium.cf4m.annotation.configuration.Value;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 /**
  * @author Enaium
  */
@@ -12,7 +15,7 @@ public class CommandConfiguration {
     private String prefix = "`";
 
     @Value
-    private String message = "cn.enaium.cf4m.configuration.CommandConfiguration:message";
+    private String message = "cn.enaium.cf4m.configuration.CommandConfiguration:send";
 
     public String getPrefix() {
         return prefix;
@@ -23,6 +26,18 @@ public class CommandConfiguration {
     }
 
     public void message(String message) {
+        String klass = this.message.split(":")[0];
+        String method = this.message.split(":")[1];
+        try {
+            Method send = this.getClass().getClassLoader().loadClass(klass).getDeclaredMethod(method, String.class);
+            send.setAccessible(true);
+            send.invoke(null, message);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void send(String message) {
         System.err.println(message);
     }
 }
