@@ -26,8 +26,8 @@ public class CommandConfiguration {
     }
 
     public void message(String message) {
-        String klass = this.message.split(":")[0];
-        String method = this.message.split(":")[1];
+        String klass = getMessage().split(":")[0];
+        String method = getMessage().split(":")[1];
         try {
             Method send = this.getClass().getClassLoader().loadClass(klass).getDeclaredMethod(method, String.class);
             send.setAccessible(true);
