@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -180,12 +181,25 @@ public final class ClassFacade {
         LinkedHashSet<String> classNames = new LinkedHashSet<>();
 
         for (ClassLoader cl : classLoaders) {
-            if (!(cl instanceof URLClassLoader)) {
+            if (!(cl instanceof URLClassLoader) && !cl.equals(classLoaders.get(classLoaders.size() - 1))) {
                 continue;
             }
 
-            URLClassLoader urlClassLoader = (URLClassLoader) cl;
-            for (URL url : urlClassLoader.getURLs()) {
+            List<URL> urLs = new ArrayList<>();
+
+            if (cl instanceof URLClassLoader) {
+                Collections.addAll(urLs, ((URLClassLoader) cl).getURLs());
+            } else {
+                for (String s : System.getProperty("java.class.path").split(";")) {
+                    try {
+                        urLs.add(new File(s).toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            for (URL url : urLs) {
                 try {
                     if (url.toURI().getScheme().equals("file")) {
                         File file = new File(url.toURI());
