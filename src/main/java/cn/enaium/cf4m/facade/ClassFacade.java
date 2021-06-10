@@ -174,75 +174,49 @@ public final class ClassFacade {
     }
 
     private LinkedHashSet<String> getAllClassName(ClassLoader classLoader) {
-
-        List<ClassLoader> classLoaders = new ArrayList<>();
-        findClassLoader(classLoader, classLoaders);
-
         LinkedHashSet<String> classNames = new LinkedHashSet<>();
-
-        for (ClassLoader cl : classLoaders) {
-            if (!(cl instanceof URLClassLoader) && !cl.equals(classLoaders.get(classLoaders.size() - 1))) {
-                continue;
-            }
-
-            List<URL> urLs = new ArrayList<>();
-
-            if (cl instanceof URLClassLoader) {
-                Collections.addAll(urLs, ((URLClassLoader) cl).getURLs());
-            } else {
-                for (String s : System.getProperty("java.class.path").split(";")) {
-                    try {
-                        urLs.add(new File(s).toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            for (URL url : urLs) {
-                try {
-                    if (url.toURI().getScheme().equals("file")) {
-                        File file = new File(url.toURI());
-                        if (file.exists()) {
-                            try {
-                                if (file.isDirectory()) {
-                                    List<File> files = new ArrayList<>();
-                                    listFiles(file, files);
-                                    for (File listFile : files) {
-                                        String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
-                                        if (classFile.startsWith(File.separator)) {
-                                            classFile = classFile.substring(1);
-                                        }
-                                        classNames.add(classFile.replace(File.separator, "."));
+        for (URL url : getUrls(classLoader)) {
+            try {
+                if (url.toURI().getScheme().equals("file")) {
+                    File file = new File(url.toURI());
+                    if (file.exists()) {
+                        try {
+                            if (file.isDirectory()) {
+                                List<File> files = new ArrayList<>();
+                                listFiles(file, files);
+                                for (File listFile : files) {
+                                    String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
+                                    if (classFile.startsWith(File.separator)) {
+                                        classFile = classFile.substring(1);
                                     }
-                                } else {
-                                    JarFile jarFile = new JarFile(file);
-                                    if (url.getFile().endsWith(".jar")) {
-                                        Enumeration<JarEntry> entries = jarFile.entries();
-                                        while (entries.hasMoreElements()) {
-                                            JarEntry jarEntry = entries.nextElement();
+                                    classNames.add(classFile.replace(File.separator, "."));
+                                }
+                            } else {
+                                JarFile jarFile = new JarFile(file);
+                                if (url.getFile().endsWith(".jar")) {
+                                    Enumeration<JarEntry> entries = jarFile.entries();
+                                    while (entries.hasMoreElements()) {
+                                        JarEntry jarEntry = entries.nextElement();
 
-                                            if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
-                                                continue;
-                                            }
+                                        if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
+                                            continue;
+                                        }
 
-                                            if (jarEntry.getName().endsWith(".class")) {
-                                                classNames.add(jarEntry.getName().replace(".class", "").replace("/", "."));
-                                            }
+                                        if (jarEntry.getName().endsWith(".class")) {
+                                            classNames.add(jarEntry.getName().replace(".class", "").replace("/", "."));
                                         }
                                     }
                                 }
-                            } catch (IOException e) {
-                                e.printStackTrace();
                             }
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
                 }
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
             }
         }
-
         return classNames;
     }
 
@@ -251,6 +225,26 @@ public final class ClassFacade {
         if (classLoader.getParent() != null) {
             findClassLoader(classLoader.getParent(), classLoaders);
         }
+    }
+
+    private List<URL> getUrls(ClassLoader classLoader) {
+        List<ClassLoader> classLoaders = new ArrayList<>();
+        findClassLoader(classLoader, classLoaders);
+
+        Set<URL> urls = new HashSet<>();
+
+        if (classLoaders.stream().filter(it -> it instanceof URLClassLoader).toArray().length == 0) {
+            for (String s : System.getProperty("java.class.path").split(";")) {
+                try {
+                    urls.add(new File(s).toURI().toURL());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            classLoaders.stream().filter(it -> it instanceof URLClassLoader).map(it -> (URLClassLoader) it).forEach(it -> Collections.addAll(urls, it.getURLs()));
+        }
+        return new ArrayList<>(urls);
     }
 
     private void listFiles(File file, List<File> list) {
