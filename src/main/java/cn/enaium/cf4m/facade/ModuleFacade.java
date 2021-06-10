@@ -2,6 +2,7 @@ package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
+import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;

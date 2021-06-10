@@ -4,8 +4,8 @@ import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.facade.*;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
+import java.util.Objects;
 
 /**
  * @author Enaium
@@ -123,7 +123,7 @@ public final class CF4M {
                 setStaticFinalField("MODULE", moduleContainer);
                 setStaticFinalField("COMMAND", commandContainer);
                 setStaticFinalField("CONFIG", configContainer);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
             run = true;
@@ -160,12 +160,35 @@ public final class CF4M {
         run(instance.getClass(), path);
     }
 
-    private static void setStaticFinalField(String name, Object value) throws NoSuchFieldException, IllegalAccessException {
+    private static void setStaticFinalField(String name, Object value) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Field field = CF4M.class.getDeclaredField(name);
         field.setAccessible(true);
-        Field modifiers = Field.class.getDeclaredField("modifiers");
-        modifiers.setAccessible(true);
-        modifiers.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        Field f = null;
+
+        try {
+            f = Field.class.getDeclaredField("modifiers");
+        } catch (NoSuchFieldException e) {
+
+            Method getDeclaredFields0 = Class.class.getDeclaredMethod("getDeclaredFields0", boolean.class);
+            boolean accessible = getDeclaredFields0.isAccessible();
+
+            getDeclaredFields0.setAccessible(true);
+            Field[] declaredFields = (Field[]) getDeclaredFields0.invoke(Field.class, false);
+            getDeclaredFields0.setAccessible(accessible);
+
+            for (Field declaredField : declaredFields) {
+                if ("modifiers".equals(declaredField.getName())) {
+                    f = declaredField;
+                    break;
+                }
+            }
+        }
+
+
+        assert f != null;
+        f.setAccessible(true);
+        f.setInt(field, field.getModifiers() & ~Modifier.FINAL);
         field.set(null, value);
     }
 }
