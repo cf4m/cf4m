@@ -17,12 +17,11 @@ public final class CF4M {
     }
 
     /**
-     * Not final
      * Nullable
      * Only read
      */
     @Deprecated
-    public static final ICF4M INSTANCE = new ICF4M() {
+    public static ICF4M INSTANCE = new ICF4M() {
         @Override
         public ClassContainer getKlass() {
             return null;
@@ -54,12 +53,41 @@ public final class CF4M {
         }
     };
 
-    public static final ClassContainer CLASS = INSTANCE.getKlass();
-    public static final ConfigurationContainer CONFIGURATION = INSTANCE.getConfiguration();
-    public static final EventContainer EVENT = INSTANCE.getEvent();
-    public static final ModuleContainer MODULE = INSTANCE.getModule();
-    public static final CommandContainer COMMAND = INSTANCE.getCommand();
-    public static final ConfigContainer CONFIG = INSTANCE.getConfig();
+    /**
+     * Nullable
+     * Only read
+     */
+    public static ClassContainer CLASS = INSTANCE.getKlass();
+
+    /**
+     * Nullable
+     * Only read
+     */
+    public static ConfigurationContainer CONFIGURATION = INSTANCE.getConfiguration();
+
+    /**
+     * Nullable
+     * Only read
+     */
+    public static EventContainer EVENT = INSTANCE.getEvent();
+
+    /**
+     * Nullable
+     * Only read
+     */
+    public static ModuleContainer MODULE = INSTANCE.getModule();
+
+    /**
+     * Nullable
+     * Only read
+     */
+    public static CommandContainer COMMAND = INSTANCE.getCommand();
+
+    /**
+     * Nullable
+     * Only read
+     */
+    public static ConfigContainer CONFIG = INSTANCE.getConfig();
 
     private static boolean run = false;
 
@@ -115,17 +143,15 @@ public final class CF4M {
                     return configContainer;
                 }
             };
-            try {
-                setStaticFinalField("INSTANCE", cf4m);
-                setStaticFinalField("CLASS", classContainer);
-                setStaticFinalField("CONFIGURATION", configuration);
-                setStaticFinalField("EVENT", eventContainer);
-                setStaticFinalField("MODULE", moduleContainer);
-                setStaticFinalField("COMMAND", commandContainer);
-                setStaticFinalField("CONFIG", configContainer);
-            } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
+
+            INSTANCE = cf4m;
+            CLASS = classContainer;
+            CONFIGURATION = configuration;
+            EVENT = eventContainer;
+            MODULE = moduleContainer;
+            COMMAND = commandContainer;
+            CONFIG = configContainer;
+
             run = true;
             classFacade.after();
             configContainer.load();
@@ -158,37 +184,5 @@ public final class CF4M {
      */
     public static void run(Object instance, String path) {
         run(instance.getClass(), path);
-    }
-
-    private static void setStaticFinalField(String name, Object value) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        Field field = CF4M.class.getDeclaredField(name);
-        field.setAccessible(true);
-
-        Field f = null;
-
-        try {
-            f = Field.class.getDeclaredField("modifiers");
-        } catch (NoSuchFieldException e) {
-
-            Method getDeclaredFields0 = Class.class.getDeclaredMethod("getDeclaredFields0", boolean.class);
-            boolean accessible = getDeclaredFields0.isAccessible();
-
-            getDeclaredFields0.setAccessible(true);
-            Field[] declaredFields = (Field[]) getDeclaredFields0.invoke(Field.class, false);
-            getDeclaredFields0.setAccessible(accessible);
-
-            for (Field declaredField : declaredFields) {
-                if ("modifiers".equals(declaredField.getName())) {
-                    f = declaredField;
-                    break;
-                }
-            }
-        }
-
-
-        assert f != null;
-        f.setAccessible(true);
-        f.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        field.set(null, value);
     }
 }

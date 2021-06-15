@@ -12,8 +12,6 @@ import java.lang.annotation.*;
 public @interface Module {
     String value();
 
-    boolean enable() default false;
-
     int key() default 0;
 
     String type() default "NONE";

@@ -48,8 +48,8 @@ public final class ModuleFacade {
 
                 for (Class<?> extendClass : extendClasses) {
                     try {
-                        extend.put(extendClass, extendClass.newInstance());
-                    } catch (InstantiationException | IllegalAccessException e) {
+                        extend.put(extendClass, extendClass.getConstructor().newInstance());
+                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
@@ -121,6 +121,15 @@ public final class ModuleFacade {
                 ArrayList<ModuleService> processors = classContainer.getService(ModuleService.class);
 
                 modules.put(moduleInstance, new ModuleProvider() {
+
+                    private boolean enable;
+                    private int key;
+
+                    {
+                        enable = false;
+                        key = module.key();
+                    }
+
                     @Override
                     public String getName() {
                         return module.value();
@@ -128,7 +137,7 @@ public final class ModuleFacade {
 
                     @Override
                     public boolean getEnable() {
-                        return module.enable();
+                        return enable;
                     }
 
                     @Override
@@ -140,9 +149,10 @@ public final class ModuleFacade {
                     public void enable() {
                         Class<?> klass = moduleInstance.getClass();
                         Module module = klass.getAnnotation(Module.class);
-                        typeAnnotation(klass.getAnnotation(Module.class), "enable", !module.enable());
 
-                        if (module.enable()) {
+                        enable = !enable;
+
+                        if (enable) {
                             processors.forEach(moduleService -> moduleService.beforeEnable(this));
                             CF4M.EVENT.register(moduleInstance);
                             processors.forEach(moduleService -> moduleService.afterEnable(this));
@@ -155,7 +165,7 @@ public final class ModuleFacade {
                         for (Method method : klass.getDeclaredMethods()) {
                             method.setAccessible(true);
                             try {
-                                if (module.enable()) {
+                                if (enable) {
                                     if (method.isAnnotationPresent(Enable.class)) {
                                         method.invoke(moduleInstance);
                                     }
@@ -172,12 +182,12 @@ public final class ModuleFacade {
 
                     @Override
                     public int getKey() {
-                        return module.key();
+                        return key;
                     }
 
                     @Override
                     public void setKey(int key) {
-                        typeAnnotation(klass.getAnnotation(Module.class), "key", key);
+                        this.key = key;
                     }
 
                     @Override
@@ -264,18 +274,6 @@ public final class ModuleFacade {
                     }
                 }
             }
-        }
-    }
-
-    private void typeAnnotation(Annotation annotation, String name, Object value) {
-        try {
-            InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
-            Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
-            memberValues.setAccessible(true);
-            Map<String, Object> map = (Map<String, Object>) memberValues.get(invocationHandler);
-            map.put(name, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
         }
     }
 }
