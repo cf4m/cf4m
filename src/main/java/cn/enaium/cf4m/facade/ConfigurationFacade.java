@@ -1,7 +1,7 @@
 package cn.enaium.cf4m.facade;
 
 import cn.enaium.cf4m.annotation.configuration.Configuration;
-import cn.enaium.cf4m.annotation.configuration.Value;
+import cn.enaium.cf4m.annotation.configuration.Key;
 import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigurationContainer;
 
@@ -41,8 +41,8 @@ public final class ConfigurationFacade {
         for (Map.Entry<String, Object> stringObjectEntry : configurations.entrySet()) {
             for (Field declaredField : stringObjectEntry.getValue().getClass().getDeclaredFields()) {
                 declaredField.setAccessible(true);
-                if (declaredField.isAnnotationPresent(Value.class)) {
-                    final Value annotation = declaredField.getAnnotation(Value.class);
+                if (declaredField.isAnnotationPresent(Key.class)) {
+                    final Key annotation = declaredField.getAnnotation(Key.class);
                     final String name;
                     if (annotation.value().isEmpty()) {
                         name = declaredField.getName();

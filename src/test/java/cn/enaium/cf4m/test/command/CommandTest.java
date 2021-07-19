@@ -21,7 +21,7 @@ public class CommandTest {
     }
 
     @Exec
-    public void exec(String var1, int var2) {
+    public void exec(String var1, Integer var2) {
         CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(var1 + "|" + var2);
     }
 }

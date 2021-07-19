@@ -81,15 +81,8 @@ public final class CommandFacade {
 
                     if (command != null) {
                         if (!CommandFacade.this.execCommand(command, args)) {
-                            for (Method method : command.getClass().getDeclaredMethods()) {
-                                if (method.isAnnotationPresent(Exec.class)) {
-                                    Parameter[] parameters = method.getParameters();
-                                    List<String> params = new ArrayList<>();
-                                    for (Parameter parameter : parameters) {
-                                        params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
-                                    }
-                                    configuration.getByClass(CommandConfiguration.class).message(key + " " + params);
-                                }
+                            for (List<String> parameters : this.getByInstance(command).getParam()) {
+                                configuration.getByClass(CommandConfiguration.class).message(key + " " + parameters);
                             }
                         }
                     } else {
@@ -125,6 +118,21 @@ public final class CommandFacade {
                     public String[] getKey() {
                         return klass.getAnnotation(Command.class).value();
                     }
+
+                    @Override
+                    public List<List<String>> getParam() {
+                        List<List<String>> param = new ArrayList<>();
+                        for (Method method : getInstance().getClass().getDeclaredMethods()) {
+                            if (method.isAnnotationPresent(Exec.class)) {
+                                List<String> parameters = new ArrayList<>();
+                                for (Parameter parameter : method.getParameters()) {
+                                    parameters.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
+                                }
+                                param.add(parameters);
+                            }
+                        }
+                        return param;
+                    }
                 });
             }
         }
@@ -140,23 +148,13 @@ public final class CommandFacade {
                     String arg = args.get(i);
                     Class<?> paramType = method.getParameterTypes()[i];
                     try {
-                        if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
-                            params.add(Boolean.parseBoolean(arg));
-                        } else if (paramType.equals(Integer.class) || paramType.equals(int.class)) {
-                            params.add(Integer.parseInt(arg));
-                        } else if (paramType.equals(Float.class) || paramType.equals(float.class)) {
-                            params.add(Float.parseFloat(arg));
-                        } else if (paramType.equals(Double.class) || paramType.equals(double.class)) {
-                            params.add(Double.parseDouble(arg));
-                        } else if (paramType.equals(Long.class) || paramType.equals(long.class)) {
-                            params.add(Long.parseLong(arg));
-                        } else if (paramType.equals(Short.class) || paramType.equals(short.class)) {
-                            params.add(Short.parseShort(arg));
-                        } else if (paramType.equals(Byte.class) || paramType.equals(byte.class)) {
-                            params.add(Byte.parseByte(arg));
-                        } else if (paramType.equals(String.class)) {
-                            params.add(String.valueOf(arg));
+
+                        if (paramType.equals(String.class)) {
+                            params.add(arg);
+                        } else {
+                            params.add(paramType.getMethod("valueOf", String.class).invoke(null, arg));
                         }
+
                     } catch (Exception e) {
                         configuration.getByClass(CommandConfiguration.class).message(e.getMessage());
                         e.printStackTrace();

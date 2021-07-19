@@ -14,9 +14,9 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Value {
+public @interface Key {
     /**
-     * @return key
+     * @return configuration key
      */
     String value() default "";
 

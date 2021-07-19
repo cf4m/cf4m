@@ -20,74 +20,37 @@ public final class CF4M {
      * Nullable
      * Only read
      */
-    @Deprecated
-    public static ICF4M INSTANCE = new ICF4M() {
-        @Override
-        public ClassContainer getKlass() {
-            return null;
-        }
-
-        @Override
-        public ConfigurationContainer getConfiguration() {
-            return null;
-        }
-
-        @Override
-        public EventContainer getEvent() {
-            return null;
-        }
-
-        @Override
-        public ModuleContainer getModule() {
-            return null;
-        }
-
-        @Override
-        public CommandContainer getCommand() {
-            return null;
-        }
-
-        @Override
-        public ConfigContainer getConfig() {
-            return null;
-        }
-    };
+    public static ClassContainer CLASS;
 
     /**
      * Nullable
      * Only read
      */
-    public static ClassContainer CLASS = INSTANCE.getKlass();
+    public static ConfigurationContainer CONFIGURATION;
 
     /**
      * Nullable
      * Only read
      */
-    public static ConfigurationContainer CONFIGURATION = INSTANCE.getConfiguration();
+    public static EventContainer EVENT;
 
     /**
      * Nullable
      * Only read
      */
-    public static EventContainer EVENT = INSTANCE.getEvent();
+    public static ModuleContainer MODULE;
 
     /**
      * Nullable
      * Only read
      */
-    public static ModuleContainer MODULE = INSTANCE.getModule();
+    public static CommandContainer COMMAND;
 
     /**
      * Nullable
      * Only read
      */
-    public static CommandContainer COMMAND = INSTANCE.getCommand();
-
-    /**
-     * Nullable
-     * Only read
-     */
-    public static ConfigContainer CONFIG = INSTANCE.getConfig();
+    public static ConfigContainer CONFIG;
 
     private static boolean run = false;
 
@@ -112,39 +75,6 @@ public final class CF4M {
             classContainer.create(ClassContainer.class, classContainer);
             classContainer.create(ConfigContainer.class, configContainer);
             classContainer.create(ConfigurationContainer.class, configuration);
-            ICF4M cf4m = new ICF4M() {
-                @Override
-                public ClassContainer getKlass() {
-                    return classContainer;
-                }
-
-                @Override
-                public ConfigurationContainer getConfiguration() {
-                    return configuration;
-                }
-
-                @Override
-                public EventContainer getEvent() {
-                    return eventContainer;
-                }
-
-                @Override
-                public ModuleContainer getModule() {
-                    return moduleContainer;
-                }
-
-                @Override
-                public CommandContainer getCommand() {
-                    return commandContainer;
-                }
-
-                @Override
-                public ConfigContainer getConfig() {
-                    return configContainer;
-                }
-            };
-
-            INSTANCE = cf4m;
             CLASS = classContainer;
             CONFIGURATION = configuration;
             EVENT = eventContainer;
@@ -168,7 +98,7 @@ public final class CF4M {
      * @param mainClass MainClass.
      */
     public static void run(Class<?> mainClass) {
-        run(mainClass, new File(".", mainClass.getSimpleName()).toString());
+        run(mainClass, new File(mainClass.getSimpleName()).toString());
     }
 
     /**

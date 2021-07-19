@@ -18,6 +18,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -26,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * @author Enaium
  */
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked", "deprecation"})
 public final class ClassFacade {
 
     public final ClassContainer classContainer;
@@ -182,25 +187,26 @@ public final class ClassFacade {
                     if (file.exists()) {
                         try {
                             if (file.isDirectory()) {
-                                List<File> files = new ArrayList<>();
-                                listFiles(file, files);
-                                for (File listFile : files) {
-                                    String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
-                                    if (classFile.startsWith(File.separator)) {
-                                        classFile = classFile.substring(1);
+                                Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
+                                    @Override
+                                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                                        if (path.toFile().getName().endsWith(".class")) {
+                                            File listFile = path.toFile();
+                                            String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
+                                            if (classFile.startsWith(File.separator)) {
+                                                classFile = classFile.substring(1);
+                                            }
+                                            classNames.add(classFile.replace(File.separator, "."));
+                                        }
+                                        return super.visitFile(path, attrs);
                                     }
-                                    classNames.add(classFile.replace(File.separator, "."));
-                                }
+                                });
                             } else {
                                 JarFile jarFile = new JarFile(file);
                                 if (url.getFile().endsWith(".jar")) {
                                     Enumeration<JarEntry> entries = jarFile.entries();
                                     while (entries.hasMoreElements()) {
                                         JarEntry jarEntry = entries.nextElement();
-
-                                        if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
-                                            continue;
-                                        }
 
                                         if (jarEntry.getName().endsWith(".class")) {
                                             classNames.add(jarEntry.getName().replace(".class", "").replace("/", "."));
@@ -245,20 +251,5 @@ public final class ClassFacade {
             classLoaders.stream().filter(it -> it instanceof URLClassLoader).map(it -> (URLClassLoader) it).forEach(it -> Collections.addAll(urls, it.getURLs()));
         }
         return new ArrayList<>(urls);
-    }
-
-    private void listFiles(File file, List<File> list) {
-        File[] listFiles = file.listFiles();
-        if (listFiles == null) {
-            return;
-        }
-
-        for (File listFile : listFiles) {
-            if (listFile.isFile() && listFile.getName().endsWith(".class")) {
-                list.add(listFile);
-            } else if (file.isDirectory()) {
-                listFiles(listFile.getAbsoluteFile(), list);
-            }
-        }
     }
 }
