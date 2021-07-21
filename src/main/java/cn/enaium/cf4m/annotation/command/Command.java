@@ -15,7 +15,13 @@ import java.util.List;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
+    /**
+     * @return command key
+     */
     String[] value();
 
+    /**
+     * @return command description
+     */
     String description() default "";
 }

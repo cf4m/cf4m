@@ -7,15 +7,11 @@ import java.util.List;
  */
 public interface CommandProvider extends Provider {
     /**
-     * NotNull
-     *
      * @return command key
      */
     String[] getKey();
 
     /**
-     * NotNull
-     *
      * @return command param
      */
     List<List<String>> getParam();

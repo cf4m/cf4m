@@ -1,7 +1,7 @@
-package cn.enaium.cf4m.facade;
+package cn.enaium.cf4m.factory;
 
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Event;
-import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.EventContainer;
 import cn.enaium.cf4m.service.EventService;
 
@@ -11,31 +11,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+
 /**
  * @author Enaium
  */
-public final class EventFacade {
+public final class EventFactory {
 
 
     private final ConcurrentHashMap<Class<?>, CopyOnWriteArrayList<EventBean>> events;
 
     public final EventContainer eventContainer;
 
-    public EventFacade(ClassContainer classContainer) {
+    public EventFactory() {
         events = new ConcurrentHashMap<>();
-        final ArrayList<EventService> processors = classContainer.getService(EventService.class);
+        final ArrayList<EventService> processors = CF4M.CLASS.getService(EventService.class);
         eventContainer = new EventContainer() {
             @Override
             public void register(Object instance) {
                 processors.forEach(eventService -> eventService.beforeRegister(instance));
-                EventFacade.this.register(instance);
+                EventFactory.this.register(instance);
                 processors.forEach(eventService -> eventService.afterRegister(instance));
             }
 
             @Override
             public void unregister(Object instance) {
                 processors.forEach(eventService -> eventService.beforeUnregister(instance));
-                EventFacade.this.unregister(instance);
+                EventFactory.this.unregister(instance);
                 processors.forEach(eventService -> eventService.afterUnregister(instance));
             }
 

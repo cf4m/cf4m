@@ -15,7 +15,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Setting {
+    /**
+     * @return module setting name
+     */
     String value();
 
+    /**
+     * @return module setting description
+     */
     String description() default "";
 }

@@ -15,4 +15,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Exec {
+    /**
+     * @return wait for the command to finish
+     */
+    boolean await() default true;
 }

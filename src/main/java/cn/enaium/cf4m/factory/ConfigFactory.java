@@ -1,15 +1,13 @@
-package cn.enaium.cf4m.facade;
+package cn.enaium.cf4m.factory;
 
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
 import cn.enaium.cf4m.configuration.ConfigConfiguration;
-import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ConfigContainer;
-import cn.enaium.cf4m.container.ConfigurationContainer;
 import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -20,16 +18,16 @@ import java.util.HashMap;
 /**
  * @author Enaium
  */
-public final class ConfigFacade {
+public final class ConfigFactory {
 
     public final ConfigContainer configContainer;
 
-    public ConfigFacade(ClassContainer classContainer, ConfigurationContainer configuration, String path) {
+    public ConfigFactory(String path) {
         final HashMap<Object, ConfigProvider> configs = new HashMap<>();
-        ArrayList<ConfigService> processors = classContainer.getService(ConfigService.class);
-        for (Class<?> klass : classContainer.getAll()) {
+        ArrayList<ConfigService> processors = CF4M.CLASS.getService(ConfigService.class);
+        for (Class<?> klass : CF4M.CLASS.getAll()) {
             if (klass.isAnnotationPresent(Config.class)) {
-                final Object configInstance = classContainer.create(klass);
+                final Object configInstance = CF4M.CLASS.create(klass);
                 configs.put(configInstance, new ConfigProvider() {
                     @Override
                     public String getName() {
@@ -77,12 +75,12 @@ public final class ConfigFacade {
 
             @Override
             public <T> ConfigProvider getByClass(Class<T> klass) {
-                return getByInstance(classContainer.create(klass));
+                return getByInstance(CF4M.CLASS.create(klass));
             }
 
             @Override
             public void load() {
-                if (configuration.getByClass(ConfigConfiguration.class).getEnable()) {
+                if (CF4M.CONFIGURATION.getByClass(ConfigConfiguration.class).getEnable()) {
                     configs.keySet().forEach(config -> {
                         for (Method method : config.getClass().getMethods()) {
                             method.setAccessible(true);
@@ -105,7 +103,7 @@ public final class ConfigFacade {
             @SuppressWarnings("ResultOfMethodCallIgnored")
             @Override
             public void save() {
-                if (configuration.getByClass(ConfigConfiguration.class).getEnable()) {
+                if (CF4M.CONFIGURATION.getByClass(ConfigConfiguration.class).getEnable()) {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
                     configs.keySet().forEach(config -> {

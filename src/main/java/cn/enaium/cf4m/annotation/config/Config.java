@@ -13,7 +13,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
+    /**
+     * @return config name
+     */
     String value();
 
+    /**
+     * @return config description
+     */
     String description() default "";
 }

@@ -1,15 +1,13 @@
-package cn.enaium.cf4m.facade;
+package cn.enaium.cf4m.factory;
 
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.command.Command;
 import cn.enaium.cf4m.annotation.command.Exec;
 import cn.enaium.cf4m.annotation.command.Param;
 import cn.enaium.cf4m.configuration.CommandConfiguration;
-import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.CommandContainer;
-import cn.enaium.cf4m.container.ConfigurationContainer;
 import cn.enaium.cf4m.service.CommandService;
 import cn.enaium.cf4m.provider.CommandProvider;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -19,19 +17,14 @@ import java.util.*;
 /**
  * @author Enaium
  */
-public final class CommandFacade {
+public final class CommandFactory {
 
     private final HashMap<Object, CommandProvider> commands;
 
     public final CommandContainer commandContainer;
 
-    private final ConfigurationContainer configuration;
 
-    private final ClassContainer classContainer;
-
-    public CommandFacade(ClassContainer classContainer, ConfigurationContainer configuration) {
-        this.classContainer = classContainer;
-        this.configuration = configuration;
+    public CommandFactory() {
         commands = new HashMap<>();
 
         commandContainer = new CommandContainer() {
@@ -47,7 +40,7 @@ public final class CommandFacade {
 
             @Override
             public <T> CommandProvider getByClass(Class<T> klass) {
-                return getByInstance(classContainer.create(klass));
+                return getByInstance(CF4M.CLASS.create(klass));
             }
 
             @Override
@@ -64,14 +57,14 @@ public final class CommandFacade {
 
             @Override
             public boolean execCommand(String rawMessage) {
-                if (!rawMessage.startsWith(configuration.getByClass(CommandConfiguration.class).getPrefix())) {
+                if (!rawMessage.startsWith(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix())) {
                     return false;
                 }
 
-                boolean safe = rawMessage.split(configuration.getByClass(CommandConfiguration.class).getPrefix()).length > 1;
+                boolean safe = rawMessage.split(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix()).length > 1;
 
                 if (safe) {
-                    String beheaded = rawMessage.split(configuration.getByClass(CommandConfiguration.class).getPrefix())[1];
+                    String beheaded = rawMessage.split(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix())[1];
                     List<String> args = new ArrayList<>();
                     Collections.addAll(args, beheaded.split(" "));
                     String key = args.get(0);
@@ -80,9 +73,9 @@ public final class CommandFacade {
                     Object command = getCommand(key);
 
                     if (command != null) {
-                        if (!CommandFacade.this.execCommand(command, args)) {
+                        if (!CommandFactory.this.execCommand(command, args)) {
                             for (List<String> parameters : this.getByInstance(command).getParam()) {
-                                configuration.getByClass(CommandConfiguration.class).message(key + " " + parameters);
+                                CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(key + " " + parameters);
                             }
                         }
                     } else {
@@ -95,9 +88,9 @@ public final class CommandFacade {
             }
         };
 
-        for (Class<?> klass : classContainer.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll()) {
             if (klass.isAnnotationPresent(Command.class)) {
-                final Object commandInstance = classContainer.create(klass);
+                final Object commandInstance = CF4M.CLASS.create(klass);
                 commands.put(commandInstance, new CommandProvider() {
                     @Override
                     public String getName() {
@@ -143,39 +136,46 @@ public final class CommandFacade {
             method.setAccessible(true);
 
             if (method.getParameterTypes().length == args.size() && method.isAnnotationPresent(Exec.class)) {
+                Exec annotation = method.getAnnotation(Exec.class);
                 List<Object> params = new ArrayList<>();
                 for (int i = 0; i < method.getParameterTypes().length; i++) {
                     String arg = args.get(i);
                     Class<?> paramType = method.getParameterTypes()[i];
                     try {
-
                         if (paramType.equals(String.class)) {
                             params.add(arg);
                         } else {
                             params.add(paramType.getMethod("valueOf", String.class).invoke(null, arg));
                         }
-
                     } catch (Exception e) {
-                        configuration.getByClass(CommandConfiguration.class).message(e.getMessage());
+                        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
 
-                List<CommandService> processors = classContainer.getService(CommandService.class);
+                List<CommandService> processors = CF4M.CLASS.getService(CommandService.class);
+                processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
+                Runnable runnable = () -> {
+                    try {
+                        if (params.isEmpty()) {
+                            method.invoke(command);
+                        } else {
+                            method.invoke(command, params.toArray());
+                        }
 
-                try {
-                    processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
-                    if (params.isEmpty()) {
-                        method.invoke(command);
-                    } else {
-                        method.invoke(command, params.toArray());
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(e.getMessage());
+                        e.printStackTrace();
                     }
-                    processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
-                    return true;
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    configuration.getByClass(CommandConfiguration.class).message(e.getMessage());
-                    e.printStackTrace();
+                };
+
+                if (annotation.await()) {
+                    runnable.run();
+                } else {
+                    new Thread(runnable).start();
                 }
+                processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
+                return true;
             }
         }
         return false;
@@ -183,7 +183,7 @@ public final class CommandFacade {
 
     private void help() {
         for (CommandProvider commandProvider : commandContainer.getAll()) {
-            configuration.getByClass(CommandConfiguration.class).message(configuration.getByClass(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
+            CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }
 

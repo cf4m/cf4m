@@ -1,14 +1,11 @@
 package cn.enaium.cf4m.provider;
 
 import cn.enaium.cf4m.container.SettingContainer;
-
 /**
  * @author Enaium
  */
 public interface ModuleProvider extends Provider {
     /**
-     * NotNull
-     * <p>
      * get module enable
      *
      * @return module enable
@@ -35,8 +32,6 @@ public interface ModuleProvider extends Provider {
     void setKey(int key);
 
     /**
-     * NotNull
-     *
      * @return module type
      */
     String getType();
@@ -51,8 +46,6 @@ public interface ModuleProvider extends Provider {
     <T> T getExtend(Class<T> klass);
 
     /**
-     * NotNull
-     *
      * @return module setting
      */
     SettingContainer getSetting();

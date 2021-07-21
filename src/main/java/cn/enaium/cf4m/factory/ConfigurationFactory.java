@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.facade;
+package cn.enaium.cf4m.factory;
 
 import cn.enaium.cf4m.annotation.configuration.Configuration;
 import cn.enaium.cf4m.annotation.configuration.Key;
@@ -14,12 +14,12 @@ import java.util.*;
  * @author Enaium
  */
 @SuppressWarnings("unchecked")
-public final class ConfigurationFacade {
+public final class ConfigurationFactory {
 
     public final ConfigurationContainer configurationContainer;
     public final Properties properties = new Properties();
 
-    public ConfigurationFacade(ClassContainer classContainer, ClassLoader classLoader) {
+    public ConfigurationFactory(ClassContainer classContainer, ClassLoader classLoader) {
 
         final HashMap<String, Object> configurations = new HashMap<>();
 

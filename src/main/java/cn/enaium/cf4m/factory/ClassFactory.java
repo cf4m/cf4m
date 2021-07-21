@@ -1,4 +1,4 @@
-package cn.enaium.cf4m.facade;
+package cn.enaium.cf4m.factory;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.*;
@@ -8,7 +8,6 @@ import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
 import cn.enaium.cf4m.struct.Pair;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -32,15 +31,14 @@ import java.util.stream.Collectors;
  * @author Enaium
  */
 @SuppressWarnings({"unchecked", "deprecation"})
-public final class ClassFacade {
+public final class ClassFactory {
 
     public final ClassContainer classContainer;
     public final ConfigurationContainer configuration;
     private final ArrayList<PluginBean<PluginInitialize>> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
-
-    public ClassFacade(Class<?> mainClass) {
+    public ClassFactory(Class<?> mainClass) {
         LinkedHashSet<String> allClassName = getAllClassName(mainClass.getClassLoader());
 
         final List<Pair<ClassLoader, String>> scan = new ArrayList<>();
@@ -119,11 +117,11 @@ public final class ClassFacade {
 
             @Override
             public <T> ArrayList<T> getService(Class<T> type) {
-                return ClassFacade.this.getService(type);
+                return ClassFactory.this.getService(type);
             }
         };
 
-        configuration = new ConfigurationFacade(classContainer, mainClass.getClassLoader()).configurationContainer;
+        configuration = new ConfigurationFactory(classContainer, mainClass.getClassLoader()).configurationContainer;
     }
 
     public void after() {

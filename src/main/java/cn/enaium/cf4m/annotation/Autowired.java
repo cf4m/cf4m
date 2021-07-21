@@ -8,23 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Add this annotation to the class/field to the field of this class will be auto put
  * <p>
- * Support {@link cn.enaium.cf4m.annotation.module.Module}
- * <p>
- * Support {@link cn.enaium.cf4m.annotation.command.Command}
- * <p>
- * Support {@link cn.enaium.cf4m.annotation.config.Config}
- * <p>
- * Support {@link cn.enaium.cf4m.container.ClassContainer}
- * <p>
- * Support {@link cn.enaium.cf4m.container.EventContainer}
- * <p>
- * Support {@link cn.enaium.cf4m.container.ModuleContainer}
- * <p>
- * Support {@link cn.enaium.cf4m.container.CommandContainer}
- * <p>
- * Support {@link cn.enaium.cf4m.container.ConfigContainer}
- * <p>
- * Support {@link cn.enaium.cf4m.container.ConfigurationContainer}
+ * Support all classes in the container
  *
  * @author Enaium
  */
