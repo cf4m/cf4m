@@ -14,7 +14,7 @@ public @interface Module {
 
     int key() default 0;
 
-    String type() default "NONE";
+    String type() default "UNKNOWN";
 
     String description() default "";
 }
