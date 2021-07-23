@@ -8,7 +8,7 @@ import cn.enaium.cf4m.annotation.configuration.Key;
  */
 @Configuration("cf4m.config")
 public class ConfigConfiguration {
-    @Value
+    @Key
     private boolean enable = true;
 
     public boolean getEnable() {

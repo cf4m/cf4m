@@ -11,10 +11,10 @@ import java.lang.reflect.Method;
  */
 @Configuration("cf4m.command")
 public class CommandConfiguration {
-    @Value
+    @Key
     private String prefix = "`";
 
-    @Value
+    @Key
     private String message = "cn.enaium.cf4m.configuration.CommandConfiguration:send";
 
     public String getPrefix() {
