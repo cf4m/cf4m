@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Configuration {
     /**
-     * @return key
+     * @return key prefix
      */
     String value();
 

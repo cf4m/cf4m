@@ -1,7 +1,7 @@
 package cn.enaium.cf4m.configuration;
 
 import cn.enaium.cf4m.annotation.configuration.Configuration;
-import cn.enaium.cf4m.annotation.configuration.Value;
+import cn.enaium.cf4m.annotation.configuration.Key;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
