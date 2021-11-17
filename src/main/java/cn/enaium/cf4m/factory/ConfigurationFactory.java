@@ -17,22 +17,28 @@ import java.util.*;
 public final class ConfigurationFactory {
 
     public final ConfigurationContainer configurationContainer;
-    public final Properties properties = new Properties();
+    public final Properties configurationProperties = new Properties();
 
     public ConfigurationFactory(ClassContainer classContainer, ClassLoader classLoader) {
 
         final HashMap<String, Object> configurations = new HashMap<>();
 
+        final HashMap<String, Object> properties = new HashMap<>();
+
         for (Class<?> klass : classContainer.getAll()) {
             if (klass.isAnnotationPresent(Configuration.class)) {
                 configurations.put(klass.getAnnotation(Configuration.class).value(), classContainer.create(klass));
+            }
+
+            if (klass.isAnnotationPresent(cn.enaium.cf4m.annotation.configuration.Properties.class)) {
+                properties.put(klass.getAnnotation(cn.enaium.cf4m.annotation.configuration.Properties.class).value(), classContainer.create(klass));
             }
         }
 
         InputStream resourceAsStream = classLoader.getResourceAsStream("cf4m.configuration.properties");
         try {
             if (resourceAsStream != null) {
-                properties.load(resourceAsStream);
+                configurationProperties.load(resourceAsStream);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,9 +57,9 @@ public final class ConfigurationFactory {
                     }
 
                     String keyAndValue = stringObjectEntry.getKey() + "." + name;
-                    if (properties.containsKey(keyAndValue)) {
+                    if (configurationProperties.containsKey(keyAndValue)) {
                         try {
-                            declaredField.set(stringObjectEntry.getValue(), properties.get(keyAndValue));
+                            declaredField.set(stringObjectEntry.getValue(), configurationProperties.get(keyAndValue));
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
@@ -66,6 +72,33 @@ public final class ConfigurationFactory {
             if (klass.getSuperclass() != null && klass.getSuperclass().isAnnotationPresent(Configuration.class)) {
                 Configuration annotation = klass.getSuperclass().getAnnotation(Configuration.class);
                 configurations.put(annotation.value(), classContainer.put(klass.getSuperclass(), classContainer.create(klass)));
+            }
+        }
+
+        for (Map.Entry<String, Object> stringObjectEntry : properties.entrySet()) {
+            Properties propertiesProperties = new Properties();
+            InputStream propertiesInputStream = classLoader.getResourceAsStream(stringObjectEntry.getKey());
+            try {
+                if (propertiesInputStream != null) {
+                    propertiesProperties.load(propertiesInputStream);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            for (Field declaredField : stringObjectEntry.getValue().getClass().getDeclaredFields()) {
+                declaredField.setAccessible(true);
+                if (declaredField.isAnnotationPresent(Key.class)) {
+                    Key annotation = declaredField.getAnnotation(Key.class);
+                    String key = annotation.value();
+                    if (propertiesProperties.containsKey(key)) {
+                        try {
+                            declaredField.set(stringObjectEntry.getValue(), propertiesProperties.get(key));
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
 

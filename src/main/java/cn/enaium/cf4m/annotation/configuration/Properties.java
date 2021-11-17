@@ -6,19 +6,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Add this annotation to the field to that this class is a configuration value
- * <p>
- * The default is the field name
+ * Add this annotation to the class to that this class need to read properties
  *
  * @author Enaium
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Key {
+public @interface Properties {
     /**
-     * @return properties key
+     * @return file name
      */
-    String value() default "";
+    String value();
 
     /**
      * @return description
