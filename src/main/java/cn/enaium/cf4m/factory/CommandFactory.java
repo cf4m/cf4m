@@ -1,15 +1,29 @@
-package cn.enaium.cf4m.facade;
+/**
+ * Copyright (C) 2020 Enaium
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
+package cn.enaium.cf4m.factory;
+
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.command.Command;
 import cn.enaium.cf4m.annotation.command.Exec;
 import cn.enaium.cf4m.annotation.command.Param;
 import cn.enaium.cf4m.configuration.CommandConfiguration;
-import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.CommandContainer;
-import cn.enaium.cf4m.container.ConfigurationContainer;
 import cn.enaium.cf4m.service.CommandService;
 import cn.enaium.cf4m.provider.CommandProvider;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -19,19 +33,14 @@ import java.util.*;
 /**
  * @author Enaium
  */
-public final class CommandFacade {
+public final class CommandFactory {
 
     private final HashMap<Object, CommandProvider> commands;
 
     public final CommandContainer commandContainer;
 
-    private final ConfigurationContainer configuration;
 
-    private final ClassContainer classContainer;
-
-    public CommandFacade(ClassContainer classContainer, ConfigurationContainer configuration) {
-        this.classContainer = classContainer;
-        this.configuration = configuration;
+    public CommandFactory() {
         commands = new HashMap<>();
 
         commandContainer = new CommandContainer() {
@@ -47,7 +56,7 @@ public final class CommandFacade {
 
             @Override
             public <T> CommandProvider getByClass(Class<T> klass) {
-                return getByInstance(classContainer.create(klass));
+                return getByInstance(CF4M.CLASS.create(klass));
             }
 
             @Override
@@ -64,14 +73,14 @@ public final class CommandFacade {
 
             @Override
             public boolean execCommand(String rawMessage) {
-                if (!rawMessage.startsWith(configuration.getByClass(CommandConfiguration.class).getPrefix())) {
+                if (!rawMessage.startsWith(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix())) {
                     return false;
                 }
 
-                boolean safe = rawMessage.split(configuration.getByClass(CommandConfiguration.class).getPrefix()).length > 1;
+                boolean safe = rawMessage.split(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix()).length > 1;
 
                 if (safe) {
-                    String beheaded = rawMessage.split(configuration.getByClass(CommandConfiguration.class).getPrefix())[1];
+                    String beheaded = rawMessage.split(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix())[1];
                     List<String> args = new ArrayList<>();
                     Collections.addAll(args, beheaded.split(" "));
                     String key = args.get(0);
@@ -80,16 +89,9 @@ public final class CommandFacade {
                     Object command = getCommand(key);
 
                     if (command != null) {
-                        if (!CommandFacade.this.execCommand(command, args)) {
-                            for (Method method : command.getClass().getDeclaredMethods()) {
-                                if (method.isAnnotationPresent(Exec.class)) {
-                                    Parameter[] parameters = method.getParameters();
-                                    List<String> params = new ArrayList<>();
-                                    for (Parameter parameter : parameters) {
-                                        params.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
-                                    }
-                                    configuration.getByClass(CommandConfiguration.class).message(key + " " + params);
-                                }
+                        if (!CommandFactory.this.execCommand(command, args)) {
+                            for (List<String> parameters : this.getByInstance(command).getParam()) {
+                                CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(key + " " + parameters);
                             }
                         }
                     } else {
@@ -102,9 +104,9 @@ public final class CommandFacade {
             }
         };
 
-        for (Class<?> klass : classContainer.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll()) {
             if (klass.isAnnotationPresent(Command.class)) {
-                final Object commandInstance = classContainer.create(klass);
+                final Object commandInstance = CF4M.CLASS.create(klass);
                 commands.put(commandInstance, new CommandProvider() {
                     @Override
                     public String getName() {
@@ -125,6 +127,21 @@ public final class CommandFacade {
                     public String[] getKey() {
                         return klass.getAnnotation(Command.class).value();
                     }
+
+                    @Override
+                    public List<List<String>> getParam() {
+                        List<List<String>> param = new ArrayList<>();
+                        for (Method method : getInstance().getClass().getDeclaredMethods()) {
+                            if (method.isAnnotationPresent(Exec.class)) {
+                                List<String> parameters = new ArrayList<>();
+                                for (Parameter parameter : method.getParameters()) {
+                                    parameters.add("<" + (parameter.isAnnotationPresent(Param.class) ? parameter.getAnnotation(Param.class).value() : "NULL") + "|" + parameter.getType().getSimpleName() + ">");
+                                }
+                                param.add(parameters);
+                            }
+                        }
+                        return param;
+                    }
                 });
             }
         }
@@ -135,49 +152,46 @@ public final class CommandFacade {
             method.setAccessible(true);
 
             if (method.getParameterTypes().length == args.size() && method.isAnnotationPresent(Exec.class)) {
+                Exec annotation = method.getAnnotation(Exec.class);
                 List<Object> params = new ArrayList<>();
                 for (int i = 0; i < method.getParameterTypes().length; i++) {
                     String arg = args.get(i);
                     Class<?> paramType = method.getParameterTypes()[i];
                     try {
-                        if (paramType.equals(Boolean.class) || paramType.equals(boolean.class)) {
-                            params.add(Boolean.parseBoolean(arg));
-                        } else if (paramType.equals(Integer.class) || paramType.equals(int.class)) {
-                            params.add(Integer.parseInt(arg));
-                        } else if (paramType.equals(Float.class) || paramType.equals(float.class)) {
-                            params.add(Float.parseFloat(arg));
-                        } else if (paramType.equals(Double.class) || paramType.equals(double.class)) {
-                            params.add(Double.parseDouble(arg));
-                        } else if (paramType.equals(Long.class) || paramType.equals(long.class)) {
-                            params.add(Long.parseLong(arg));
-                        } else if (paramType.equals(Short.class) || paramType.equals(short.class)) {
-                            params.add(Short.parseShort(arg));
-                        } else if (paramType.equals(Byte.class) || paramType.equals(byte.class)) {
-                            params.add(Byte.parseByte(arg));
-                        } else if (paramType.equals(String.class)) {
-                            params.add(String.valueOf(arg));
+                        if (paramType.equals(String.class)) {
+                            params.add(arg);
+                        } else {
+                            params.add(paramType.getMethod("valueOf", String.class).invoke(null, arg));
                         }
                     } catch (Exception e) {
-                        configuration.getByClass(CommandConfiguration.class).message(e.getMessage());
+                        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
 
-                List<CommandService> processors = classContainer.getService(CommandService.class);
+                List<CommandService> processors = CF4M.CLASS.getService(CommandService.class);
+                processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
+                Runnable runnable = () -> {
+                    try {
+                        if (params.isEmpty()) {
+                            method.invoke(command);
+                        } else {
+                            method.invoke(command, params.toArray());
+                        }
 
-                try {
-                    processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
-                    if (params.isEmpty()) {
-                        method.invoke(command);
-                    } else {
-                        method.invoke(command, params.toArray());
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(e.getMessage());
+                        e.printStackTrace();
                     }
-                    processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
-                    return true;
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    configuration.getByClass(CommandConfiguration.class).message(e.getMessage());
-                    e.printStackTrace();
+                };
+
+                if (annotation.await()) {
+                    runnable.run();
+                } else {
+                    new Thread(runnable).start();
                 }
+                processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
+                return true;
             }
         }
         return false;
@@ -185,7 +199,7 @@ public final class CommandFacade {
 
     private void help() {
         for (CommandProvider commandProvider : commandContainer.getAll()) {
-            configuration.getByClass(CommandConfiguration.class).message(configuration.getByClass(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
+            CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }
 

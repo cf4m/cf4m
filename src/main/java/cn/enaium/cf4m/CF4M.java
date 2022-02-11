@@ -1,11 +1,25 @@
+/**
+ * Copyright (C) 2020 Enaium
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package cn.enaium.cf4m;
 
 import cn.enaium.cf4m.container.*;
-import cn.enaium.cf4m.facade.*;
+import cn.enaium.cf4m.factory.*;
 
 import java.io.File;
-import java.lang.reflect.*;
-import java.util.Objects;
 
 /**
  * @author Enaium
@@ -17,77 +31,34 @@ public final class CF4M {
     }
 
     /**
-     * Nullable
      * Only read
      */
-    @Deprecated
-    public static ICF4M INSTANCE = new ICF4M() {
-        @Override
-        public ClassContainer getKlass() {
-            return null;
-        }
-
-        @Override
-        public ConfigurationContainer getConfiguration() {
-            return null;
-        }
-
-        @Override
-        public EventContainer getEvent() {
-            return null;
-        }
-
-        @Override
-        public ModuleContainer getModule() {
-            return null;
-        }
-
-        @Override
-        public CommandContainer getCommand() {
-            return null;
-        }
-
-        @Override
-        public ConfigContainer getConfig() {
-            return null;
-        }
-    };
+    public static ClassContainer CLASS;
 
     /**
-     * Nullable
      * Only read
      */
-    public static ClassContainer CLASS = INSTANCE.getKlass();
+    public static ConfigurationContainer CONFIGURATION;
 
     /**
-     * Nullable
      * Only read
      */
-    public static ConfigurationContainer CONFIGURATION = INSTANCE.getConfiguration();
+    public static EventContainer EVENT;
 
     /**
-     * Nullable
      * Only read
      */
-    public static EventContainer EVENT = INSTANCE.getEvent();
+    public static ModuleContainer MODULE;
 
     /**
-     * Nullable
      * Only read
      */
-    public static ModuleContainer MODULE = INSTANCE.getModule();
+    public static CommandContainer COMMAND;
 
     /**
-     * Nullable
      * Only read
      */
-    public static CommandContainer COMMAND = INSTANCE.getCommand();
-
-    /**
-     * Nullable
-     * Only read
-     */
-    public static ConfigContainer CONFIG = INSTANCE.getConfig();
+    public static ConfigContainer CONFIG;
 
     private static boolean run = false;
 
@@ -99,61 +70,33 @@ public final class CF4M {
         if (run) {
             new Exception("CF4M already run").printStackTrace();
         } else {
-            ClassFacade classFacade = new ClassFacade(mainClass);
-            final ClassContainer classContainer = classFacade.classContainer;
-            final ConfigurationContainer configuration = classFacade.configuration;
-            final EventContainer eventContainer = new EventFacade(classContainer).eventContainer;
-            final ModuleContainer moduleContainer = new ModuleFacade(classContainer).moduleContainer;
-            final CommandContainer commandContainer = new CommandFacade(classContainer, configuration).commandContainer;
-            final ConfigContainer configContainer = new ConfigFacade(classContainer, configuration, path).configContainer;
-            classContainer.create(EventContainer.class, eventContainer);
-            classContainer.create(ModuleContainer.class, moduleContainer);
-            classContainer.create(CommandContainer.class, commandContainer);
-            classContainer.create(ClassContainer.class, classContainer);
-            classContainer.create(ConfigContainer.class, configContainer);
-            classContainer.create(ConfigurationContainer.class, configuration);
-            ICF4M cf4m = new ICF4M() {
-                @Override
-                public ClassContainer getKlass() {
-                    return classContainer;
-                }
-
-                @Override
-                public ConfigurationContainer getConfiguration() {
-                    return configuration;
-                }
-
-                @Override
-                public EventContainer getEvent() {
-                    return eventContainer;
-                }
-
-                @Override
-                public ModuleContainer getModule() {
-                    return moduleContainer;
-                }
-
-                @Override
-                public CommandContainer getCommand() {
-                    return commandContainer;
-                }
-
-                @Override
-                public ConfigContainer getConfig() {
-                    return configContainer;
-                }
-            };
-
-            INSTANCE = cf4m;
+            ClassFactory classFactory = new ClassFactory(mainClass);
+            final ClassContainer classContainer = classFactory.classContainer;
             CLASS = classContainer;
+            classContainer.create(ClassContainer.class, classContainer);
+
+            final ConfigurationContainer configuration = classFactory.configuration;
             CONFIGURATION = configuration;
+            classContainer.create(ConfigurationContainer.class, configuration);
+
+            final EventContainer eventContainer = new EventFactory().eventContainer;
             EVENT = eventContainer;
+            classContainer.create(EventContainer.class, eventContainer);
+
+            final ModuleContainer moduleContainer = new ModuleFactory().moduleContainer;
             MODULE = moduleContainer;
+            classContainer.create(ModuleContainer.class, moduleContainer);
+
+            final CommandContainer commandContainer = new CommandFactory().commandContainer;
             COMMAND = commandContainer;
+            classContainer.create(CommandContainer.class, commandContainer);
+
+            final ConfigContainer configContainer = new ConfigFactory(path).configContainer;
             CONFIG = configContainer;
+            classContainer.create(ConfigContainer.class, configContainer);
 
             run = true;
-            classFacade.after();
+            classFactory.after();
             configContainer.load();
             Runtime.getRuntime().addShutdownHook(new Thread("CF4M Shutdown Thread") {
                 @Override
@@ -168,7 +111,7 @@ public final class CF4M {
      * @param mainClass MainClass.
      */
     public static void run(Class<?> mainClass) {
-        run(mainClass, new File(".", mainClass.getSimpleName()).toString());
+        run(mainClass, new File(mainClass.getSimpleName()).toString());
     }
 
     /**

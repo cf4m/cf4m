@@ -1,4 +1,20 @@
-package cn.enaium.cf4m.facade;
+/**
+ * Copyright (C) 2020 Enaium
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package cn.enaium.cf4m.factory;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Autowired;
@@ -6,14 +22,11 @@ import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
-import cn.enaium.cf4m.container.ClassContainer;
 import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
-
-import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,15 +35,15 @@ import java.util.stream.Collectors;
  * @author Enaium
  */
 @SuppressWarnings({"unchecked", "unused"})
-public final class ModuleFacade {
+public final class ModuleFactory {
 
     public final ModuleContainer moduleContainer;
 
-    public ModuleFacade(ClassContainer classContainer) {
+    public ModuleFactory() {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
         Set<Class<?>> extendClasses = new HashSet<>();
-        for (Class<?> klass : classContainer.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll()) {
             if (klass.isAnnotationPresent(Extend.class)) {
                 extendClasses.add(klass);
             }
@@ -39,10 +52,10 @@ public final class ModuleFacade {
         final Map<Object, Map<Class<?>, Object>> multipleExtend = new HashMap<>();
 
         //Add Modules
-        for (Class<?> klass : classContainer.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll()) {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
-                Object moduleInstance = classContainer.create(klass);
+                Object moduleInstance = CF4M.CLASS.create(klass);
 
                 Map<Class<?>, Object> extend = new HashMap<>();
 
@@ -118,7 +131,7 @@ public final class ModuleFacade {
                     }
                 };
 
-                ArrayList<ModuleService> processors = classContainer.getService(ModuleService.class);
+                ArrayList<ModuleService> processors = CF4M.CLASS.getService(ModuleService.class);
 
                 modules.put(moduleInstance, new ModuleProvider() {
 
@@ -247,7 +260,7 @@ public final class ModuleFacade {
 
             @Override
             public <T> ModuleProvider getByClass(Class<T> klass) {
-                return getByInstance(classContainer.create(klass));
+                return getByInstance(CF4M.CLASS.create(klass));
             }
 
             @Override

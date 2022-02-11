@@ -8,7 +8,7 @@ import cn.enaium.cf4m.annotation.configuration.Key;
  */
 @Configuration("test")
 public class ConfigurationTest {
-    @Value
+    @Key
     private String value;
 
     public String getValue() {

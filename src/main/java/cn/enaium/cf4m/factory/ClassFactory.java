@@ -1,4 +1,20 @@
-package cn.enaium.cf4m.facade;
+/**
+ * Copyright (C) 2020 Enaium
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package cn.enaium.cf4m.factory;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.*;
@@ -8,7 +24,6 @@ import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
 import cn.enaium.cf4m.struct.Pair;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -18,6 +33,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -26,16 +46,15 @@ import java.util.stream.Collectors;
 /**
  * @author Enaium
  */
-@SuppressWarnings({"unchecked"})
-public final class ClassFacade {
+@SuppressWarnings({"unchecked", "deprecation"})
+public final class ClassFactory {
 
     public final ClassContainer classContainer;
     public final ConfigurationContainer configuration;
     private final ArrayList<PluginBean<PluginInitialize>> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
     private final HashMap<Class<?>, Object> all = new HashMap<>();
 
-
-    public ClassFacade(Class<?> mainClass) {
+    public ClassFactory(Class<?> mainClass) {
         LinkedHashSet<String> allClassName = getAllClassName(mainClass.getClassLoader());
 
         final List<Pair<ClassLoader, String>> scan = new ArrayList<>();
@@ -114,11 +133,11 @@ public final class ClassFacade {
 
             @Override
             public <T> ArrayList<T> getService(Class<T> type) {
-                return ClassFacade.this.getService(type);
+                return ClassFactory.this.getService(type);
             }
         };
 
-        configuration = new ConfigurationFacade(classContainer, mainClass.getClassLoader()).configurationContainer;
+        configuration = new ConfigurationFactory(classContainer, mainClass.getClassLoader()).configurationContainer;
     }
 
     public void after() {
@@ -182,25 +201,26 @@ public final class ClassFacade {
                     if (file.exists()) {
                         try {
                             if (file.isDirectory()) {
-                                List<File> files = new ArrayList<>();
-                                listFiles(file, files);
-                                for (File listFile : files) {
-                                    String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
-                                    if (classFile.startsWith(File.separator)) {
-                                        classFile = classFile.substring(1);
+                                Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
+                                    @Override
+                                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                                        if (path.toFile().getName().endsWith(".class")) {
+                                            File listFile = path.toFile();
+                                            String classFile = listFile.getAbsolutePath().replace(file.getAbsolutePath(), "").replace(".class", "");
+                                            if (classFile.startsWith(File.separator)) {
+                                                classFile = classFile.substring(1);
+                                            }
+                                            classNames.add(classFile.replace(File.separator, "."));
+                                        }
+                                        return super.visitFile(path, attrs);
                                     }
-                                    classNames.add(classFile.replace(File.separator, "."));
-                                }
+                                });
                             } else {
                                 JarFile jarFile = new JarFile(file);
                                 if (url.getFile().endsWith(".jar")) {
                                     Enumeration<JarEntry> entries = jarFile.entries();
                                     while (entries.hasMoreElements()) {
                                         JarEntry jarEntry = entries.nextElement();
-
-                                        if (jarEntry.isDirectory() || jarEntry.getName().equals(JarFile.MANIFEST_NAME)) {
-                                            continue;
-                                        }
 
                                         if (jarEntry.getName().endsWith(".class")) {
                                             classNames.add(jarEntry.getName().replace(".class", "").replace("/", "."));
@@ -245,20 +265,5 @@ public final class ClassFacade {
             classLoaders.stream().filter(it -> it instanceof URLClassLoader).map(it -> (URLClassLoader) it).forEach(it -> Collections.addAll(urls, it.getURLs()));
         }
         return new ArrayList<>(urls);
-    }
-
-    private void listFiles(File file, List<File> list) {
-        File[] listFiles = file.listFiles();
-        if (listFiles == null) {
-            return;
-        }
-
-        for (File listFile : listFiles) {
-            if (listFile.isFile() && listFile.getName().endsWith(".class")) {
-                list.add(listFile);
-            } else if (file.isDirectory()) {
-                listFiles(listFile.getAbsoluteFile(), list);
-            }
-        }
     }
 }
