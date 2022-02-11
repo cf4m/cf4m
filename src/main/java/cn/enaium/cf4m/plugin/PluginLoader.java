@@ -23,7 +23,6 @@ import java.util.*;
 /**
  * @author Enaium
  */
-@SuppressWarnings("deprecation")
 public final class PluginLoader {
     private static final String PLUGIN = "plugin";
     private static final String NAME = "name";
