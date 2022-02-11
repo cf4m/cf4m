@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Attached to {@link Command}
  * <p>
- * Add this annotation to the method to that this method is a executable command
+ * Add this annotation to the method to that this method is an executable command
  *
  * @author Enaium
  */

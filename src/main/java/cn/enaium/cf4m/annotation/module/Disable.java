@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * Attached {@link Module}
  * <p>
- * Add this annotation to the method to that this class will be invoke at module disable
+ * Add this annotation to the method to that this class will be invoked at module disable
  *
  * @author Enaium
  */
