@@ -36,10 +36,7 @@ public @interface Module {
      */
     int key() default 0;
 
-    /**
-     * @return module type
-     */
-    String type() default "NONE";
+    String type() default "UNKNOWN";
 
     /**
      * @return module description
