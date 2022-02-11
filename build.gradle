@@ -6,8 +6,7 @@ plugins {
 group 'cn.enaium.cf4m'
 version '1.10.0'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -21,8 +20,9 @@ test {
     useJUnitPlatform()
 }
 
-java {
-    withSourcesJar()
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
 }
 
 publishing {
@@ -41,6 +41,7 @@ publishing {
             artifactId project.name
             version project.version
             from components.java
+            artifact sourcesJar
         }
     }
 }
