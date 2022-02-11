@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 /**
  * @author Enaium
  */
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings({"unchecked", "deprecation"})
 public final class ClassFactory {
 
     public final ClassContainer classContainer;
