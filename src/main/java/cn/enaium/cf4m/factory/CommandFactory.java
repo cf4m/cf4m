@@ -24,6 +24,7 @@ import cn.enaium.cf4m.configuration.CommandConfiguration;
 import cn.enaium.cf4m.container.CommandContainer;
 import cn.enaium.cf4m.service.CommandService;
 import cn.enaium.cf4m.provider.CommandProvider;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -33,6 +34,7 @@ import java.util.*;
 /**
  * @author Enaium
  */
+@SuppressWarnings("unchecked")
 public final class CommandFactory {
 
     private final HashMap<Object, CommandProvider> commands;
@@ -121,6 +123,11 @@ public final class CommandFactory {
                     @Override
                     public Object getInstance() {
                         return commandInstance;
+                    }
+
+                    @Override
+                    public <T> T get() {
+                        return (T) commandInstance;
                     }
 
                     @Override

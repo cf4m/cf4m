@@ -27,6 +27,7 @@ import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,6 +98,16 @@ public final class ModuleFactory {
                             }
 
                             @Override
+                            public <T> T get() {
+                                try {
+                                    return (T) field.get(moduleInstance);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
+
+                            @Override
                             public <T> T getSetting() {
                                 return (T) getInstance();
                             }
@@ -156,6 +167,11 @@ public final class ModuleFactory {
                     @Override
                     public Object getInstance() {
                         return moduleInstance;
+                    }
+
+                    @Override
+                    public <T> T get() {
+                        return (T) moduleInstance;
                     }
 
                     @Override

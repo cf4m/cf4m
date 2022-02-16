@@ -24,6 +24,7 @@ import cn.enaium.cf4m.configuration.ConfigConfiguration;
 import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 /**
  * @author Enaium
  */
+@SuppressWarnings("unchecked")
 public final class ConfigFactory {
 
     public final ConfigContainer configContainer;
@@ -58,6 +60,11 @@ public final class ConfigFactory {
                     @Override
                     public Object getInstance() {
                         return configInstance;
+                    }
+
+                    @Override
+                    public <T> T get() {
+                        return (T) configInstance;
                     }
 
                     @Override

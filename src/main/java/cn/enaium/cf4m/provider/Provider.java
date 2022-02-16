@@ -33,5 +33,12 @@ public interface Provider {
     /**
      * @return instance
      */
+    @Deprecated
     Object getInstance();
+
+    /**
+     * @param <T> type
+     * @return instance
+     */
+    <T> T get();
 }
