@@ -98,7 +98,7 @@ public final class ConfigFactory {
             public void load() {
                 if (CF4M.CONFIGURATION.getByClass(ConfigConfiguration.class).getEnable()) {
                     configs.keySet().forEach(config -> {
-                        for (Method method : config.getClass().getMethods()) {
+                        for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Load.class)) {
                                 try {
@@ -123,7 +123,7 @@ public final class ConfigFactory {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
                     configs.keySet().forEach(config -> {
-                        for (Method method : config.getClass().getMethods()) {
+                        for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Save.class)) {
                                 try {
