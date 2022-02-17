@@ -63,7 +63,7 @@ public final class ConfigFactory {
                     }
 
                     @Override
-                    public <T> T get() {
+                    public <T> T as() {
                         return (T) configInstance;
                     }
 

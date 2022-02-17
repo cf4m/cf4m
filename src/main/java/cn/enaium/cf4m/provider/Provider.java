@@ -40,5 +40,5 @@ public interface Provider {
      * @param <T> type
      * @return instance
      */
-    <T> T get();
+    <T> T as();
 }

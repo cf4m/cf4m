@@ -22,15 +22,15 @@ public class ModuleSettingTest {
     public void enable() {
         System.out.println(CF4M.MODULE.get(this.getClass()).getName());
         System.out.println(enableSettingTest.getEnable());
-        System.out.println(CF4M.MODULE.get(this).getSetting().get("setting1").<EnableSettingTest>get());
-        Object setting2 = CF4M.MODULE.get(this).getSetting().get("setting2").get();
-        System.out.println(CF4M.MODULE.get(this).getSetting().get("setting2").<Boolean>get());
+        System.out.println(CF4M.MODULE.get(this).getSetting().get("setting1").<EnableSettingTest>as());
+        Object setting2 = CF4M.MODULE.get(this).getSetting().get("setting2").as();
+        System.out.println(CF4M.MODULE.get(this).getSetting().get("setting2").<Boolean>as());
         if (setting2 instanceof Boolean) {
             System.out.println(CF4M.MODULE.get(this).getSetting().get("setting2").<Boolean>setSetting(false));
             System.out.println(bool);
         }
         for (SettingProvider settingProvider : CF4M.MODULE.get(this).getSetting().getAll()) {
-            if (settingProvider.get() instanceof EnableSettingTest) {
+            if (settingProvider.as() instanceof EnableSettingTest) {
                 System.out.println(settingProvider.getName());
             }
         }

@@ -148,7 +148,7 @@ public final class CommandFactory {
                     }
 
                     @Override
-                    public <T> T get() {
+                    public <T> T as() {
                         return (T) commandInstance;
                     }
 

@@ -98,7 +98,7 @@ public final class ModuleFactory {
                             }
 
                             @Override
-                            public <T> T get() {
+                            public <T> T as() {
                                 try {
                                     return (T) field.get(moduleInstance);
                                 } catch (IllegalAccessException e) {
@@ -180,7 +180,7 @@ public final class ModuleFactory {
                     }
 
                     @Override
-                    public <T> T get() {
+                    public <T> T as() {
                         return (T) moduleInstance;
                     }
 
