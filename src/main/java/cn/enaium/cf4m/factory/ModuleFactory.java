@@ -140,6 +140,16 @@ public final class ModuleFactory {
                         }
                         return null;
                     }
+
+                    @Override
+                    public SettingProvider get(String name) {
+                        for (SettingProvider settingProvider : getAll()) {
+                            if (settingProvider.getName().equalsIgnoreCase(name)) {
+                                return settingProvider;
+                            }
+                        }
+                        return null;
+                    }
                 };
 
                 ArrayList<ModuleService> processors = CF4M.CLASS.getService(ModuleService.class);
@@ -270,13 +280,33 @@ public final class ModuleFactory {
             }
 
             @Override
+            public ModuleProvider get(String name) {
+                for (ModuleProvider moduleProvider : getAll()) {
+                    if (moduleProvider.getName().equalsIgnoreCase(name)) {
+                        return moduleProvider;
+                    }
+                }
+                return null;
+            }
+
+            @Override
             public ModuleProvider getByInstance(Object instance) {
+                return modules.get(instance);
+            }
+
+            @Override
+            public ModuleProvider get(Object instance) {
                 return modules.get(instance);
             }
 
             @Override
             public <T> ModuleProvider getByClass(Class<T> klass) {
                 return getByInstance(CF4M.CLASS.create(klass));
+            }
+
+            @Override
+            public <T> ModuleProvider get(Class<T> klass) {
+                return get(CF4M.CLASS.create(klass));
             }
 
             @Override

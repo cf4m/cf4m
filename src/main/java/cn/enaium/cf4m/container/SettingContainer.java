@@ -36,5 +36,8 @@ public interface SettingContainer {
      * @param name setting name
      * @return setting
      */
+    @Deprecated
     SettingProvider getByName(String name);
+
+    SettingProvider get(String name);
 }

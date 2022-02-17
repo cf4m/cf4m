@@ -17,6 +17,7 @@
 package cn.enaium.cf4m.container;
 
 import cn.enaium.cf4m.provider.ModuleProvider;
+
 import java.util.ArrayList;
 
 /**
@@ -51,14 +52,20 @@ public interface ModuleContainer {
      * @param name module name
      * @return module
      */
+    @Deprecated
     ModuleProvider getByName(String name);
+
+    ModuleProvider get(String name);
 
     /**
      * @param klass class
      * @param <T>   module
      * @return module
      */
+    @Deprecated
     <T> ModuleProvider getByClass(Class<T> klass);
+
+    <T> ModuleProvider get(Class<T> klass);
 
     /**
      * Nullable
@@ -66,7 +73,10 @@ public interface ModuleContainer {
      * @param instance module name
      * @return module
      */
+    @Deprecated
     ModuleProvider getByInstance(Object instance);
+
+    ModuleProvider get(Object instance);
 
     /**
      * enable all module

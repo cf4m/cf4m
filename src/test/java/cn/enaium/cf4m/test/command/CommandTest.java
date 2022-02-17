@@ -12,16 +12,16 @@ import cn.enaium.cf4m.configuration.CommandConfiguration;
 public class CommandTest {
     @Exec
     public void exec() {
-        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message("No var");
+        CF4M.CONFIGURATION.get(CommandConfiguration.class).message("No var");
     }
 
     @Exec
     public void exec(String var1) {
-        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message("var1 | " + var1);
+        CF4M.CONFIGURATION.get(CommandConfiguration.class).message("var1 | " + var1);
     }
 
     @Exec
     public void exec(String var1, Integer var2) {
-        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(var1 + "|" + var2);
+        CF4M.CONFIGURATION.get(CommandConfiguration.class).message(var1 + "|" + var2);
     }
 }
