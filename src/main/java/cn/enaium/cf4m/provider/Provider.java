@@ -31,12 +31,6 @@ public interface Provider {
     String getDescription();
 
     /**
-     * @return instance
-     */
-    @Deprecated
-    Object getInstance();
-
-    /**
      * @param <T> type
      * @return instance
      */

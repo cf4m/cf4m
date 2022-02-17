@@ -52,9 +52,6 @@ public interface ModuleContainer {
      * @param name module name
      * @return module
      */
-    @Deprecated
-    ModuleProvider getByName(String name);
-
     ModuleProvider get(String name);
 
     /**
@@ -62,9 +59,6 @@ public interface ModuleContainer {
      * @param <T>   module
      * @return module
      */
-    @Deprecated
-    <T> ModuleProvider getByClass(Class<T> klass);
-
     <T> ModuleProvider get(Class<T> klass);
 
     /**
@@ -73,9 +67,6 @@ public interface ModuleContainer {
      * @param instance module name
      * @return module
      */
-    @Deprecated
-    ModuleProvider getByInstance(Object instance);
-
     ModuleProvider get(Object instance);
 
     /**

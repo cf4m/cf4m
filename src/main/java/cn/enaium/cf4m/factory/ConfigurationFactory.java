@@ -120,18 +120,8 @@ public final class ConfigurationFactory {
 
         configurationContainer = new ConfigurationContainer() {
             @Override
-            public <T> T getByKey(String key) {
-                return (T) configurations.get(key);
-            }
-
-            @Override
             public <T> T get(String key) {
                 return (T) configurations.get(key);
-            }
-
-            @Override
-            public <T> T getByClass(Class<T> klass) {
-                return classContainer.create(klass);
             }
 
             @Override

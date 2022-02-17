@@ -88,16 +88,6 @@ public final class ModuleFactory {
                             }
 
                             @Override
-                            public Object getInstance() {
-                                try {
-                                    return field.get(moduleInstance);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                }
-                                return null;
-                            }
-
-                            @Override
                             public <T> T as() {
                                 try {
                                     return (T) field.get(moduleInstance);
@@ -109,7 +99,7 @@ public final class ModuleFactory {
 
                             @Override
                             public <T> T getSetting() {
-                                return (T) getInstance();
+                                return as();
                             }
 
                             @Override
@@ -119,7 +109,7 @@ public final class ModuleFactory {
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
                                 }
-                                return (T) getInstance();
+                                return as();
                             }
                         });
                     }
@@ -129,16 +119,6 @@ public final class ModuleFactory {
                     @Override
                     public ArrayList<SettingProvider> getAll() {
                         return settingProviders;
-                    }
-
-                    @Override
-                    public SettingProvider getByName(String name) {
-                        for (SettingProvider settingProvider : getAll()) {
-                            if (settingProvider.getName().equalsIgnoreCase(name)) {
-                                return settingProvider;
-                            }
-                        }
-                        return null;
                     }
 
                     @Override
@@ -172,11 +152,6 @@ public final class ModuleFactory {
                     @Override
                     public boolean getEnable() {
                         return enable;
-                    }
-
-                    @Override
-                    public Object getInstance() {
-                        return moduleInstance;
                     }
 
                     @Override
@@ -270,16 +245,6 @@ public final class ModuleFactory {
             }
 
             @Override
-            public ModuleProvider getByName(String name) {
-                for (ModuleProvider moduleProvider : getAll()) {
-                    if (moduleProvider.getName().equalsIgnoreCase(name)) {
-                        return moduleProvider;
-                    }
-                }
-                return null;
-            }
-
-            @Override
             public ModuleProvider get(String name) {
                 for (ModuleProvider moduleProvider : getAll()) {
                     if (moduleProvider.getName().equalsIgnoreCase(name)) {
@@ -290,18 +255,8 @@ public final class ModuleFactory {
             }
 
             @Override
-            public ModuleProvider getByInstance(Object instance) {
-                return modules.get(instance);
-            }
-
-            @Override
             public ModuleProvider get(Object instance) {
                 return modules.get(instance);
-            }
-
-            @Override
-            public <T> ModuleProvider getByClass(Class<T> klass) {
-                return getByInstance(CF4M.CLASS.create(klass));
             }
 
             @Override

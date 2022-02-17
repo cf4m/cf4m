@@ -52,35 +52,13 @@ public final class CommandFactory {
             }
 
             @Override
-            public CommandProvider getByInstance(Object instance) {
-                return commands.get(instance);
-            }
-
-            @Override
             public CommandProvider get(Object instance) {
                 return commands.get(instance);
             }
 
             @Override
-            public <T> CommandProvider getByClass(Class<T> klass) {
-                return getByInstance(CF4M.CLASS.create(klass));
-            }
-
-            @Override
             public <T> CommandProvider get(Class<T> klass) {
-                return getByInstance(CF4M.CLASS.create(klass));
-            }
-
-            @Override
-            public CommandProvider getByKey(String key) {
-                for (CommandProvider commandProvider : getAll()) {
-                    for (String s : commandProvider.getKey()) {
-                        if (s.equalsIgnoreCase(key)) {
-                            return commandProvider;
-                        }
-                    }
-                }
-                return null;
+                return get(CF4M.CLASS.create(klass));
             }
 
             @Override
@@ -114,7 +92,7 @@ public final class CommandFactory {
 
                     if (command != null) {
                         if (!CommandFactory.this.execCommand(command, args)) {
-                            for (List<String> parameters : this.getByInstance(command).getParam()) {
+                            for (List<String> parameters : this.get(command).getParam()) {
                                 CF4M.CONFIGURATION.get(CommandConfiguration.class).message(key + " " + parameters);
                             }
                         }
@@ -143,11 +121,6 @@ public final class CommandFactory {
                     }
 
                     @Override
-                    public Object getInstance() {
-                        return commandInstance;
-                    }
-
-                    @Override
                     public <T> T as() {
                         return (T) commandInstance;
                     }
@@ -160,7 +133,7 @@ public final class CommandFactory {
                     @Override
                     public List<List<String>> getParam() {
                         List<List<String>> param = new ArrayList<>();
-                        for (Method method : getInstance().getClass().getDeclaredMethods()) {
+                        for (Method method : as().getClass().getDeclaredMethods()) {
                             if (method.isAnnotationPresent(Exec.class)) {
                                 List<String> parameters = new ArrayList<>();
                                 for (Parameter parameter : method.getParameters()) {

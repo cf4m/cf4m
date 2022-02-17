@@ -58,11 +58,6 @@ public final class ConfigFactory {
                     }
 
                     @Override
-                    public Object getInstance() {
-                        return configInstance;
-                    }
-
-                    @Override
                     public <T> T as() {
                         return (T) configInstance;
                     }
@@ -82,16 +77,6 @@ public final class ConfigFactory {
             }
 
             @Override
-            public ConfigProvider getByName(String name) {
-                for (ConfigProvider configProvider : getAll()) {
-                    if (configProvider.getName().equalsIgnoreCase(name)) {
-                        return configProvider;
-                    }
-                }
-                return null;
-            }
-
-            @Override
             public ConfigProvider get(String name) {
                 for (ConfigProvider configProvider : getAll()) {
                     if (configProvider.getName().equalsIgnoreCase(name)) {
@@ -102,18 +87,8 @@ public final class ConfigFactory {
             }
 
             @Override
-            public ConfigProvider getByInstance(Object instance) {
-                return configs.get(instance);
-            }
-
-            @Override
             public ConfigProvider get(Object instance) {
                 return configs.get(instance);
-            }
-
-            @Override
-            public <T> ConfigProvider getByClass(Class<T> klass) {
-                return getByInstance(CF4M.CLASS.create(klass));
             }
 
             @Override
@@ -129,10 +104,10 @@ public final class ConfigFactory {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Load.class)) {
                                 try {
-                                    if (new File(getByInstance(config).getPath()).exists()) {
-                                        processors.forEach(configService -> configService.beforeLoad(getByInstance(config)));
+                                    if (new File(get(config).getPath()).exists()) {
+                                        processors.forEach(configService -> configService.beforeLoad(get(config)));
                                         method.invoke(config);
-                                        processors.forEach(configService -> configService.afterLoad(getByInstance(config)));
+                                        processors.forEach(configService -> configService.afterLoad(get(config)));
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                     e.printStackTrace();
@@ -154,11 +129,11 @@ public final class ConfigFactory {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Save.class)) {
                                 try {
-                                    new File(getByInstance(config).getPath()).createNewFile();
-                                    if (new File(getByInstance(config).getPath()).exists()) {
-                                        processors.forEach(configService -> configService.beforeSave(getByInstance(config)));
+                                    new File(get(config).getPath()).createNewFile();
+                                    if (new File(get(config).getPath()).exists()) {
+                                        processors.forEach(configService -> configService.beforeSave(get(config)));
                                         method.invoke(config);
-                                        processors.forEach(configService -> configService.afterSave(getByInstance(config)));
+                                        processors.forEach(configService -> configService.afterSave(get(config)));
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException | IOException e) {
                                     e.printStackTrace();

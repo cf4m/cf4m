@@ -17,6 +17,7 @@
 package cn.enaium.cf4m.container;
 
 import cn.enaium.cf4m.provider.CommandProvider;
+
 import java.util.ArrayList;
 
 /**
@@ -36,9 +37,6 @@ public interface CommandContainer {
      * @param instance command
      * @return command
      */
-    @Deprecated
-    CommandProvider getByInstance(Object instance);
-
     CommandProvider get(Object instance);
 
     /**
@@ -46,9 +44,6 @@ public interface CommandContainer {
      * @param <T>   command
      * @return command
      */
-    @Deprecated
-    <T> CommandProvider getByClass(Class<T> klass);
-
     <T> CommandProvider get(Class<T> klass);
 
     /**
@@ -57,9 +52,6 @@ public interface CommandContainer {
      * @param key command key
      * @return command
      */
-    @Deprecated
-    CommandProvider getByKey(String key);
-
     CommandProvider get(String key);
 
     /**
