@@ -36,14 +36,20 @@ public interface CommandContainer {
      * @param instance command
      * @return command
      */
+    @Deprecated
     CommandProvider getByInstance(Object instance);
+
+    CommandProvider get(Object instance);
 
     /**
      * @param klass class
      * @param <T>   command
      * @return command
      */
+    @Deprecated
     <T> CommandProvider getByClass(Class<T> klass);
+
+    <T> CommandProvider get(Class<T> klass);
 
     /**
      * Nullable
@@ -51,7 +57,10 @@ public interface CommandContainer {
      * @param key command key
      * @return command
      */
+    @Deprecated
     CommandProvider getByKey(String key);
+
+    CommandProvider get(String key);
 
     /**
      * NotNull

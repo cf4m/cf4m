@@ -17,6 +17,7 @@
 package cn.enaium.cf4m.plugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
@@ -53,10 +54,10 @@ public final class PluginLoader {
             for (Properties properties : load(klass.getClassLoader())) {
                 if (properties.containsKey(PLUGIN)) {
                     Class<?> plugin = klass.getClassLoader().loadClass(properties.getProperty(PLUGIN));
-                    instance.add(new PluginBean<>((T) plugin.newInstance(), properties.getProperty(NAME), properties.getProperty(DESCRIPTION), properties.getProperty(VERSION), properties.getProperty(AUTHOR)));
+                    instance.add(new PluginBean<>((T) plugin.getConstructor().newInstance(), properties.getProperty(NAME), properties.getProperty(DESCRIPTION), properties.getProperty(VERSION), properties.getProperty(AUTHOR)));
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return instance;

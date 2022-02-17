@@ -17,6 +17,7 @@
 package cn.enaium.cf4m.container;
 
 import cn.enaium.cf4m.provider.ConfigProvider;
+
 import java.util.ArrayList;
 
 /**
@@ -37,7 +38,10 @@ public interface ConfigContainer {
      * @param name config name
      * @return config
      */
+    @Deprecated
     ConfigProvider getByName(String name);
+
+    ConfigProvider get(String name);
 
     /**
      * Nullable
@@ -45,14 +49,20 @@ public interface ConfigContainer {
      * @param instance config
      * @return config
      */
+    @Deprecated
     ConfigProvider getByInstance(Object instance);
+
+    ConfigProvider get(Object instance);
 
     /**
      * @param klass class
      * @param <T>   config
      * @return config
      */
+    @Deprecated
     <T> ConfigProvider getByClass(Class<T> klass);
+
+    <T> ConfigProvider get(Class<T> klass);
 
     /**
      * load config

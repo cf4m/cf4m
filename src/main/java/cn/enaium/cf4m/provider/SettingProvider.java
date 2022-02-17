@@ -26,6 +26,7 @@ public interface SettingProvider extends Provider {
      * @param <T> setting class
      * @return setting instance
      */
+    @Deprecated
     <T> T getSetting();
 
     /**

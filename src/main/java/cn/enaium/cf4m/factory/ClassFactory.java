@@ -24,6 +24,7 @@ import cn.enaium.cf4m.plugin.PluginInitialize;
 import cn.enaium.cf4m.service.*;
 import cn.enaium.cf4m.plugin.PluginLoader;
 import cn.enaium.cf4m.struct.Pair;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -46,7 +47,7 @@ import java.util.stream.Collectors;
 /**
  * @author Enaium
  */
-@SuppressWarnings({"unchecked", "deprecation"})
+@SuppressWarnings({"unchecked"})
 public final class ClassFactory {
 
     public final ClassContainer classContainer;
@@ -74,7 +75,7 @@ public final class ClassFactory {
                     try {
                         Class<?> klass = s.getKey().loadClass(className);
                         if (klass.isAnnotationPresent(Service.class) || klass.isAnnotationPresent(Component.class)) {
-                            Object instance = klass.newInstance();
+                            Object instance = klass.getConstructor().newInstance();
 
                             if (klass.isAnnotationPresent(Component.class)) {
                                 for (Method declaredMethod : klass.getDeclaredMethods()) {
@@ -89,7 +90,7 @@ public final class ClassFactory {
                         } else {
                             all.put(klass, null);
                         }
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -124,8 +125,8 @@ public final class ClassFactory {
             @Override
             public <T> T create(Class<T> klass) {
                 try {
-                    return create(klass, klass.newInstance());
-                } catch (InstantiationException | IllegalAccessException e) {
+                    return create(klass, klass.getConstructor().newInstance());
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
                 return (T) all.get(klass);

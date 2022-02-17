@@ -75,7 +75,7 @@ public class Test {
         System.out.println("Check ConfigTest End");
         System.out.println();
         System.out.println("Check ConfigurationTest Start");
-        Assertions.assertNotNull(CF4M.CONFIGURATION.getByClass(ConfigurationTest.class).getValue());
+        Assertions.assertNotNull(CF4M.CONFIGURATION.get(ConfigurationTest.class).getValue());
         System.out.println("Check ConfigurationTest End");
         System.out.println(System.currentTimeMillis() - start);
     }

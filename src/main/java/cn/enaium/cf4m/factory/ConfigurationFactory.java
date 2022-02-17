@@ -125,7 +125,17 @@ public final class ConfigurationFactory {
             }
 
             @Override
+            public <T> T get(String key) {
+                return (T) configurations.get(key);
+            }
+
+            @Override
             public <T> T getByClass(Class<T> klass) {
+                return classContainer.create(klass);
+            }
+
+            @Override
+            public <T> T get(Class<T> klass) {
                 return classContainer.create(klass);
             }
         };

@@ -24,6 +24,7 @@ import cn.enaium.cf4m.configuration.CommandConfiguration;
 import cn.enaium.cf4m.container.CommandContainer;
 import cn.enaium.cf4m.service.CommandService;
 import cn.enaium.cf4m.provider.CommandProvider;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -33,6 +34,7 @@ import java.util.*;
 /**
  * @author Enaium
  */
+@SuppressWarnings("unchecked")
 public final class CommandFactory {
 
     private final HashMap<Object, CommandProvider> commands;
@@ -55,7 +57,17 @@ public final class CommandFactory {
             }
 
             @Override
+            public CommandProvider get(Object instance) {
+                return commands.get(instance);
+            }
+
+            @Override
             public <T> CommandProvider getByClass(Class<T> klass) {
+                return getByInstance(CF4M.CLASS.create(klass));
+            }
+
+            @Override
+            public <T> CommandProvider get(Class<T> klass) {
                 return getByInstance(CF4M.CLASS.create(klass));
             }
 
@@ -72,15 +84,27 @@ public final class CommandFactory {
             }
 
             @Override
+            public CommandProvider get(String key) {
+                for (CommandProvider commandProvider : getAll()) {
+                    for (String s : commandProvider.getKey()) {
+                        if (s.equalsIgnoreCase(key)) {
+                            return commandProvider;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
             public boolean execCommand(String rawMessage) {
-                if (!rawMessage.startsWith(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix())) {
+                if (!rawMessage.startsWith(CF4M.CONFIGURATION.get(CommandConfiguration.class).getPrefix())) {
                     return false;
                 }
 
-                boolean safe = rawMessage.split(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix()).length > 1;
+                boolean safe = rawMessage.split(CF4M.CONFIGURATION.get(CommandConfiguration.class).getPrefix()).length > 1;
 
                 if (safe) {
-                    String beheaded = rawMessage.split(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix())[1];
+                    String beheaded = rawMessage.split(CF4M.CONFIGURATION.get(CommandConfiguration.class).getPrefix())[1];
                     List<String> args = new ArrayList<>();
                     Collections.addAll(args, beheaded.split(" "));
                     String key = args.get(0);
@@ -91,7 +115,7 @@ public final class CommandFactory {
                     if (command != null) {
                         if (!CommandFactory.this.execCommand(command, args)) {
                             for (List<String> parameters : this.getByInstance(command).getParam()) {
-                                CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(key + " " + parameters);
+                                CF4M.CONFIGURATION.get(CommandConfiguration.class).message(key + " " + parameters);
                             }
                         }
                     } else {
@@ -121,6 +145,11 @@ public final class CommandFactory {
                     @Override
                     public Object getInstance() {
                         return commandInstance;
+                    }
+
+                    @Override
+                    public <T> T as() {
+                        return (T) commandInstance;
                     }
 
                     @Override
@@ -164,7 +193,7 @@ public final class CommandFactory {
                             params.add(paramType.getMethod("valueOf", String.class).invoke(null, arg));
                         }
                     } catch (Exception e) {
-                        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(e.getMessage());
+                        CF4M.CONFIGURATION.get(CommandConfiguration.class).message(e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -180,7 +209,7 @@ public final class CommandFactory {
                         }
 
                     } catch (IllegalAccessException | InvocationTargetException e) {
-                        CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(e.getMessage());
+                        CF4M.CONFIGURATION.get(CommandConfiguration.class).message(e.getMessage());
                         e.printStackTrace();
                     }
                 };
@@ -199,7 +228,7 @@ public final class CommandFactory {
 
     private void help() {
         for (CommandProvider commandProvider : commandContainer.getAll()) {
-            CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).message(CF4M.CONFIGURATION.getByClass(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
+            CF4M.CONFIGURATION.get(CommandConfiguration.class).message(CF4M.CONFIGURATION.get(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }
 

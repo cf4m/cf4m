@@ -24,6 +24,7 @@ import cn.enaium.cf4m.configuration.ConfigConfiguration;
 import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 /**
  * @author Enaium
  */
+@SuppressWarnings("unchecked")
 public final class ConfigFactory {
 
     public final ConfigContainer configContainer;
@@ -61,6 +63,11 @@ public final class ConfigFactory {
                     }
 
                     @Override
+                    public <T> T as() {
+                        return (T) configInstance;
+                    }
+
+                    @Override
                     public String getPath() {
                         return path + File.separator + "configs" + File.separator + getName() + ".json";
                     }
@@ -85,7 +92,22 @@ public final class ConfigFactory {
             }
 
             @Override
+            public ConfigProvider get(String name) {
+                for (ConfigProvider configProvider : getAll()) {
+                    if (configProvider.getName().equalsIgnoreCase(name)) {
+                        return configProvider;
+                    }
+                }
+                return null;
+            }
+
+            @Override
             public ConfigProvider getByInstance(Object instance) {
+                return configs.get(instance);
+            }
+
+            @Override
+            public ConfigProvider get(Object instance) {
                 return configs.get(instance);
             }
 
@@ -95,10 +117,15 @@ public final class ConfigFactory {
             }
 
             @Override
+            public <T> ConfigProvider get(Class<T> klass) {
+                return get(CF4M.CLASS.create(klass));
+            }
+
+            @Override
             public void load() {
-                if (CF4M.CONFIGURATION.getByClass(ConfigConfiguration.class).getEnable()) {
+                if (CF4M.CONFIGURATION.get(ConfigConfiguration.class).getEnable()) {
                     configs.keySet().forEach(config -> {
-                        for (Method method : config.getClass().getMethods()) {
+                        for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Load.class)) {
                                 try {
@@ -119,11 +146,11 @@ public final class ConfigFactory {
             @SuppressWarnings("ResultOfMethodCallIgnored")
             @Override
             public void save() {
-                if (CF4M.CONFIGURATION.getByClass(ConfigConfiguration.class).getEnable()) {
+                if (CF4M.CONFIGURATION.get(ConfigConfiguration.class).getEnable()) {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
                     configs.keySet().forEach(config -> {
-                        for (Method method : config.getClass().getMethods()) {
+                        for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Save.class)) {
                                 try {

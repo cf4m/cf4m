@@ -27,6 +27,7 @@ import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,6 +98,16 @@ public final class ModuleFactory {
                             }
 
                             @Override
+                            public <T> T as() {
+                                try {
+                                    return (T) field.get(moduleInstance);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                                return null;
+                            }
+
+                            @Override
                             public <T> T getSetting() {
                                 return (T) getInstance();
                             }
@@ -122,6 +133,16 @@ public final class ModuleFactory {
 
                     @Override
                     public SettingProvider getByName(String name) {
+                        for (SettingProvider settingProvider : getAll()) {
+                            if (settingProvider.getName().equalsIgnoreCase(name)) {
+                                return settingProvider;
+                            }
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public SettingProvider get(String name) {
                         for (SettingProvider settingProvider : getAll()) {
                             if (settingProvider.getName().equalsIgnoreCase(name)) {
                                 return settingProvider;
@@ -156,6 +177,11 @@ public final class ModuleFactory {
                     @Override
                     public Object getInstance() {
                         return moduleInstance;
+                    }
+
+                    @Override
+                    public <T> T as() {
+                        return (T) moduleInstance;
                     }
 
                     @Override
@@ -254,13 +280,33 @@ public final class ModuleFactory {
             }
 
             @Override
+            public ModuleProvider get(String name) {
+                for (ModuleProvider moduleProvider : getAll()) {
+                    if (moduleProvider.getName().equalsIgnoreCase(name)) {
+                        return moduleProvider;
+                    }
+                }
+                return null;
+            }
+
+            @Override
             public ModuleProvider getByInstance(Object instance) {
+                return modules.get(instance);
+            }
+
+            @Override
+            public ModuleProvider get(Object instance) {
                 return modules.get(instance);
             }
 
             @Override
             public <T> ModuleProvider getByClass(Class<T> klass) {
                 return getByInstance(CF4M.CLASS.create(klass));
+            }
+
+            @Override
+            public <T> ModuleProvider get(Class<T> klass) {
+                return get(CF4M.CLASS.create(klass));
             }
 
             @Override
