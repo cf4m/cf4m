@@ -22,22 +22,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Attach to {@link Module}
+ * Attached {@link Module}
  * <p>
- * Add this annotation to the field to that this field is module setting
+ * Add this annotation to the method to that this class will be invoked at module enable or disable
  *
  * @author Enaium
+ * @since 1.11.0
  */
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Setting {
-    /**
-     * @return module setting name
-     */
-    String value() default "";
-
-    /**
-     * @return module setting description
-     */
-    String description() default "";
+public @interface Toggle {
 }

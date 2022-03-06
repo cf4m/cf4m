@@ -21,18 +21,17 @@ package cn.enaium.cf4m.provider;
  */
 public interface SettingProvider extends Provider {
     /**
-     * Nullable
-     *
-     * @param <T> setting class
+     * @param value setting value
+     * @param <T>   setting class
      * @return setting instance
      */
     @Deprecated
-    <T> T getSetting();
+    <T> T setSetting(Object value);
 
     /**
      * @param value setting value
      * @param <T>   setting class
      * @return setting instance
      */
-    <T> T setSetting(Object value);
+    <T> T set(Object value);
 }

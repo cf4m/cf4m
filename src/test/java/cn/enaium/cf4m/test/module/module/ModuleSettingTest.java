@@ -26,7 +26,7 @@ public class ModuleSettingTest {
         Object setting2 = CF4M.MODULE.get(this).getSetting().get("setting2").as();
         System.out.println(CF4M.MODULE.get(this).getSetting().get("setting2").<Boolean>as());
         if (setting2 instanceof Boolean) {
-            System.out.println(CF4M.MODULE.get(this).getSetting().get("setting2").<Boolean>setSetting(false));
+            System.out.println(CF4M.MODULE.get(this).getSetting().get("setting2").<Boolean>set(false));
             System.out.println(bool);
         }
         for (SettingProvider settingProvider : CF4M.MODULE.get(this).getSetting().getAll()) {

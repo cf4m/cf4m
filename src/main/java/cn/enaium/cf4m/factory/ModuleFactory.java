@@ -22,11 +22,14 @@ import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
 import cn.enaium.cf4m.annotation.module.*;
+import cn.enaium.cf4m.configuration.NameGeneratorConfiguration;
 import cn.enaium.cf4m.container.ModuleContainer;
 import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
+import cn.enaium.cf4m.struct.AnonymousClass;
+import cn.enaium.cf4m.util.StringUtil;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -76,15 +79,19 @@ public final class ModuleFactory {
                 for (Field field : klass.getDeclaredFields()) {
                     field.setAccessible(true);
                     if (field.isAnnotationPresent(Setting.class)) {
+
+                        Setting setting = field.getAnnotation(Setting.class);
+
                         settingProviders.add(new SettingProvider() {
                             @Override
                             public String getName() {
-                                return field.getAnnotation(Setting.class).value();
+
+                                return setting.value();
                             }
 
                             @Override
                             public String getDescription() {
-                                return field.getAnnotation(Setting.class).description();
+                                return setting.description();
                             }
 
                             @Override
@@ -98,11 +105,6 @@ public final class ModuleFactory {
                             }
 
                             @Override
-                            public <T> T getSetting() {
-                                return as();
-                            }
-
-                            @Override
                             public <T> T setSetting(Object value) {
                                 try {
                                     field.set(moduleInstance, value);
@@ -110,6 +112,11 @@ public final class ModuleFactory {
                                     e.printStackTrace();
                                 }
                                 return as();
+                            }
+
+                            @Override
+                            public <T> T set(Object value) {
+                                return setSetting(value);
                             }
                         });
                     }
@@ -146,11 +153,21 @@ public final class ModuleFactory {
 
                     @Override
                     public String getName() {
+
+                        if (StringUtil.isEmpty(module.value())) {
+                            return CF4M.CONFIGURATION.get(NameGeneratorConfiguration.class).generate(klass);
+                        }
+
                         return module.value();
                     }
 
                     @Override
                     public boolean getEnable() {
+                        return enable;
+                    }
+
+                    @Override
+                    public boolean isEnable() {
                         return enable;
                     }
 
@@ -161,7 +178,6 @@ public final class ModuleFactory {
 
                     @Override
                     public void enable() {
-                        Class<?> klass = moduleInstance.getClass();
                         Module module = klass.getAnnotation(Module.class);
 
                         enable = !enable;
@@ -179,6 +195,11 @@ public final class ModuleFactory {
                         for (Method method : klass.getDeclaredMethods()) {
                             method.setAccessible(true);
                             try {
+
+                                if (method.isAnnotationPresent(Toggle.class)) {
+                                    method.invoke(moduleInstance);
+                                }
+
                                 if (enable) {
                                     if (method.isAnnotationPresent(Enable.class)) {
                                         method.invoke(moduleInstance);
@@ -271,6 +292,11 @@ public final class ModuleFactory {
                         module.enable();
                     }
                 }
+            }
+
+            @Override
+            public void create(AnonymousClass anonymousClass) {
+
             }
         };
 

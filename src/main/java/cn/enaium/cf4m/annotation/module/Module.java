@@ -16,6 +16,8 @@
 
 package cn.enaium.cf4m.annotation.module;
 
+import cn.enaium.cf4m.provider.ModuleProvider;
+
 import java.lang.annotation.*;
 
 /**
@@ -23,22 +25,33 @@ import java.lang.annotation.*;
  *
  * @author Enaium
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Module {
     /**
+     * {@link ModuleProvider#getName()}
+     *
      * @return module name
      */
-    String value();
+    String value() default "";
 
     /**
+     * {@link ModuleProvider#getKey()}
+     *
      * @return module key
      */
     int key() default 0;
 
+    /**
+     * {@link ModuleProvider#getType()}
+     *
+     * @return module type
+     */
     String type() default "UNKNOWN";
 
     /**
+     * {@link ModuleProvider#getDescription()}
+     *
      * @return module description
      */
     String description() default "";

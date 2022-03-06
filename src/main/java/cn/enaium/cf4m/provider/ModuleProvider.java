@@ -29,6 +29,13 @@ public interface ModuleProvider extends Provider {
     boolean getEnable();
 
     /**
+     * get module enable
+     *
+     * @return module enable
+     */
+    boolean isEnable();
+
+    /**
      * enable or disable module
      */
     void enable();
