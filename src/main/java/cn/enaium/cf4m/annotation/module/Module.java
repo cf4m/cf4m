@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  *
  * @author Enaium
  */
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Module {
     /**
