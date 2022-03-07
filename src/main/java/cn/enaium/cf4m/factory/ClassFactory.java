@@ -27,6 +27,7 @@ import cn.enaium.cf4m.struct.Pair;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -74,15 +75,23 @@ public final class ClassFactory {
                 if (className.startsWith(s.getValue())) {
                     try {
                         Class<?> klass = s.getKey().loadClass(className);
-                        if (klass.isAnnotationPresent(Service.class) || klass.isAnnotationPresent(Component.class)) {
+
+                        boolean component = false;
+
+                        for (Annotation annotation : klass.getAnnotations()) {
+                            if (annotation.annotationType().equals(Component.class)) {
+                                component = true;
+                                break;
+                            }
+                        }
+
+                        if (component || klass.isAnnotationPresent(Component.class)) {
                             Object instance = klass.getConstructor().newInstance();
 
-                            if (klass.isAnnotationPresent(Component.class)) {
-                                for (Method declaredMethod : klass.getDeclaredMethods()) {
-                                    declaredMethod.setAccessible(true);
-                                    if (declaredMethod.isAnnotationPresent(Bean.class)) {
-                                        all.put(declaredMethod.getReturnType(), declaredMethod.invoke(instance));
-                                    }
+                            for (Method declaredMethod : klass.getDeclaredMethods()) {
+                                declaredMethod.setAccessible(true);
+                                if (declaredMethod.isAnnotationPresent(Bean.class)) {
+                                    all.put(declaredMethod.getReturnType(), declaredMethod.invoke(instance));
                                 }
                             }
 

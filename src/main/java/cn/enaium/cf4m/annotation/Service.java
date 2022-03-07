@@ -22,11 +22,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Add this annotation to the class to that this class is a service impl
+ * Add this annotation to the class to that this class is a service implement
  *
  * @author Enaium
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Component
 public @interface Service {
 }

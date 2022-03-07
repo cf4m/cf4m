@@ -85,6 +85,10 @@ public final class ModuleFactory {
                             @Override
                             public String getName() {
 
+                                if (StringUtil.isEmpty(setting.value())) {
+                                    return CF4M.CONFIGURATION.get(NameGeneratorConfiguration.class).generate(field);
+                                }
+
                                 return setting.value();
                             }
 

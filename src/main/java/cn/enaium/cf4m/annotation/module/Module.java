@@ -29,6 +29,10 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Module {
     /**
+     * The name is generated when it is empty
+     * <p>
+     * {@link cn.enaium.cf4m.configuration.NameGeneratorConfiguration#generate(Class)}
+     * <p>
      * {@link ModuleProvider#getName()}
      *
      * @return module name

@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 
 /**
  * Attach to {@link Module}
@@ -32,6 +33,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Setting {
     /**
+     * The name is generated when it is empty
+     * <p>
+     * {@link cn.enaium.cf4m.configuration.NameGeneratorConfiguration#generate(Field)}
+     *
      * @return module setting name
      */
     String value() default "";
