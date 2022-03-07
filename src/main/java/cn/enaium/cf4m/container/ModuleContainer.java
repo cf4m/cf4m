@@ -17,7 +17,6 @@
 package cn.enaium.cf4m.container;
 
 import cn.enaium.cf4m.provider.ModuleProvider;
-import cn.enaium.cf4m.struct.AnonymousClass;
 
 import java.util.ArrayList;
 
@@ -76,6 +75,4 @@ public interface ModuleContainer {
      * @param key keyboard
      */
     void onKey(int key);
-
-    void create(AnonymousClass anonymousClass);
 }

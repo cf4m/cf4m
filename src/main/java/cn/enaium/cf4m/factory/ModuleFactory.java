@@ -28,7 +28,6 @@ import cn.enaium.cf4m.service.ModuleService;
 import cn.enaium.cf4m.provider.ModuleProvider;
 import cn.enaium.cf4m.container.SettingContainer;
 import cn.enaium.cf4m.provider.SettingProvider;
-import cn.enaium.cf4m.struct.AnonymousClass;
 import cn.enaium.cf4m.util.StringUtil;
 
 import java.lang.reflect.*;
@@ -292,11 +291,6 @@ public final class ModuleFactory {
                         module.enable();
                     }
                 }
-            }
-
-            @Override
-            public void create(AnonymousClass anonymousClass) {
-
             }
         };
 
