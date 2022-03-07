@@ -2,13 +2,17 @@ package cn.enaium.cf4m.test;
 
 import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Scan;
+import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.test.config.ConfigTest;
 import cn.enaium.cf4m.test.configuration.ConfigurationTest;
 import cn.enaium.cf4m.test.event.EventCancelTest;
 import cn.enaium.cf4m.test.event.EventPriorityTest;
 import cn.enaium.cf4m.test.event.EventRegisterUnregisterTest;
 import cn.enaium.cf4m.test.module.ModuleBeanTest;
+import cn.enaium.cf4m.test.service.MService;
 import org.junit.jupiter.api.Assertions;
+
+import java.lang.annotation.Annotation;
 
 /**
  * @author Enaium

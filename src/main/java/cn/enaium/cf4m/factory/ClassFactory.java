@@ -78,14 +78,14 @@ public final class ClassFactory {
 
                         boolean component = false;
 
-                        for (Annotation annotation : klass.getAnnotations()) {
-                            if (annotation.annotationType().equals(Component.class)) {
+                        for (Annotation typeAnnotation : klass.getAnnotations()) {
+                            if (typeAnnotation.annotationType().isAnnotationPresent(Component.class)) {
                                 component = true;
                                 break;
                             }
                         }
 
-                        if (component || klass.isAnnotationPresent(Component.class)) {
+                        if (component && !klass.isAnnotation()) {
                             Object instance = klass.getConstructor().newInstance();
 
                             for (Method declaredMethod : klass.getDeclaredMethods()) {
@@ -184,8 +184,13 @@ public final class ClassFactory {
 
                 try {
                     getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
-                    if (all.get(field.getType()) != null && field.get(instance) == null) {
-                        field.set(instance, all.get(field.getType()));
+                    if (field.get(instance) == null) {
+                        Object o = all.get(field.getType());
+                        if (o == null && !getService(field.getType()).isEmpty()) {
+                            o = getService(field.getType()).get(0);
+                        }
+
+                        field.set(instance, o);
                     }
                     getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
                 } catch (IllegalAccessException e) {
