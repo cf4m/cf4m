@@ -153,7 +153,7 @@ public final class ClassFactory {
 
     public void after() {
         initializePlugin();
-        getService(ClassService.class).forEach(it -> it.afterProcessor(all));
+        getService(ClassService.class).forEach(ClassService::afterProcessor);
     }
 
     private void initializePlugin() {

@@ -21,8 +21,8 @@ public class AutowiredProcessor implements ClassService {
     }
 
     @Override
-    public void afterProcessor(Map<Class<?>, Object> all) {
-        all.forEach(this::autowired);
+    public void afterProcessor() {
+        CF4M.CLASS.getBeans().forEach(this::autowired);
     }
 
     private void autowired(Class<?> klass, Object instance) {

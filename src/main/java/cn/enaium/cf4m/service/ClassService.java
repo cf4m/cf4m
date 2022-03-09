@@ -43,10 +43,9 @@ public interface ClassService {
     }
 
     /**
-     * @param all bean map
      * @since 1.11.0
      */
-    default void afterProcessor(Map<Class<?>, Object> all) {
+    default void afterProcessor() {
 
     }
 }

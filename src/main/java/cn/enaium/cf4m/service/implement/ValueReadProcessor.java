@@ -31,8 +31,8 @@ import java.util.Map;
 @Service
 public class ValueReadProcessor implements ClassService {
     @Override
-    public void afterProcessor(Map<Class<?>, Object> all) {
-        for (Map.Entry<Class<?>, Object> classObjectEntry : all.entrySet()) {
+    public void afterProcessor() {
+        for (Map.Entry<Class<?>, Object> classObjectEntry : CF4M.CLASS.getBeans().entrySet()) {
             Class<?> klass = classObjectEntry.getKey();
             Object instance = classObjectEntry.getValue();
 

@@ -31,6 +31,10 @@ public interface ClassContainer {
     @Deprecated
     ArrayList<Class<?>> getAll();
 
+    /**
+     * @return bean map
+     * @since 1.11.0
+     */
     Map<Class<?>, Object> getBeans();
 
     <T> T put(Class<T> klass, Object instance);
