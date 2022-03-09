@@ -28,7 +28,6 @@ import cn.enaium.cf4m.struct.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -51,10 +50,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unchecked"})
 public final class ClassFactory {
 
-    public final ClassContainer classContainer;
-    public final ConfigurationContainer configuration;
     private final ArrayList<PluginBean<PluginInitialize>> pluginInitializes = PluginLoader.loadPlugin(PluginInitialize.class);
-    private final HashMap<Class<?>, Object> all = new HashMap<>();
+    private final Map<Class<?>, Object> all = new HashMap<>();
 
     public ClassFactory(Class<?> mainClass) {
         LinkedHashSet<String> allClassName = getAllClassName(mainClass.getClassLoader());
@@ -108,10 +105,15 @@ public final class ClassFactory {
 
         ArrayList<ClassService> classServices = getService(ClassService.class);
 
-        classContainer = new ClassContainer() {
+        CF4M.CLASS = new ClassContainer() {
             @Override
             public ArrayList<Class<?>> getAll() {
                 return new ArrayList<>(all.keySet());
+            }
+
+            @Override
+            public Map<Class<?>, Object> getBeans() {
+                return all;
             }
 
             @Override
@@ -119,7 +121,6 @@ public final class ClassFactory {
                 classServices.forEach(classService -> classService.beforeCreate(klass, instance));
                 all.put(klass, instance);
                 classServices.forEach(classService -> classService.afterCreate(klass, instance));
-                autowired();
                 return (T) all.get(klass);
             }
 
@@ -147,12 +148,12 @@ public final class ClassFactory {
             }
         };
 
-        configuration = new ConfigurationFactory(classContainer, mainClass.getClassLoader()).configurationContainer;
+        CF4M.CONFIGURATION = new ConfigurationFactory(CF4M.CLASS, mainClass.getClassLoader()).configurationContainer;
     }
 
     public void after() {
         initializePlugin();
-        autowired();
+        getService(ClassService.class).forEach(it -> it.afterProcessor(all));
     }
 
     private void initializePlugin() {
@@ -164,40 +165,9 @@ public final class ClassFactory {
                         + " | " + it.getDescription()
                         + " | " + it.getVersion()
                         + " | " + it.getAuthor());
-                it.getInstance().initialize(() -> configuration);
+                it.getInstance().initialize(() -> CF4M.CONFIGURATION);
             });
         }
-    }
-
-    private void autowired() {
-        all.forEach((klass, instance) -> {
-
-            if (instance == null) {
-                return;
-            }
-
-            for (Field field : klass.getDeclaredFields()) {
-                field.setAccessible(true);
-                if (!klass.isAnnotationPresent(Autowired.class) && !field.isAnnotationPresent(Autowired.class)) {
-                    continue;
-                }
-
-                try {
-                    getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
-                    if (field.get(instance) == null) {
-                        Object o = all.get(field.getType());
-                        if (o == null && !getService(field.getType()).isEmpty()) {
-                            o = getService(field.getType()).get(0);
-                        }
-
-                        field.set(instance, o);
-                    }
-                    getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private <T> ArrayList<T> getService(Class<T> type) {

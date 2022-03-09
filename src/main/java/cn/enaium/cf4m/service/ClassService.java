@@ -16,6 +16,8 @@
 
 package cn.enaium.cf4m.service;
 
+import java.util.Map;
+
 /**
  * @author Enaium
  */
@@ -37,6 +39,14 @@ public interface ClassService {
      * @param instance class instance
      */
     default void afterCreate(Class<?> klass, Object instance) {
+
+    }
+
+    /**
+     * @param all bean map
+     * @since 1.11.0
+     */
+    default void afterProcessor(Map<Class<?>, Object> all) {
 
     }
 }

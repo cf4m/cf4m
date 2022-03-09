@@ -17,6 +17,7 @@
 package cn.enaium.cf4m.container;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author Enaium
@@ -27,7 +28,10 @@ public interface ClassContainer {
      *
      * @return class list
      */
+    @Deprecated
     ArrayList<Class<?>> getAll();
+
+    Map<Class<?>, Object> getBeans();
 
     <T> T put(Class<T> klass, Object instance);
 

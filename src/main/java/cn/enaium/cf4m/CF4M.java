@@ -71,29 +71,24 @@ public final class CF4M {
             new Exception("CF4M already run").printStackTrace();
         } else {
             ClassFactory classFactory = new ClassFactory(mainClass);
-            final ClassContainer classContainer = classFactory.classContainer;
-            CLASS = classContainer;
-            classContainer.create(ClassContainer.class, classContainer);
-
-            final ConfigurationContainer configuration = classFactory.configuration;
-            CONFIGURATION = configuration;
-            classContainer.create(ConfigurationContainer.class, configuration);
+            CLASS.create(ClassContainer.class, CLASS);
+            CLASS.create(ConfigurationContainer.class, CONFIGURATION);
 
             final EventContainer eventContainer = new EventFactory().eventContainer;
             EVENT = eventContainer;
-            classContainer.create(EventContainer.class, eventContainer);
+            CLASS.create(EventContainer.class, eventContainer);
 
             final ModuleContainer moduleContainer = new ModuleFactory().moduleContainer;
             MODULE = moduleContainer;
-            classContainer.create(ModuleContainer.class, moduleContainer);
+            CLASS.create(ModuleContainer.class, moduleContainer);
 
             final CommandContainer commandContainer = new CommandFactory().commandContainer;
             COMMAND = commandContainer;
-            classContainer.create(CommandContainer.class, commandContainer);
+            CLASS.create(CommandContainer.class, commandContainer);
 
             final ConfigContainer configContainer = new ConfigFactory(path).configContainer;
             CONFIG = configContainer;
-            classContainer.create(ConfigContainer.class, configContainer);
+            CLASS.create(ConfigContainer.class, configContainer);
 
             run = true;
             classFactory.after();

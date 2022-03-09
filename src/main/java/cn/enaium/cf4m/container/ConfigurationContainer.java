@@ -16,6 +16,8 @@
 
 package cn.enaium.cf4m.container;
 
+import java.util.Properties;
+
 /**
  * @author Enaium
  */
@@ -23,4 +25,6 @@ public interface ConfigurationContainer {
     <T> T get(String key);
 
     <T> T get(Class<T> klass);
+
+    Properties getProperties();
 }

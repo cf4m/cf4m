@@ -1,11 +1,13 @@
 package cn.enaium.cf4m.test.module.module;
 
 import cn.enaium.cf4m.annotation.Autowired;
+import cn.enaium.cf4m.annotation.Value;
 import cn.enaium.cf4m.annotation.module.Enable;
 import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.container.*;
 import cn.enaium.cf4m.test.component.UtilBean;
 import cn.enaium.cf4m.test.component.UtilTest;
+import cn.enaium.cf4m.test.component.ValueTest;
 import cn.enaium.cf4m.test.configuration.ConfigurationTest;
 import cn.enaium.cf4m.test.configuration.PropertiesTest;
 import cn.enaium.cf4m.test.gui.Gui;
@@ -43,6 +45,8 @@ public class ModuleAutowiredTest {
     private ServiceTest serviceTest;
     @Autowired
     private ServiceTestImplement serviceTestImplement;
+    @Autowired
+    private ValueTest value;
 
     @Enable
     public void enable() {
@@ -64,5 +68,7 @@ public class ModuleAutowiredTest {
         Assertions.assertNotNull(serviceTestImplement);
         serviceTest.accept();
         serviceTestImplement.accept();
+        Assertions.assertNotNull(value);
+        value.custom();
     }
 }
