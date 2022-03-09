@@ -32,11 +32,20 @@ public interface ClassContainer {
     ArrayList<Class<?>> getAll();
 
     /**
+     * get all bean in the container
+     *
      * @return bean map
      * @since 1.11.0
      */
     Map<Class<?>, Object> getBeans();
 
+
+    /**
+     * @param klass    klass
+     * @param instance object
+     * @param <T>      class
+     * @return class instance
+     */
     <T> T put(Class<T> klass, Object instance);
 
     /**
