@@ -21,9 +21,11 @@ import cn.enaium.cf4m.annotation.config.Config;
 import cn.enaium.cf4m.annotation.config.Load;
 import cn.enaium.cf4m.annotation.config.Save;
 import cn.enaium.cf4m.configuration.ConfigConfiguration;
+import cn.enaium.cf4m.configuration.NameGeneratorConfiguration;
 import cn.enaium.cf4m.container.ConfigContainer;
 import cn.enaium.cf4m.service.ConfigService;
 import cn.enaium.cf4m.provider.ConfigProvider;
+import cn.enaium.cf4m.util.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +49,13 @@ public final class ConfigFactory {
                 configs.put(configInstance, new ConfigProvider() {
                     @Override
                     public String getName() {
-                        return klass.getAnnotation(Config.class).value();
+                        String value = klass.getAnnotation(Config.class).value();
+
+                        if (StringUtil.isEmpty(value)) {
+                            return CF4M.CONFIGURATION.get(NameGeneratorConfiguration.class).generate(klass);
+                        }
+
+                        return value;
                     }
 
                     @Override

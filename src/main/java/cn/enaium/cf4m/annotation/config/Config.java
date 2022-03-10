@@ -30,9 +30,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Config {
     /**
+     * The name is generated when it is empty
+     * <p>
+     * {@link cn.enaium.cf4m.configuration.NameGeneratorConfiguration#generate(Class)}
+     *
      * @return config name
      */
-    String value();
+    String value() default "";
 
     /**
      * @return config description
