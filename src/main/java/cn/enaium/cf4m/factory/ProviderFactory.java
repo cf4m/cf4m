@@ -1,8 +1,6 @@
 package cn.enaium.cf4m.factory;
 
-import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.provider.Provider;
-import cn.enaium.cf4m.service.ProviderService;
 
 import java.util.HashMap;
 import java.util.Map;
