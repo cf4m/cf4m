@@ -28,5 +28,10 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Event {
+    /**
+     * big to small
+     *
+     * @return priority
+     */
     int priority() default 0;
 }
