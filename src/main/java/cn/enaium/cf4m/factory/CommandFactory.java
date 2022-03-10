@@ -35,22 +35,17 @@ import java.util.*;
  * @author Enaium
  */
 @SuppressWarnings("unchecked")
-public final class CommandFactory {
-
-    private final HashMap<Object, CommandProvider> commands;
-
+public final class CommandFactory extends ProviderFactory<CommandProvider> {
     public CommandFactory() {
-        commands = new HashMap<>();
-
         CF4M.COMMAND = new CommandContainer() {
             @Override
             public ArrayList<CommandProvider> getAll() {
-                return new ArrayList<>(commands.values());
+                return new ArrayList<>(getProviders().values());
             }
 
             @Override
             public CommandProvider get(Object instance) {
-                return commands.get(instance);
+                return getProviders().get(instance);
             }
 
             @Override
@@ -106,7 +101,7 @@ public final class CommandFactory {
         for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
             if (klass.isAnnotationPresent(Command.class)) {
                 final Object commandInstance = CF4M.CLASS.create(klass);
-                commands.put(commandInstance, new CommandProvider() {
+                addProvider(commandInstance, new CommandProvider() {
                     @Override
                     public String getName() {
                         return "";
@@ -169,7 +164,7 @@ public final class CommandFactory {
                 }
 
                 List<CommandService> processors = CF4M.CLASS.getService(CommandService.class);
-                processors.forEach(commandService -> commandService.beforeExec(commands.get(command)));
+                processors.forEach(commandService -> commandService.beforeExec(getProviders().get(command)));
                 Runnable runnable = () -> {
                     try {
                         if (params.isEmpty()) {
@@ -189,7 +184,7 @@ public final class CommandFactory {
                 } else {
                     new Thread(runnable).start();
                 }
-                processors.forEach(commandService -> commandService.afterExec(commands.get(command)));
+                processors.forEach(commandService -> commandService.afterExec(getProviders().get(command)));
                 return true;
             }
         }
@@ -203,7 +198,7 @@ public final class CommandFactory {
     }
 
     private Object getCommand(String key) {
-        for (Map.Entry<Object, CommandProvider> entry : commands.entrySet()) {
+        for (Map.Entry<Object, CommandProvider> entry : getProviders().entrySet()) {
             for (String s : entry.getValue().getKey()) {
                 if (s.equalsIgnoreCase(key)) {
                     return entry.getKey();

@@ -38,15 +38,14 @@ import java.util.HashMap;
  * @author Enaium
  */
 @SuppressWarnings("unchecked")
-public final class ConfigFactory {
+public final class ConfigFactory extends ProviderFactory<ConfigProvider> {
 
     public ConfigFactory(String path) {
-        final HashMap<Object, ConfigProvider> configs = new HashMap<>();
         ArrayList<ConfigService> processors = CF4M.CLASS.getService(ConfigService.class);
         for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
             if (klass.isAnnotationPresent(Config.class)) {
                 final Object configInstance = CF4M.CLASS.create(klass);
-                configs.put(configInstance, new ConfigProvider() {
+                addProvider(configInstance, new ConfigProvider() {
                     @Override
                     public String getName() {
                         String value = klass.getAnnotation(Config.class).value();
@@ -79,7 +78,7 @@ public final class ConfigFactory {
         CF4M.CONFIG = new ConfigContainer() {
             @Override
             public ArrayList<ConfigProvider> getAll() {
-                return new ArrayList<>(configs.values());
+                return new ArrayList<>(getProviders().values());
             }
 
             @Override
@@ -94,7 +93,7 @@ public final class ConfigFactory {
 
             @Override
             public ConfigProvider get(Object instance) {
-                return configs.get(instance);
+                return getProviders().get(instance);
             }
 
             @Override
@@ -105,7 +104,7 @@ public final class ConfigFactory {
             @Override
             public void load() {
                 if (CF4M.CONFIGURATION.get(ConfigConfiguration.class).getEnable()) {
-                    configs.keySet().forEach(config -> {
+                    getProviders().keySet().forEach(config -> {
                         for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Load.class)) {
@@ -130,7 +129,7 @@ public final class ConfigFactory {
                 if (CF4M.CONFIGURATION.get(ConfigConfiguration.class).getEnable()) {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
-                    configs.keySet().forEach(config -> {
+                    getProviders().keySet().forEach(config -> {
                         for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Save.class)) {

@@ -17,7 +17,6 @@
 package cn.enaium.cf4m.factory;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Autowired;
 import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.annotation.module.Setting;
 import cn.enaium.cf4m.annotation.module.Extend;
@@ -38,10 +37,9 @@ import java.util.stream.Collectors;
  * @author Enaium
  */
 @SuppressWarnings({"unchecked", "unused"})
-public final class ModuleFactory {
+public final class ModuleFactory extends ProviderFactory<ModuleProvider> {
 
     public ModuleFactory() {
-        final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
         Set<Class<?>> extendClasses = new HashSet<>();
         for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
@@ -70,63 +68,70 @@ public final class ModuleFactory {
 
                 multipleExtend.put(moduleInstance, extend);
 
-                //Add Setting
-                ArrayList<SettingProvider> settingProviders = new ArrayList<>();
 
-                for (Field field : klass.getDeclaredFields()) {
-                    field.setAccessible(true);
-                    if (field.isAnnotationPresent(Setting.class)) {
+                ProviderFactory<SettingProvider> providerFactory = new ProviderFactory<SettingProvider>() {
+                    {
+                        for (Field field : klass.getDeclaredFields()) {
+                            field.setAccessible(true);
+                            if (field.isAnnotationPresent(Setting.class)) {
 
-                        Setting setting = field.getAnnotation(Setting.class);
+                                Setting setting = field.getAnnotation(Setting.class);
 
-                        settingProviders.add(new SettingProvider() {
-                            @Override
-                            public String getName() {
-
-                                if (StringUtil.isEmpty(setting.value())) {
-                                    return CF4M.CONFIGURATION.get(NameGeneratorConfiguration.class).generate(field);
-                                }
-
-                                return setting.value();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return setting.description();
-                            }
-
-                            @Override
-                            public <T> T as() {
                                 try {
-                                    return (T) field.get(moduleInstance);
+                                    addProvider(field.get(moduleInstance), new SettingProvider() {
+                                        @Override
+                                        public String getName() {
+
+                                            if (StringUtil.isEmpty(setting.value())) {
+                                                return CF4M.CONFIGURATION.get(NameGeneratorConfiguration.class).generate(field);
+                                            }
+
+                                            return setting.value();
+                                        }
+
+                                        @Override
+                                        public String getDescription() {
+                                            return setting.description();
+                                        }
+
+                                        @Override
+                                        public <T> T as() {
+                                            try {
+                                                return (T) field.get(moduleInstance);
+                                            } catch (IllegalAccessException e) {
+                                                e.printStackTrace();
+                                            }
+                                            return null;
+                                        }
+
+                                        @Override
+                                        public <T> T setSetting(Object value) {
+                                            try {
+                                                field.set(moduleInstance, value);
+                                            } catch (IllegalAccessException e) {
+                                                e.printStackTrace();
+                                            }
+                                            return as();
+                                        }
+
+                                        @Override
+                                        public <T> T set(Object value) {
+                                            return setSetting(value);
+                                        }
+                                    });
                                 } catch (IllegalAccessException e) {
                                     e.printStackTrace();
                                 }
-                                return null;
                             }
-
-                            @Override
-                            public <T> T setSetting(Object value) {
-                                try {
-                                    field.set(moduleInstance, value);
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                }
-                                return as();
-                            }
-
-                            @Override
-                            public <T> T set(Object value) {
-                                return setSetting(value);
-                            }
-                        });
+                        }
                     }
-                }
+                };
+
 
                 SettingContainer settingContainer = new SettingContainer() {
                     @Override
                     public ArrayList<SettingProvider> getAll() {
-                        return settingProviders;
+                        return new ArrayList<>(providerFactory.getProviders().values());
                     }
 
                     @Override
@@ -142,7 +147,7 @@ public final class ModuleFactory {
 
                 ArrayList<ModuleService> processors = CF4M.CLASS.getService(ModuleService.class);
 
-                modules.put(moduleInstance, new ModuleProvider() {
+                addProvider(moduleInstance, new ModuleProvider() {
 
                     private boolean enable;
                     private int key;
@@ -253,12 +258,12 @@ public final class ModuleFactory {
         CF4M.MODULE = new ModuleContainer() {
             @Override
             public ArrayList<ModuleProvider> getAll() {
-                return new ArrayList<>(modules.values());
+                return new ArrayList<>(getProviders().values());
             }
 
             @Override
             public ArrayList<ModuleProvider> getAllByType(String type) {
-                return modules.values().stream().filter(moduleProvider -> moduleProvider.getType().equals(type)).collect(Collectors.toCollection(ArrayList::new));
+                return getProviders().values().stream().filter(moduleProvider -> moduleProvider.getType().equals(type)).collect(Collectors.toCollection(ArrayList::new));
             }
 
             @Override
@@ -278,7 +283,7 @@ public final class ModuleFactory {
 
             @Override
             public ModuleProvider get(Object instance) {
-                return modules.get(instance);
+                return getProviders().get(instance);
             }
 
             @Override

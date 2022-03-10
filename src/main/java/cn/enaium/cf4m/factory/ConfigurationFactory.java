@@ -17,7 +17,6 @@
 package cn.enaium.cf4m.factory;
 
 import cn.enaium.cf4m.CF4M;
-import cn.enaium.cf4m.annotation.Value;
 import cn.enaium.cf4m.annotation.configuration.Configuration;
 import cn.enaium.cf4m.annotation.configuration.Key;
 import cn.enaium.cf4m.container.ClassContainer;
