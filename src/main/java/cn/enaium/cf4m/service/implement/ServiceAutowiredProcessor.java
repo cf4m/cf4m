@@ -21,7 +21,9 @@ import cn.enaium.cf4m.annotation.Service;
 import cn.enaium.cf4m.service.AutowiredService;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Enaium
@@ -32,12 +34,26 @@ public class ServiceAutowiredProcessor implements AutowiredService {
     @Override
     public void beforePut(Field field, Object instance) {
         try {
-            ArrayList<?> service = CF4M.CLASS.getService(field.getType());
-            if (field.get(instance) == null && !service.isEmpty()) {
-                field.set(instance, service.get(0));
+
+            Class<?> type;
+            if (!isList(field)) {
+                type = field.getType();
+            } else {
+                type = instance.getClass().getClassLoader().loadClass(((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0].getTypeName());
             }
-        } catch (IllegalAccessException e) {
+
+            ArrayList<?> service = CF4M.CLASS.getService(type);
+            if (field.get(instance) == null && !service.isEmpty()) {
+                field.set(instance, isList(field) ? service : service.get(0));
+            }
+
+
+        } catch (IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isList(Field field) {
+        return List.class.isAssignableFrom(field.getType());
     }
 }

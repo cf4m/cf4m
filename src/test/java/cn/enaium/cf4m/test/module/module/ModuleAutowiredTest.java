@@ -1,7 +1,6 @@
 package cn.enaium.cf4m.test.module.module;
 
 import cn.enaium.cf4m.annotation.Autowired;
-import cn.enaium.cf4m.annotation.Value;
 import cn.enaium.cf4m.annotation.module.Enable;
 import cn.enaium.cf4m.annotation.module.Module;
 import cn.enaium.cf4m.container.*;
@@ -14,6 +13,8 @@ import cn.enaium.cf4m.test.gui.Gui;
 import cn.enaium.cf4m.test.service.ServiceTest;
 import cn.enaium.cf4m.test.service.implement.ServiceTestImplement;
 import org.junit.jupiter.api.Assertions;
+
+import java.util.List;
 
 /**
  * @author Enaium
@@ -44,6 +45,8 @@ public class ModuleAutowiredTest {
     @Autowired
     private ServiceTest serviceTest;
     @Autowired
+    private List<ServiceTest> serviceTests;
+    @Autowired
     private ServiceTestImplement serviceTestImplement;
     @Autowired
     private ValueTest value;
@@ -65,6 +68,7 @@ public class ModuleAutowiredTest {
         classContainer.create(Gui.class).render();
         System.out.println(propertiesTest.name);
         Assertions.assertNotNull(serviceTest);
+        Assertions.assertNotNull(serviceTests);
         Assertions.assertNotNull(serviceTestImplement);
         serviceTest.accept();
         serviceTestImplement.accept();
