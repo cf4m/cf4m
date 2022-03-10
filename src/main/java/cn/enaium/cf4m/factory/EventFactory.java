@@ -36,12 +36,10 @@ public final class EventFactory {
 
     private final ConcurrentHashMap<Class<?>, CopyOnWriteArrayList<EventBean>> events;
 
-    public final EventContainer eventContainer;
-
     public EventFactory() {
         events = new ConcurrentHashMap<>();
         final ArrayList<EventService> processors = CF4M.CLASS.getService(EventService.class);
-        eventContainer = new EventContainer() {
+        CF4M.EVENT = new EventContainer() {
             @Override
             public void register(Object instance) {
                 processors.forEach(eventService -> eventService.beforeRegister(instance));

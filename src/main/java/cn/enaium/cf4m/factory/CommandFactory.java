@@ -39,13 +39,10 @@ public final class CommandFactory {
 
     private final HashMap<Object, CommandProvider> commands;
 
-    public final CommandContainer commandContainer;
-
-
     public CommandFactory() {
         commands = new HashMap<>();
 
-        commandContainer = new CommandContainer() {
+        CF4M.COMMAND = new CommandContainer() {
             @Override
             public ArrayList<CommandProvider> getAll() {
                 return new ArrayList<>(commands.values());
@@ -106,7 +103,7 @@ public final class CommandFactory {
             }
         };
 
-        for (Class<?> klass : CF4M.CLASS.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
             if (klass.isAnnotationPresent(Command.class)) {
                 final Object commandInstance = CF4M.CLASS.create(klass);
                 commands.put(commandInstance, new CommandProvider() {
@@ -200,7 +197,7 @@ public final class CommandFactory {
     }
 
     private void help() {
-        for (CommandProvider commandProvider : commandContainer.getAll()) {
+        for (CommandProvider commandProvider : CF4M.COMMAND.getAll()) {
             CF4M.CONFIGURATION.get(CommandConfiguration.class).message(CF4M.CONFIGURATION.get(CommandConfiguration.class).getPrefix() + Arrays.toString(commandProvider.getKey()) + commandProvider.getDescription());
         }
     }

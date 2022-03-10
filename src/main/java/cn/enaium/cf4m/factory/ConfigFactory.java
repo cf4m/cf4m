@@ -38,12 +38,10 @@ import java.util.HashMap;
 @SuppressWarnings("unchecked")
 public final class ConfigFactory {
 
-    public final ConfigContainer configContainer;
-
     public ConfigFactory(String path) {
         final HashMap<Object, ConfigProvider> configs = new HashMap<>();
         ArrayList<ConfigService> processors = CF4M.CLASS.getService(ConfigService.class);
-        for (Class<?> klass : CF4M.CLASS.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
             if (klass.isAnnotationPresent(Config.class)) {
                 final Object configInstance = CF4M.CLASS.create(klass);
                 configs.put(configInstance, new ConfigProvider() {
@@ -70,7 +68,7 @@ public final class ConfigFactory {
             }
         }
 
-        configContainer = new ConfigContainer() {
+        CF4M.CONFIG = new ConfigContainer() {
             @Override
             public ArrayList<ConfigProvider> getAll() {
                 return new ArrayList<>(configs.values());

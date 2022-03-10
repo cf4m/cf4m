@@ -40,13 +40,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unchecked", "unused"})
 public final class ModuleFactory {
 
-    public final ModuleContainer moduleContainer;
-
     public ModuleFactory() {
         final HashMap<Object, ModuleProvider> modules = new HashMap<>();
         //Find Extend
         Set<Class<?>> extendClasses = new HashSet<>();
-        for (Class<?> klass : CF4M.CLASS.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
             if (klass.isAnnotationPresent(Extend.class)) {
                 extendClasses.add(klass);
             }
@@ -55,7 +53,7 @@ public final class ModuleFactory {
         final Map<Object, Map<Class<?>, Object>> multipleExtend = new HashMap<>();
 
         //Add Modules
-        for (Class<?> klass : CF4M.CLASS.getAll()) {
+        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
                 Object moduleInstance = CF4M.CLASS.create(klass);
@@ -252,7 +250,7 @@ public final class ModuleFactory {
             }
         }
 
-        moduleContainer = new ModuleContainer() {
+        CF4M.MODULE = new ModuleContainer() {
             @Override
             public ArrayList<ModuleProvider> getAll() {
                 return new ArrayList<>(modules.values());
@@ -297,21 +295,5 @@ public final class ModuleFactory {
                 }
             }
         };
-
-        for (Object module : modules.keySet()) {
-            Class<?> klass = module.getClass();
-            if (klass.isAnnotationPresent(Autowired.class)) {
-                for (Field field : klass.getDeclaredFields()) {
-                    field.setAccessible(true);
-                    try {
-                        if (field.getType().equals(ModuleContainer.class)) {
-                            field.set(module, moduleContainer);
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
     }
 }

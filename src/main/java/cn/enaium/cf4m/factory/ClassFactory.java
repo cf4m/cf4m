@@ -107,12 +107,7 @@ public final class ClassFactory {
 
         CF4M.CLASS = new ClassContainer() {
             @Override
-            public ArrayList<Class<?>> getAll() {
-                return new ArrayList<>(all.keySet());
-            }
-
-            @Override
-            public Map<Class<?>, Object> getBeans() {
+            public Map<Class<?>, Object> getAll() {
                 return all;
             }
 
@@ -147,8 +142,6 @@ public final class ClassFactory {
                 return ClassFactory.this.getService(type);
             }
         };
-
-        CF4M.CONFIGURATION = new ConfigurationFactory(CF4M.CLASS, mainClass.getClassLoader()).configurationContainer;
     }
 
     public void after() {

@@ -72,31 +72,24 @@ public final class CF4M {
         } else {
             ClassFactory classFactory = new ClassFactory(mainClass);
             CLASS.create(ClassContainer.class, CLASS);
+            new ConfigurationFactory(CF4M.CLASS, mainClass.getClassLoader());
             CLASS.create(ConfigurationContainer.class, CONFIGURATION);
-
-            final EventContainer eventContainer = new EventFactory().eventContainer;
-            EVENT = eventContainer;
-            CLASS.create(EventContainer.class, eventContainer);
-
-            final ModuleContainer moduleContainer = new ModuleFactory().moduleContainer;
-            MODULE = moduleContainer;
-            CLASS.create(ModuleContainer.class, moduleContainer);
-
-            final CommandContainer commandContainer = new CommandFactory().commandContainer;
-            COMMAND = commandContainer;
-            CLASS.create(CommandContainer.class, commandContainer);
-
-            final ConfigContainer configContainer = new ConfigFactory(path).configContainer;
-            CONFIG = configContainer;
-            CLASS.create(ConfigContainer.class, configContainer);
+            new EventFactory();
+            CLASS.create(EventContainer.class, EVENT);
+            new ModuleFactory();
+            CLASS.create(ModuleContainer.class, MODULE);
+            new CommandFactory();
+            CLASS.create(CommandContainer.class, COMMAND);
+            new ConfigFactory(path);
+            CLASS.create(ConfigContainer.class, CONFIG);
 
             run = true;
             classFactory.after();
-            configContainer.load();
+            CONFIG.load();
             Runtime.getRuntime().addShutdownHook(new Thread("CF4M Shutdown Thread") {
                 @Override
                 public void run() {
-                    configContainer.save();
+                    CONFIG.save();
                 }
             });
         }

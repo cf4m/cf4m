@@ -32,7 +32,7 @@ import java.util.Map;
 public class ValueReadProcessor implements ClassService {
     @Override
     public void afterProcessor() {
-        for (Map.Entry<Class<?>, Object> classObjectEntry : CF4M.CLASS.getBeans().entrySet()) {
+        for (Map.Entry<Class<?>, Object> classObjectEntry : CF4M.CLASS.getAll().entrySet()) {
             Class<?> klass = classObjectEntry.getKey();
             Object instance = classObjectEntry.getValue();
 

@@ -16,6 +16,7 @@
 
 package cn.enaium.cf4m.factory;
 
+import cn.enaium.cf4m.CF4M;
 import cn.enaium.cf4m.annotation.Value;
 import cn.enaium.cf4m.annotation.configuration.Configuration;
 import cn.enaium.cf4m.annotation.configuration.Key;
@@ -33,7 +34,6 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public final class ConfigurationFactory {
 
-    public final ConfigurationContainer configurationContainer;
     private final Properties configurationProperties = new Properties();
 
     public ConfigurationFactory(ClassContainer classContainer, ClassLoader classLoader) {
@@ -42,7 +42,7 @@ public final class ConfigurationFactory {
 
         final HashMap<String, Object> properties = new HashMap<>();
 
-        for (Class<?> klass : classContainer.getAll()) {
+        for (Class<?> klass : classContainer.getAll().keySet()) {
             if (klass.isAnnotationPresent(Configuration.class)) {
                 configurations.put(klass.getAnnotation(Configuration.class).value(), classContainer.create(klass));
             }
@@ -86,7 +86,7 @@ public final class ConfigurationFactory {
         }
 
         //Configuration
-        for (Class<?> klass : classContainer.getAll()) {
+        for (Class<?> klass : classContainer.getAll().keySet()) {
             if (klass.getSuperclass() != null && klass.getSuperclass().isAnnotationPresent(Configuration.class)) {
                 Configuration annotation = klass.getSuperclass().getAnnotation(Configuration.class);
                 configurations.put(annotation.value(), classContainer.put(klass.getSuperclass(), classContainer.create(klass)));
@@ -121,7 +121,7 @@ public final class ConfigurationFactory {
             }
         }
 
-        configurationContainer = new ConfigurationContainer() {
+        CF4M.CONFIGURATION = new ConfigurationContainer() {
             @Override
             public <T> T get(String key) {
                 return (T) configurations.get(key);

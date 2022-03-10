@@ -24,20 +24,12 @@ import java.util.Map;
  */
 public interface ClassContainer {
     /**
-     * get all the classes in the container
-     *
-     * @return class list
-     */
-    @Deprecated
-    ArrayList<Class<?>> getAll();
-
-    /**
      * get all bean in the container
      *
      * @return bean map
      * @since 1.11.0
      */
-    Map<Class<?>, Object> getBeans();
+    Map<Class<?>, Object> getAll();
 
 
     /**
