@@ -40,12 +40,12 @@ public final class CommandFactory extends ProviderFactory<CommandProvider> {
         CF4M.COMMAND = new CommandContainer() {
             @Override
             public ArrayList<CommandProvider> getAll() {
-                return new ArrayList<>(getProviders().values());
+                return new ArrayList<>(getProvider().values());
             }
 
             @Override
             public CommandProvider get(Object instance) {
-                return getProviders().get(instance);
+                return getProvider().get(instance);
             }
 
             @Override
@@ -164,7 +164,7 @@ public final class CommandFactory extends ProviderFactory<CommandProvider> {
                 }
 
                 List<CommandService> processors = CF4M.CLASS.getService(CommandService.class);
-                processors.forEach(commandService -> commandService.beforeExec(getProviders().get(command)));
+                processors.forEach(commandService -> commandService.beforeExec(getProvider().get(command)));
                 Runnable runnable = () -> {
                     try {
                         if (params.isEmpty()) {
@@ -184,7 +184,7 @@ public final class CommandFactory extends ProviderFactory<CommandProvider> {
                 } else {
                     new Thread(runnable).start();
                 }
-                processors.forEach(commandService -> commandService.afterExec(getProviders().get(command)));
+                processors.forEach(commandService -> commandService.afterExec(getProvider().get(command)));
                 return true;
             }
         }
@@ -198,7 +198,7 @@ public final class CommandFactory extends ProviderFactory<CommandProvider> {
     }
 
     private Object getCommand(String key) {
-        for (Map.Entry<Object, CommandProvider> entry : getProviders().entrySet()) {
+        for (Map.Entry<Object, CommandProvider> entry : getProvider().entrySet()) {
             for (String s : entry.getValue().getKey()) {
                 if (s.equalsIgnoreCase(key)) {
                     return entry.getKey();

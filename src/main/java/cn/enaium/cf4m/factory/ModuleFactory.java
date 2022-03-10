@@ -131,7 +131,7 @@ public final class ModuleFactory extends ProviderFactory<ModuleProvider> {
                 SettingContainer settingContainer = new SettingContainer() {
                     @Override
                     public ArrayList<SettingProvider> getAll() {
-                        return new ArrayList<>(providerFactory.getProviders().values());
+                        return new ArrayList<>(providerFactory.getProvider().values());
                     }
 
                     @Override
@@ -258,12 +258,12 @@ public final class ModuleFactory extends ProviderFactory<ModuleProvider> {
         CF4M.MODULE = new ModuleContainer() {
             @Override
             public ArrayList<ModuleProvider> getAll() {
-                return new ArrayList<>(getProviders().values());
+                return new ArrayList<>(getProvider().values());
             }
 
             @Override
             public ArrayList<ModuleProvider> getAllByType(String type) {
-                return getProviders().values().stream().filter(moduleProvider -> moduleProvider.getType().equals(type)).collect(Collectors.toCollection(ArrayList::new));
+                return getProvider().values().stream().filter(moduleProvider -> moduleProvider.getType().equals(type)).collect(Collectors.toCollection(ArrayList::new));
             }
 
             @Override
@@ -283,7 +283,7 @@ public final class ModuleFactory extends ProviderFactory<ModuleProvider> {
 
             @Override
             public ModuleProvider get(Object instance) {
-                return getProviders().get(instance);
+                return getProvider().get(instance);
             }
 
             @Override

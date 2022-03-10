@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * @author Enaium
@@ -78,7 +77,7 @@ public final class ConfigFactory extends ProviderFactory<ConfigProvider> {
         CF4M.CONFIG = new ConfigContainer() {
             @Override
             public ArrayList<ConfigProvider> getAll() {
-                return new ArrayList<>(getProviders().values());
+                return new ArrayList<>(getProvider().values());
             }
 
             @Override
@@ -93,7 +92,7 @@ public final class ConfigFactory extends ProviderFactory<ConfigProvider> {
 
             @Override
             public ConfigProvider get(Object instance) {
-                return getProviders().get(instance);
+                return getProvider().get(instance);
             }
 
             @Override
@@ -104,7 +103,7 @@ public final class ConfigFactory extends ProviderFactory<ConfigProvider> {
             @Override
             public void load() {
                 if (CF4M.CONFIGURATION.get(ConfigConfiguration.class).getEnable()) {
-                    getProviders().keySet().forEach(config -> {
+                    getProvider().keySet().forEach(config -> {
                         for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Load.class)) {
@@ -129,7 +128,7 @@ public final class ConfigFactory extends ProviderFactory<ConfigProvider> {
                 if (CF4M.CONFIGURATION.get(ConfigConfiguration.class).getEnable()) {
                     new File(path).mkdir();
                     new File(path, "configs").mkdir();
-                    getProviders().keySet().forEach(config -> {
+                    getProvider().keySet().forEach(config -> {
                         for (Method method : config.getClass().getDeclaredMethods()) {
                             method.setAccessible(true);
                             if (method.isAnnotationPresent(Save.class)) {
