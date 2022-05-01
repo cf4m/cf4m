@@ -23,7 +23,6 @@ import cn.enaium.cf4m.service.AutowiredService;
 import cn.enaium.cf4m.service.ClassService;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 
 /**
  * @author Enaium
@@ -38,7 +37,7 @@ public class AutowiredProcessor implements ClassService {
 
     @Override
     public void afterProcessor() {
-        CF4M.CLASS.getAll().forEach(this::autowired);
+        CF4M.CLASS.getInstance().forEach(this::autowired);
     }
 
     private void autowired(Class<?> klass, Object instance) {
@@ -55,7 +54,7 @@ public class AutowiredProcessor implements ClassService {
             try {
                 CF4M.CLASS.getService(AutowiredService.class).forEach(postProcessor -> postProcessor.beforePut(field, instance));
                 if (field.get(instance) == null) {
-                    field.set(instance, CF4M.CLASS.getAll().get(field.getType()));
+                    field.set(instance, CF4M.CLASS.getInstance().get(field.getType()));
                 }
                 CF4M.CLASS.getService(AutowiredService.class).forEach(autowiredService -> autowiredService.afterPut(field, instance));
             } catch (IllegalAccessException e) {

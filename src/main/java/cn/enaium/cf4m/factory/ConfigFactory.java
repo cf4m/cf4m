@@ -41,7 +41,7 @@ public final class ConfigFactory extends ProviderFactory<ConfigProvider> {
 
     public ConfigFactory(String path) {
         ArrayList<ConfigService> processors = CF4M.CLASS.getService(ConfigService.class);
-        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
+        for (Class<?> klass : CF4M.CLASS.getInstance().keySet()) {
             if (klass.isAnnotationPresent(Config.class)) {
                 final Object configInstance = CF4M.CLASS.create(klass);
                 addProvider(configInstance, new ConfigProvider() {

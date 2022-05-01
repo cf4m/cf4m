@@ -42,7 +42,7 @@ public final class ModuleFactory extends ProviderFactory<ModuleProvider> {
     public ModuleFactory() {
         //Find Extend
         Set<Class<?>> extendClasses = new HashSet<>();
-        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
+        for (Class<?> klass : CF4M.CLASS.getInstance().keySet()) {
             if (klass.isAnnotationPresent(Extend.class)) {
                 extendClasses.add(klass);
             }
@@ -51,7 +51,7 @@ public final class ModuleFactory extends ProviderFactory<ModuleProvider> {
         final Map<Object, Map<Class<?>, Object>> multipleExtend = new HashMap<>();
 
         //Add Modules
-        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
+        for (Class<?> klass : CF4M.CLASS.getInstance().keySet()) {
             if (klass.isAnnotationPresent(Module.class)) {
                 Module module = klass.getAnnotation(Module.class);
                 Object moduleInstance = CF4M.CLASS.create(klass);

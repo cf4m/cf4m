@@ -41,7 +41,7 @@ public final class ConfigurationFactory {
 
         final HashMap<String, Object> properties = new HashMap<>();
 
-        for (Class<?> klass : classContainer.getAll().keySet()) {
+        for (Class<?> klass : classContainer.getInstance().keySet()) {
             if (klass.isAnnotationPresent(Configuration.class)) {
                 configurations.put(klass.getAnnotation(Configuration.class).value(), classContainer.create(klass));
             }
@@ -85,7 +85,7 @@ public final class ConfigurationFactory {
         }
 
         //Configuration
-        for (Class<?> klass : classContainer.getAll().keySet()) {
+        for (Class<?> klass : classContainer.getInstance().keySet()) {
             if (klass.getSuperclass() != null && klass.getSuperclass().isAnnotationPresent(Configuration.class)) {
                 Configuration annotation = klass.getSuperclass().getAnnotation(Configuration.class);
                 configurations.put(annotation.value(), classContainer.put(klass.getSuperclass(), classContainer.create(klass)));

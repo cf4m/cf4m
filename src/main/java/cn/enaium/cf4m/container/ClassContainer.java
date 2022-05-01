@@ -29,8 +29,15 @@ public interface ClassContainer {
      * @return bean map
      * @since 1.11.0
      */
-    Map<Class<?>, Object> getAll();
+    Map<Class<?>, Object> getInstance();
 
+    /**
+     * get all the classes in the container
+     *
+     * @return class list
+     */
+    @Deprecated
+    ArrayList<Class<?>> getAll();
 
     /**
      * @param klass    klass

@@ -96,7 +96,8 @@ public final class ClassFactory {
                         } else {
                             all.put(klass, null);
                         }
-                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                             InvocationTargetException | NoSuchMethodException e) {
                         e.printStackTrace();
                     }
                 }
@@ -107,8 +108,13 @@ public final class ClassFactory {
 
         CF4M.CLASS = new ClassContainer() {
             @Override
-            public Map<Class<?>, Object> getAll() {
+            public Map<Class<?>, Object> getInstance() {
                 return all;
+            }
+
+            @Override
+            public ArrayList<Class<?>> getAll() {
+                return new ArrayList<>(all.keySet());
             }
 
             @Override
@@ -131,7 +137,8 @@ public final class ClassFactory {
             public <T> T create(Class<T> klass) {
                 try {
                     return create(klass, klass.getConstructor().newInstance());
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                         NoSuchMethodException e) {
                     e.printStackTrace();
                 }
                 return (T) all.get(klass);

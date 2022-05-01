@@ -98,7 +98,7 @@ public final class CommandFactory extends ProviderFactory<CommandProvider> {
             }
         };
 
-        for (Class<?> klass : CF4M.CLASS.getAll().keySet()) {
+        for (Class<?> klass : CF4M.CLASS.getInstance().keySet()) {
             if (klass.isAnnotationPresent(Command.class)) {
                 final Object commandInstance = CF4M.CLASS.create(klass);
                 addProvider(commandInstance, new CommandProvider() {
